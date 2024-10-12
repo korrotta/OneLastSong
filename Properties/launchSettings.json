@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "OneLastSong (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "OneLastSong (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
