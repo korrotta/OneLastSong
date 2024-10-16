@@ -6,9 +6,31 @@
     xmlns:local="using:OneLastSong.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:l="using:WinUI3Localizer"
     mc:Ignorable="d"
     Background="{ThemeResource cMainBg}">
-    <Grid>
-        <TextBlock Text="Main Page" Style="{StaticResource SongBigTitle}" Foreground="{ThemeResource cTextPrimary}"/>
+    <Grid
+        Width="600" Height="200"
+        >
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Width="500" Height="200">
+
+            <TextBlock l:Uids.Uid="Author_TextBlock" Style="{StaticResource SongBigTitle}" Foreground="{ThemeResource cTextPrimary}"/>
+            <ComboBox SelectionChanged="langComboBox_SelectionChanged" Width="80"
+                    SelectedValue="{x:Bind MainPageViewModel.Language, Mode=TwoWay}"
+                    VerticalAlignment="Center"
+                    Foreground="{ThemeResource cMainBg}"
+                    Background="{ThemeResource cTextPrimary}"
+                    >     
+                <x:String>en</x:String>
+                <x:String>vn</x:String>
+            </ComboBox>
+            <Rectangle Width="10"/>
+            <Button l:Uids.Uid="ChangeTheme_Button" Click="changeThemeButton_Click"
+            Foreground="{ThemeResource cMainBg}"
+            Background="{ThemeResource cTextPrimary}"/>
+
+        </StackPanel>
+        
     </Grid>
 </Page>

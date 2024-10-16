@@ -25,7 +25,7 @@ namespace OneLastSong.Utils
                 .AddStringResourcesFolderForLanguageDictionaries(stringsFolder.Path)
                 .SetOptions(options =>
                 {
-                    options.DefaultLanguage = "vn";
+                    options.DefaultLanguage = "en";
                 })
                 .Build();
 
