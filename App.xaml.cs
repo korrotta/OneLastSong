@@ -42,8 +42,11 @@ namespace OneLastSong
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            //this line is for testing purposes only
+            ThemeUtils.ChangeTheme(ThemeUtils.LIGHT_THEME);
+            //ThemeUtils.LoadStoredTheme(); uncomment this line to load the stored theme
+
             _window = new MainWindow();
-            ThemeUtils.LoadStoredTheme();
             _window.Activate();
         }
 

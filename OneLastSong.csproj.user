@@ -11,9 +11,9 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
-    <None Update="Themes\Generic.xaml">
+    <Page Update="Styles\SongBigTitle.xaml">
       <SubType>Designer</SubType>
-    </None>
+    </Page>
     <Page Update="Views\MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>

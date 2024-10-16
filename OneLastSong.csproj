@@ -13,12 +13,11 @@
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Styles\SongBigTitle.xaml" />
     <None Remove="Themes\DarkMode.xaml" />
+    <None Remove="Themes\DefaultTheme.xaml" />
     <None Remove="Themes\LightMode.xaml" />
     <None Remove="Views\MainPage.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Remove="Themes\Generic.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,9 +53,15 @@
     <Folder Include="DAOs\" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Themes\Generic.xaml">
+    <Page Update="Styles\SongBigTitle.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </None>
+    </Page>
+    <Page Update="Themes\DefaultTheme.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
