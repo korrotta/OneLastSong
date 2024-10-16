@@ -11,5 +11,17 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
+    <None Update="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <Page Update="Views\MainPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\LightMode.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\DarkMode.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 </Project>

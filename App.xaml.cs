@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
+using OneLastSong.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,10 +42,19 @@ namespace OneLastSong
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            m_window = new MainWindow();
-            m_window.Activate();
+            _window = new MainWindow();
+            ThemeUtils.LoadStoredTheme();
+            _window.Activate();
         }
 
-        private Window m_window;
+        private static Window _window;
+
+        public static Window MainWindow
+        {
+            get
+            {
+                return _window;
+            }
+        }
     }
 }
