@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -76,8 +77,17 @@ namespace OneLastSong.Utils
         private static async Task<StorageFile> LoadStringResourcesFileFromAppResource(string filePath)
         {
             Uri resourcesFileUri = new($"ms-appx:///{filePath}");
-            return await StorageFile.GetFileFromApplicationUriAsync(resourcesFileUri);
+            try
+            {
+                return await StorageFile.GetFileFromApplicationUriAsync(resourcesFileUri);
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Debug($"When loading {resourcesFileUri.ToString}: {ex.Message}");
+                LogUtils.Debug($"Exception: {ex.Message}");
+                string message = $"Failed to load string resources file from {resourcesFileUri.ToString()}";
+                throw new Exception(message, ex);
+            }
         }
-
     }
 }
