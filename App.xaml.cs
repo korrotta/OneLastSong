@@ -42,9 +42,9 @@ namespace OneLastSong
         /// <param name="args">Details about the launch request and process.</param>
         protected async override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            await LocalizationUtils.InitializeLocalizer();
             //this line is for testing purposes only
             ThemeUtils.ChangeTheme(ThemeUtils.GetStoredLocalTheme());
-            await LocalizationUtils.InitializeLocalizer();
             //ThemeUtils.LoadStoredTheme(); uncomment this line to load the stored theme
 
             _window = new MainWindow();
