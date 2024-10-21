@@ -1,19 +1,6 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using System;
-using System.Collections.Generic;
+using OneLastSong.Models;
 using System.ComponentModel;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Windows.Input;
 using WinUI3Localizer;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace OneLastSong.ModelViews
 {
@@ -21,10 +8,31 @@ namespace OneLastSong.ModelViews
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public string Language { get; set; }
+        private Song _currentSong;
 
-        public MainPageViewModel() 
-        { 
+        public Song CurrentSong
+        {
+            get => _currentSong;
+            set
+            {
+                if (_currentSong != value)
+                {
+                    _currentSong = value;
+                    OnPropertyChanged(nameof(CurrentSong));
+                }
+            }
+        }
+
+        public MainPageViewModel()
+        {
             Language = Localizer.Get().GetCurrentLanguage();
+
+            CurrentSong = new Song();
+        }
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

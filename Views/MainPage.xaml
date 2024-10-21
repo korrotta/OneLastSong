@@ -7,8 +7,13 @@
     xmlns:l="using:WinUI3Localizer"
     xmlns:local="using:OneLastSong.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:modelviews="using:OneLastSong.ModelViews"
+    d:DataContext="{d:DesignInstance Type=modelviews:MainPageViewModel}"
     Background="{ThemeResource cMainBg}"
     mc:Ignorable="d">
+    <Page.Resources>
+        <BitmapImage x:Key="PlaceholderImage" UriSource="/Assets/images/default.jpg" />
+    </Page.Resources>
     <Grid>
 
         <Grid.RowDefinitions>
@@ -75,17 +80,19 @@
                     Width="70"
                     Height="70"
                     Margin="5"
-                    Source="\Assets\images\default.jpg" />
+                    Source="{Binding CurrentSong.Thumbnail, Mode=OneWay, TargetNullValue={StaticResource PlaceholderImage}}" />
 
                 <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                     <TextBlock
                         FontSize="16"
                         Foreground="White"
-                        Text="SONG NAME" />
+                        Text="{Binding CurrentSong.Title, Mode=OneWay}"
+                        TextAlignment="Left"
+                        TextTrimming="CharacterEllipsis" />
                     <TextBlock
                         FontSize="12"
                         Foreground="LightGray"
-                        Text="Author" />
+                        Text="{Binding CurrentSong.Artist, Mode=OneWay}" />
                 </StackPanel>
             </StackPanel>
 
