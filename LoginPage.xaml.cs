@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using OneLastSong.Views;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -27,6 +28,17 @@ namespace OneLastSong
             }
 
             // Add your login logic here
+            else {
+                if (username == "admin" && password == "123")
+                {
+                    Frame.Navigate(typeof(MainPage));
+                }
+                else
+                {
+                    // Show error message
+                    ErrorTextBlock.Text = "Invalid username or password";
+                }
+            }
         }
 
         private void NavigateToRegisterPage_Click(object sender, RoutedEventArgs e)
@@ -65,7 +77,7 @@ namespace OneLastSong
                 return builder.ToString();
             }
         }
+        private TextBlock ErrorTextBlock;
 
-  
     }
 }
