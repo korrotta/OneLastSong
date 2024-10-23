@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using OneLastSong.ModelViews;
 using OneLastSong.Utils;
+using OneLastSong.Views.Components;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,25 +32,26 @@ namespace OneLastSong.Views
         public MainPage()
         {
             this.InitializeComponent();
+            BodyFrame.Navigate(typeof(BodyFrame));
             MainPageViewModel = new MainPageViewModel();
         }
 
-        private void langComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count > 0)
-            {
-                string selectedLanguage = e.AddedItems[0].ToString();
-                LogUtils.Debug($"Selected Language: {selectedLanguage}");
-                Localizer.Get().SetLanguage(selectedLanguage);
-            }
-        }
+        //private void langComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    if (e.AddedItems.Count > 0)
+        //    {
+        //        string selectedLanguage = e.AddedItems[0].ToString();
+        //        LogUtils.Debug($"Selected Language: {selectedLanguage}");
+        //        Localizer.Get().SetLanguage(selectedLanguage);
+        //    }
+        //}
 
-        private async void changeThemeButton_Click(object sender, RoutedEventArgs e)
-        {
-            var currentTheme = ThemeUtils.GetCurrentTheme();
-            var newTheme = currentTheme == ThemeUtils.LIGHT_THEME ? ThemeUtils.DARK_THEME : ThemeUtils.LIGHT_THEME;
-            ThemeUtils.ChangeTheme(newTheme, true);
-            await DialogUtils.ShowDialogAsync("Theme Changed", $"Theme changed to {newTheme}. You will need to restart to see the changes!", XamlRoot);
-        }
+        //private async void changeThemeButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var currentTheme = ThemeUtils.GetCurrentTheme();
+        //    var newTheme = currentTheme == ThemeUtils.LIGHT_THEME ? ThemeUtils.DARK_THEME : ThemeUtils.LIGHT_THEME;
+        //    ThemeUtils.ChangeTheme(newTheme, true);
+        //    await DialogUtils.ShowDialogAsync("Theme Changed", $"Theme changed to {newTheme}. You will need to restart to see the changes!", XamlRoot);
+        //}
     }
 }

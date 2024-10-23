@@ -11,6 +11,18 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\Components\RightRegion.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\CenterRegion.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\LeftRegion.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\BodyFrame.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Styles\SongBigTitle.xaml">
       <SubType>Designer</SubType>
     </Page>

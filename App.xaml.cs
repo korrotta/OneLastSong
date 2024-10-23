@@ -44,11 +44,13 @@ namespace OneLastSong
         {
             await LocalizationUtils.InitializeLocalizer();
             //this line is for testing purposes only
-            ThemeUtils.ChangeTheme(ThemeUtils.GetStoredLocalTheme());
-            //ThemeUtils.LoadStoredTheme(); uncomment this line to load the stored theme
+            //ThemeUtils.ChangeTheme(ThemeUtils.GetStoredLocalTheme());
+            ThemeUtils.ChangeTheme(ThemeUtils.DARK_THEME, true); //uncomment this line to set the default theme (dark theme
+            ThemeUtils.LoadStoredTheme(); //uncomment this line to load the stored theme
 
             _window = new MainWindow();
             _window.Activate();
+
         }
 
         private static Window _window;

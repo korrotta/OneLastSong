@@ -17,6 +17,10 @@
     <None Remove="Themes\DarkMode.xaml" />
     <None Remove="Themes\DefaultTheme.xaml" />
     <None Remove="Themes\LightMode.xaml" />
+    <None Remove="Views\Components\BodyFrame.xaml" />
+    <None Remove="Views\Components\CenterRegion.xaml" />
+    <None Remove="Views\Components\LeftRegion.xaml" />
+    <None Remove="Views\Components\RightRegion.xaml" />
     <None Remove="Views\MainPage.xaml" />
   </ItemGroup>
 
@@ -52,7 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DAOs\" />
-    <Folder Include="Components\" />
     <Folder Include="Resources\Languages\" />
   </ItemGroup>
   <ItemGroup>
@@ -93,5 +96,34 @@
     <Content Include="Strings\**\*.resw">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Components\**" />
+    <EmbeddedResource Remove="Components\**" />
+    <None Remove="Components\**" />
+    <Page Remove="Components\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Components\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\RightRegion.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\CenterRegion.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\LeftRegion.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\BodyFrame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

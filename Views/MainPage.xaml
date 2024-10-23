@@ -7,11 +7,35 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:l="using:WinUI3Localizer"
-    mc:Ignorable="d"
-    Background="{ThemeResource cMainBg}">
-    <Grid
-        Width="600" Height="200"
-        >
+    mc:Ignorable="d">
+
+    <Page.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{ThemeResource cBG_PRIMARY}" Offset="0.0" />
+            <GradientStop Color="{ThemeResource cBG_SECONDARY}" Offset="1.0" />
+        </LinearGradientBrush>
+    </Page.Background>
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="87"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="93"/>
+        </Grid.RowDefinitions>
+
+        <!--#Top bar-->
+        <Frame x:Name="TopFrame" Grid.Row="0" Margin="15"/>
+        <!--#end Top bar-->
+        
+        <!--#Body-->
+        <Frame x:Name="BodyFrame" Grid.Row="1"/>
+        <!--#end Body-->
+        
+        <!--#Bottom-->
+        <Frame x:Name="BottomFrame" Grid.Row="2" Margin="15"/>
+        <!--#end Bottom-->
+        
+        <!--
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
                     Width="500" Height="200">
 
@@ -21,7 +45,7 @@
                     VerticalAlignment="Center"
                     Foreground="{ThemeResource cMainBg}"
                     Background="{ThemeResource cTextPrimary}"
-                    >     
+                    >
                 <x:String>en</x:String>
                 <x:String>vn</x:String>
             </ComboBox>
@@ -31,6 +55,6 @@
             Background="{ThemeResource cTextPrimary}"/>
 
         </StackPanel>
-        
+    -->
     </Grid>
 </Page>
