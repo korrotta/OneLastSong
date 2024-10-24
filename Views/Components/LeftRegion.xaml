@@ -25,26 +25,32 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Ellipse x:Name="Ellipse"
+                <Border
                     Grid.RowSpan="2"
-                    Width ="32"
-                    Height="32"
-                    Margin="{StaticResource MediumRightMargin}"
+                    Width="46"
+                    Height="46"
+                    CornerRadius="5"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Fill="{ThemeResource SystemControlBackgroundBaseMediumBrush}"/>
+                    Margin="0,6,6,6">
+                    <Image
+                        Source="/Assets/LikedPlaylist.png"
+                        Stretch="UniformToFill"
+                            />
+                </Border>
                 <TextBlock Grid.Column="1"
                     Text="{x:Bind Name}"
                     x:Phase="1"
-                    Style="{ThemeResource Body1}"
+                    Style="{ThemeResource Body2}"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
-                    Margin="0,6,0,0"/>
+                    Margin="12,6,0,0"/>
                 <TextBlock  Grid.Column="1"
                     Grid.Row="1"
                     Text="{x:Bind Count}"
                     x:Phase="2"
-                    Style="{ThemeResource BodyTextBlockStyle}"
-                    Margin="0,0,0,6"/>
+                    Style="{ThemeResource BodySmall1}"
+                    Foreground="{ThemeResource TEXT_LIGHT}"
+                    Margin="12,0,0,6"/>
             </Grid>
         </DataTemplate>
     </Page.Resources>
