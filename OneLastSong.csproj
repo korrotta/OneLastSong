@@ -13,7 +13,10 @@
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Styles\SongBigTitle.xaml" />
+    <None Remove="Styles\Margins.xaml" />
+    <None Remove="Styles\Paddings.xaml" />
+    <None Remove="Styles\Sizes.xaml" />
+    <None Remove="Styles\Texts.xaml" />
     <None Remove="Themes\DarkMode.xaml" />
     <None Remove="Themes\DefaultTheme.xaml" />
     <None Remove="Themes\LightMode.xaml" />
@@ -59,7 +62,19 @@
     <Folder Include="Resources\Languages\" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Styles\SongBigTitle.xaml">
+    <Page Update="Styles\Sizes.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Paddings.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Margins.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Texts.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Themes\DefaultTheme.xaml">
@@ -105,6 +120,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Components\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Strings\vn\Resources.vn.resw">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Components\RightRegion.xaml">

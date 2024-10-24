@@ -24,7 +24,7 @@
         </Grid.RowDefinitions>
 
         <!--#Top bar-->
-        <Frame x:Name="TopFrame" Grid.Row="0" Margin="15"/>
+        <Frame x:Name="TopFrame" Grid.Row="0" Margin="{StaticResource MediumMargin}"/>
         <!--#end Top bar-->
         
         <!--#Body-->
@@ -32,7 +32,7 @@
         <!--#end Body-->
         
         <!--#Bottom-->
-        <Frame x:Name="BottomFrame" Grid.Row="2" Margin="15"/>
+        <Frame x:Name="BottomFrame" Grid.Row="2" Margin="{StaticResource MediumMargin}"/>
         <!--#end Bottom-->
         
         <!--

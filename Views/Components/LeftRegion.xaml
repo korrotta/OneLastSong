@@ -6,10 +6,25 @@
     xmlns:local="using:OneLastSong.Views.Components"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:l="using:WinUI3Localizer"
     mc:Ignorable="d"
     Background="Transparent">
 
-    <Grid>
+    <StackPanel Orientation="Vertical">
+        <Grid
+        Margin="{StaticResource MediumMargin}"
+        HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <FontIcon Glyph="&#xE8F1;" FontSize="{StaticResource SubheaderTextSize}" Foreground="{ThemeResource TEXT_LIGHT}" Grid.Column="0" Margin="0 0 16 0" />
+            <TextBlock Style="{StaticResource Body1}" Foreground="{ThemeResource TEXT_LIGHT}" l:Uids.Uid="Your_library_TextBlock" Grid.Column="1"/>
+            <FontIcon Glyph="&#xE710;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}" Grid.Column="2" Margin="{StaticResource MediumRightMargin}"/>
+            <FontIcon Glyph="&#xE89F;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}" Grid.Column="3"/>
+        </Grid>
+    </StackPanel>
 
-    </Grid>
 </Page>

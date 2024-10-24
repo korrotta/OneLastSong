@@ -1,0 +1,17 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Small Margin -->
+    <Thickness x:Key="SmallMargin">4</Thickness>
+    <!-- Medium Margin -->
+    <Thickness x:Key="MediumMargin">10</Thickness>
+    <!-- Large Margin -->
+    <Thickness x:Key="LargeMargin">20</Thickness>
+    <!-- Extra Large Margin -->
+    <Thickness x:Key="ExtraLargeMargin">30</Thickness>
+
+    <!-- Combined Margins -->
+    <Thickness x:Key="MediumLeftMargin">10,0,0,0</Thickness>
+    <Thickness x:Key="MediumHorizontalMargin">10,0,10,0</Thickness>
+    <Thickness x:Key="MediumRightMargin">0,0,10,0</Thickness>
+</ResourceDictionary>
