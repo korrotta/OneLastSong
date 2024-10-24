@@ -120,4 +120,7 @@
   <data name="Your_library_TextBlock.Text" xml:space="preserve">
     <value>Your library</value>
   </data>
+  <data name="Recents_TextBlock.Text" xml:space="preserve">
+    <value>Recents</value>
+  </data>
 </root>

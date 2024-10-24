@@ -120,4 +120,7 @@
   <data name="Your_library_TextBlock.Text" xml:space="preserve">
     <value>Thư viện</value>
   </data>
+  <data name="Recents_TextBlock.Text" xml:space="preserve">
+    <value>Gần đây</value>
+  </data>
 </root>

@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="Styles/Margins.xaml"/>
                 <ResourceDictionary Source="Styles/Paddings.xaml"/>
                 <ResourceDictionary Source="Styles/Sizes.xaml"/>
+                <ResourceDictionary Source="Styles/Buttons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark" Source="Themes/DarkMode.xaml"/>

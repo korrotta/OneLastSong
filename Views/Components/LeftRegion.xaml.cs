@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using OneLastSong.Models;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,6 +27,26 @@ namespace OneLastSong.Views.Components
         public LeftRegion()
         {
             this.InitializeComponent();
+
+            ExampleList.ItemsSource = GenerateRandomPlaylists(5);
+        }
+
+        private List<Playlist> GenerateRandomPlaylists(int count)
+        {
+            var random = new Random();
+            var playlists = new List<Playlist>();
+
+            for (int i = 0; i < count; i++)
+            {
+                playlists.Add(new Playlist
+                {
+                    Name = $"Playlist {i + 1}",
+                    Count = random.Next(1, 100),
+                    Type = random.Next(0, 2) == 0 ? "Music" : "Video"
+                });
+            }
+
+            return playlists;
         }
     }
 }
