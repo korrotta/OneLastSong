@@ -6,10 +6,46 @@
     xmlns:local="using:OneLastSong.Views.Components"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="Transparent">
+    mc:Ignorable="d">
 
-    <Grid>
+    <Page.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{ThemeResource cBG_SECONDARY}" Offset="0.0" />
+            <GradientStop Color="{ThemeResource cBG_TERTIARY}" Offset="1.0" />
+        </LinearGradientBrush>
+    </Page.Background>
 
-    </Grid>
+    <StackPanel Orientation="Vertical"
+            Padding="{StaticResource MediumPadding}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="128"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Border
+                    CornerRadius="5"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Background="{ThemeResource BG_LIGHT_TERTIARY}">
+                    <Grid>
+                        <Image
+                            Source="/Assets/Ad.png"
+                            Stretch="Uniform"/>
+                        <Button
+                            Content="Click Me"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,10,0"
+                            Background="{ThemeResource BG_TERTIARY}"
+                            Foreground="{ThemeResource TEXT_PRIMARY}"
+                            Opacity="0.7"/>
+                    </Grid>
+                </Border>
+            </Grid>
+
+        </Grid>
+    </StackPanel>
 </Page>
