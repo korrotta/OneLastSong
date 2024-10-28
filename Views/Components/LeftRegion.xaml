@@ -143,10 +143,13 @@
             </Button>
         </Grid>
 
-        <ListView
-            x:Name="ExampleList"
-            SelectionMode="Single"
-            ItemTemplate="{StaticResource PlaylistListViewTemplate}"/>
+        <ScrollViewer>
+            <ListView
+                x:Name="ExampleList"
+                SelectionMode="Single"
+                ItemTemplate="{StaticResource PlaylistListViewTemplate}"/>
+        </ScrollViewer>
+        
     </StackPanel>  
 
 </Page>

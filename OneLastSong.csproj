@@ -155,4 +155,16 @@
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
   </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
 </Project>

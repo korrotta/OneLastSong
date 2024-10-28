@@ -123,4 +123,19 @@
   <data name="Recents_TextBlock.Text" xml:space="preserve">
     <value>Gần đây</value>
   </data>
+  <data name="Go_to_Ad_Button.Content" xml:space="preserve">
+    <value>Tới QC</value>
+  </data>
+  <data name="Dicovery_TextBlock.Text" xml:space="preserve">
+    <value>Khám phá</value>
+  </data>
+  <data name="Search_result(s)_TextBlock.Text" xml:space="preserve">
+    <value>Kết quả tìm kiếm</value>
+  </data>
+  <data name="Views_TextBlock.Text" xml:space="preserve">
+    <value> Lượt xem</value>
+  </data>
+  <data name="Likes_TextBlock.Text" xml:space="preserve">
+    <value> Thích </value>
+  </data>
 </root>
