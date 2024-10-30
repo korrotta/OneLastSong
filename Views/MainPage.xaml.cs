@@ -45,6 +45,7 @@ namespace OneLastSong.Views
         {
             _db = ((App)Application.Current).Services.GetService<IDb>();
             await InitializeDatabase();
+            TopFrame.Navigate(typeof(TopFrame));
             BodyFrame.Navigate(typeof(BodyFrame));
             MainPageViewModel = new MainPageViewModel();
         }

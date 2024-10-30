@@ -25,6 +25,7 @@
     <None Remove="Views\Components\CenterRegion.xaml" />
     <None Remove="Views\Components\LeftRegion.xaml" />
     <None Remove="Views\Components\RightRegion.xaml" />
+    <None Remove="Views\Components\TopFrame.xaml" />
     <None Remove="Views\MainPage.xaml" />
   </ItemGroup>
 
@@ -61,6 +62,16 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="postgres_bind_folder\pg_commit_ts\" />
+    <Folder Include="postgres_bind_folder\pg_dynshmem\" />
+    <Folder Include="postgres_bind_folder\pg_notify\" />
+    <Folder Include="postgres_bind_folder\pg_replslot\" />
+    <Folder Include="postgres_bind_folder\pg_serial\" />
+    <Folder Include="postgres_bind_folder\pg_snapshots\" />
+    <Folder Include="postgres_bind_folder\pg_stat\" />
+    <Folder Include="postgres_bind_folder\pg_stat_tmp\" />
+    <Folder Include="postgres_bind_folder\pg_tblspc\" />
+    <Folder Include="postgres_bind_folder\pg_twophase\" />
     <Folder Include="Resources\Languages\" />
   </ItemGroup>
   <ItemGroup>
@@ -167,5 +178,10 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\TopFrame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>
