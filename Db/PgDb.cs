@@ -80,11 +80,11 @@ namespace OneLastSong.Db
 
             try
             {
-                await using (var cmd = dataSource.CreateCommand("SELECT name FROM testing_table"))
+                await using (var cmd = dataSource.CreateCommand("SELECT name FROM table_name"))
                 {
                     cmd.CommandTimeout = 5; // Set a timeout of 5 seconds
 
-                    LogUtils.Debug("Executing command: SELECT name FROM testing_table");
+                    LogUtils.Debug("Executing command: SELECT name FROM table_name");
 
                     await using (var reader = await cmd.ExecuteReaderAsync())
                     {
