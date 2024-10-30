@@ -16,6 +16,9 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Microsoft.Extensions.DependencyInjection;
+using OneLastSong.Db;
+using OneLastSong.DAOs;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,6 +30,8 @@ namespace OneLastSong
     /// </summary>
     public partial class App : Application
     {
+        public IServiceProvider Services { get; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -34,6 +39,15 @@ namespace OneLastSong
         public App()
         {
             this.InitializeComponent();
+            Services = ConfigureServices();
+        }
+
+        private static IServiceProvider ConfigureServices()
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton<IDb, PgDb>();
+            services.AddSingleton<TestDAO>();
+            return services.BuildServiceProvider();
         }
 
         /// <summary>
