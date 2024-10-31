@@ -6,20 +6,22 @@ for /f "tokens=2" %%a in ('tasklist /FI "IMAGENAME eq postgres.exe" ^| findstr /
 
 REM Run the setup script to create necessary directories
 cd ../postgres_bind_folder
-mkdir -p pg_commit_ts
-mkdir -p pg_dynshmem
-mkdir -p pg_logical/mappings
-mkdir -p pg_logical/snapshots
-mkdir -p snapshots
-mkdir -p pg_notify
-mkdir -p pg_replslot
-mkdir -p pg_serial
-mkdir -p pg_snapshots
-mkdir -p pg_stat_tmp
-mkdir -p pg_tblspc
-mkdir -p pg_twophase
-mkdir -p pg_wal/archive_status
-mkdir -p pg_wal/summaries
+mkdir pg_commit_ts
+mkdir pg_dynshmem
+mkdir pg_logical
+mkdir pg_logical\mappings
+mkdir pg_logical\snapshots
+mkdir snapshots
+mkdir pg_notify
+mkdir pg_replslot
+mkdir pg_serial
+mkdir pg_snapshots
+mkdir pg_stat_tmp
+mkdir pg_tblspc
+mkdir pg_twophase
+mkdir pg_wal
+mkdir pg_wal\archive_status
+mkdir pg_wal\summaries
 
 REM Navigate to the parent directory
 cd ..
