@@ -1,27 +1,13 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using OneLastSong.Models;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using OneLastSong.DAOs;
 using OneLastSong.Db;
+using OneLastSong.Models;
 using OneLastSong.ModelViews;
 using OneLastSong.Utils;
 using OneLastSong.Views.Components;
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using WinUI3Localizer;
 
 namespace OneLastSong.Views
 {
