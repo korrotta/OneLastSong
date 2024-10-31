@@ -1,3 +1,6 @@
+REM Navigate to the directory of the currently executing batch file
+cd /d "%~dp0"
+
 REM List all postgres.exe processes
 tasklist /FI "IMAGENAME eq postgres.exe"
 
