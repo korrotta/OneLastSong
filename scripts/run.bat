@@ -27,4 +27,4 @@ REM Navigate to the parent directory
 cd ..
 
 REM Run the Docker container with bind mount
-docker run --name postgres-onelastsong -p 5432:5432 -e POSTGRES_PASSWORD=12345678 -d --mount type=bind,source=%cd%\postgres_bind_folder,target=/var/lib/postgresql/data deltay/onelastsong:v1.0
+docker run --name postgres-onelastsong -p 5432:5432 -e POSTGRES_PASSWORD=12345678 -d --mount type=bind,source="%cd%\postgres_bind_folder",target=/var/lib/postgresql/data deltay/onelastsong:v1.0
