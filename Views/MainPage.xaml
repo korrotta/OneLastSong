@@ -5,6 +5,46 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:WinUI3Localizer"
+    mc:Ignorable="d">
+
+    <Page.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{ThemeResource cBG_PRIMARY}" Offset="0.0" />
+            <GradientStop Color="{ThemeResource cBG_SECONDARY}" Offset="1.0" />
+        </LinearGradientBrush>
+    </Page.Background>
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="87"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="93"/>
+        </Grid.RowDefinitions>
+
+        <!--#Top bar-->
+        <Frame x:Name="TopFrame" Grid.Row="0" Margin="{StaticResource MediumMargin}"/>
+        <!--#end Top bar-->
+        
+        <!--#Body-->
+        <Frame x:Name="BodyFrame" Grid.Row="1"/>
+        <!--#end Body-->
+        
+        <!--#Bottom-->
+        <Frame x:Name="BottomFrame" Grid.Row="2" Margin="{StaticResource MediumMargin}"/>
+        <!--#end Bottom-->
+        
+        <!--
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Width="500" Height="200">
+
+            <TextBlock l:Uids.Uid="Author_TextBlock" Style="{StaticResource SongBigTitle}" Foreground="{ThemeResource cTextPrimary}"/>
+            <ComboBox SelectionChanged="langComboBox_SelectionChanged" Width="80"
+                    SelectedValue="{x:Bind MainPageViewModel.Language, Mode=TwoWay}"
+                    VerticalAlignment="Center"
+                    Foreground="{ThemeResource cMainBg}"
+                    Background="{ThemeResource cTextPrimary}"
+                    >
+=======
     xmlns:local="using:OneLastSong.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource cMainBg}"
@@ -231,6 +271,5 @@
                     FontFamily="{ThemeResource SymbolThemeFontFamily}" />
             </StackPanel>
         </Grid>
-
     </Grid>
 </Page>
