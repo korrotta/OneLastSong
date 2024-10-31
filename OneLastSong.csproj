@@ -14,11 +14,18 @@
     <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Assets\images\default.png" />
-    <None Remove="Styles\SongBigTitle.xaml" />
+    <None Remove="Styles\Buttons.xaml" />
+    <None Remove="Styles\Margins.xaml" />
+    <None Remove="Styles\Paddings.xaml" />
+    <None Remove="Styles\Sizes.xaml" />
+    <None Remove="Styles\Texts.xaml" />
     <None Remove="Themes\DarkMode.xaml" />
     <None Remove="Themes\DefaultTheme.xaml" />
     <None Remove="Themes\LightMode.xaml" />
+    <None Remove="Views\Components\BodyFrame.xaml" />
+    <None Remove="Views\Components\CenterRegion.xaml" />
+    <None Remove="Views\Components\LeftRegion.xaml" />
+    <None Remove="Views\Components\RightRegion.xaml" />
     <None Remove="Views\MainPage.xaml" />
   </ItemGroup>
 
@@ -37,8 +44,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
+    <PackageReference Include="Npgsql" Version="8.0.5" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
     <PackageReference Include="TagLibSharp" Version="2.3.0" />
     <PackageReference Include="WinUI3Localizer" Version="2.2.0" />
@@ -55,10 +64,23 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components\" />
+    <Folder Include="scripts\" />
     <Folder Include="Resources\Languages\" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Styles\SongBigTitle.xaml">
+    <Page Update="Styles\Sizes.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Paddings.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Margins.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Texts.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Themes\DefaultTheme.xaml">
@@ -104,5 +126,58 @@
     <Content Update="Assets\images\default.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+    <Compile Remove="Components\**" />
+    <EmbeddedResource Remove="Components\**" />
+    <None Remove="Components\**" />
+    <Page Remove="Components\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Components\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Strings\vn\Resources.vn.resw">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Styles\Buttons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\RightRegion.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\CenterRegion.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\LeftRegion.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\BodyFrame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Strings\en\Resources.vn.resw" />
   </ItemGroup>
 </Project>

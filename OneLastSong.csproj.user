@@ -11,7 +11,31 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
-    <Page Update="Styles\SongBigTitle.xaml">
+    <Page Update="Styles\Buttons.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Sizes.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Paddings.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Margins.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\RightRegion.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\CenterRegion.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\LeftRegion.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\BodyFrame.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Texts.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\MainPage.xaml">
