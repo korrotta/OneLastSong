@@ -10,11 +10,7 @@
             <!-- Other app resources here -->
             <ResourceDictionary.MergedDictionaries>
                 <!-- Other merged dictionaries here -->
-                <ResourceDictionary Source="Styles/Texts.xaml"/>
-                <ResourceDictionary Source="Styles/Margins.xaml"/>
-                <ResourceDictionary Source="Styles/Paddings.xaml"/>
-                <ResourceDictionary Source="Styles/Sizes.xaml"/>
-                <ResourceDictionary Source="Styles/Buttons.xaml"/>
+                <ResourceDictionary Source="Styles/SongBigTitle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark" Source="Themes/DarkMode.xaml"/>
