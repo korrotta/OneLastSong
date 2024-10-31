@@ -25,6 +25,7 @@
     <None Remove="Views\Components\CenterRegion.xaml" />
     <None Remove="Views\Components\LeftRegion.xaml" />
     <None Remove="Views\Components\RightRegion.xaml" />
+    <None Remove="Views\Components\TopFrame.xaml" />
     <None Remove="Views\MainPage.xaml" />
   </ItemGroup>
 
@@ -168,5 +169,10 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\TopFrame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

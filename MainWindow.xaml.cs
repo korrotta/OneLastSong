@@ -26,7 +26,11 @@ namespace OneLastSong
         public MainWindow()
         {
             this.InitializeComponent();
-            MainFrame.Navigate(typeof(Views.MainPage));
+        }
+
+        public void NavigateMainFrameTo(Type pageType)
+        {
+            MainFrame.Navigate(pageType);
         }
     }
 }

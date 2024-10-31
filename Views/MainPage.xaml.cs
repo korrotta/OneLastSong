@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -39,12 +40,17 @@ namespace OneLastSong.Views
         {
             this.InitializeComponent();
             this.Loaded += MainPage_Loaded;
+
+            // Extend content into the title bar
+            var window = (Application.Current as App).MainWindow;
+            window.ExtendsContentIntoTitleBar = true;
         }
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             _db = ((App)Application.Current).Services.GetService<IDb>();
             await InitializeDatabase();
+            TopFrame.Navigate(typeof(TopFrame));
             BodyFrame.Navigate(typeof(BodyFrame));
             MainPageViewModel = new MainPageViewModel();
         }

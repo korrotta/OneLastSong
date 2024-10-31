@@ -19,6 +19,7 @@ using Windows.Foundation.Collections;
 using Microsoft.Extensions.DependencyInjection;
 using OneLastSong.Db;
 using OneLastSong.DAOs;
+using OneLastSong.Views;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -62,14 +63,16 @@ namespace OneLastSong
             ThemeUtils.ChangeTheme(ThemeUtils.DARK_THEME, true); //uncomment this line to set the default theme (dark theme
             ThemeUtils.LoadStoredTheme(); //uncomment this line to load the stored theme
 
-            _window = new MainWindow();
+            var mainWindow = new MainWindow();
+            _window = mainWindow;
             _window.Activate();
 
+            mainWindow.NavigateMainFrameTo(typeof(MainPage));
         }
 
-        private static Window _window;
+        private Window _window;
 
-        public static Window MainWindow
+        public Window MainWindow
         {
             get
             {

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="OneLastSong.Views.Components.TopFrame"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneLastSong.Views.Components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:l="using:WinUI3Localizer"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="FirstColumn" Width="31*" MaxWidth="416"/>
+            <ColumnDefinition Width="*" MaxWidth="700" MinWidth="400"/>
+            <ColumnDefinition x:Name="ThirdColumn" Width="31*" MaxWidth="416"/>
+        </Grid.ColumnDefinitions>
+
+        <!--#Left-->
+        <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
+            
+            <Button
+                Grid.Column="2" Margin="{StaticResource MediumRightMargin}"
+                Style="{StaticResource IconButton}">
+                <FontIcon Glyph="&#xE712;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+            </Button>
+            
+            <Button
+                Grid.Column="2" Margin="{StaticResource MediumRightMargin}"
+                Style="{StaticResource IconButton}">
+                <FontIcon Glyph="&#xE830;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+            </Button>
+            
+            <Button
+                Grid.Column="2" Margin="{StaticResource MediumRightMargin}"
+                Style="{StaticResource IconButton}">
+                <FontIcon Glyph="&#xEA47;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+            </Button>
+            
+        </StackPanel>
+
+        <!--#Center-->
+        <Grid HorizontalAlignment="Stretch" Grid.Column="1" VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button
+                Grid.Column="0"
+                Style="{StaticResource IconButton}"
+                Margin="{StaticResource MediumRightMargin}"
+                >
+                <FontIcon Glyph="&#xEA8A;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+            </Button>
+
+            <Grid
+                Grid.Column="1">
+                <Button
+                    Style="{StaticResource IconButton}">
+                    <FontIcon Glyph="&#xE721;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                </Button>
+                <TextBox
+                    Style="{StaticResource Body2}"
+                    Foreground="Transparent"
+                    Background="Transparent"
+                    BorderBrush="{ThemeResource BG_TERTIARY}"
+                    CornerRadius="16"
+                    Margin="-4 -4 0 0"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Center"/>
+            </Grid>
+
+        </Grid>
+
+        <!--#Right-->
+        <StackPanel Orientation="Horizontal" Grid.Column="2">
+
+        </StackPanel>
+
+    </Grid>
+
+</Page>
