@@ -21,10 +21,12 @@ namespace OneLastSong.Utils
                 {
                     return localSettings.Values[THEME_KEY].ToString();
                 }
+                SetStoredLocalTheme(_currentTheme);
                 return _currentTheme; // Default theme
             }
             catch (Exception ex)
             {
+                SetStoredLocalTheme(_currentTheme);
                 // Handle exceptions (e.g., file not found)
                 return _currentTheme; // Default theme
             }

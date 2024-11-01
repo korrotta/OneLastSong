@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using OneLastSong.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,9 +24,17 @@ namespace OneLastSong.Views.Components
     /// </summary>
     public sealed partial class TopFrame : Page
     {
+        public TopFrameViewModel TopFrameViewModel { get; set; } = new TopFrameViewModel();
+
         public TopFrame()
         {
             this.InitializeComponent();
+            this.Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            TopFrameViewModel.XamlRoot = this.XamlRoot;
         }
     }
 }

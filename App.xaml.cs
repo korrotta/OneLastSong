@@ -60,7 +60,7 @@ namespace OneLastSong
             await LocalizationUtils.InitializeLocalizer();
             //this line is for testing purposes only
             //ThemeUtils.ChangeTheme(ThemeUtils.GetStoredLocalTheme());
-            ThemeUtils.ChangeTheme(ThemeUtils.DARK_THEME, true); //uncomment this line to set the default theme (dark theme
+            //ThemeUtils.ChangeTheme(ThemeUtils.DARK_THEME, true); //uncomment this line to set the default theme (dark theme
             ThemeUtils.LoadStoredTheme(); //uncomment this line to load the stored theme
 
             var mainWindow = new MainWindow();
