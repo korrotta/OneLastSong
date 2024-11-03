@@ -29,6 +29,8 @@ namespace OneLastSong.Views.Components
         public TopFrame()
         {
             this.InitializeComponent();
+            // Set the DataContext of the page to the ViewModel to allow for user login state data binding
+            this.DataContext = TopFrameViewModel;
             this.Loaded += OnLoaded;
         }
 

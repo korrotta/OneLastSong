@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using WinUI3Localizer;
@@ -18,12 +19,15 @@ namespace OneLastSong.ViewModels
         private bool _isThemeComboBoxInitialized = false;
         public String Language { get; set; }
         public String Theme { get; set; }
+        public bool IsUserLoggedIn { get; set; }
+
         public XamlRoot XamlRoot { get; set; }
 
         public TopFrameViewModel()
         {
             Language = Localizer.Get().GetCurrentLanguage();
             Theme = ThemeUtils.GetStoredLocalTheme();
+            IsUserLoggedIn = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

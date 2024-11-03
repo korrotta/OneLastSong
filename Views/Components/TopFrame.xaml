@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:l="using:WinUI3Localizer"
+    xmlns:selectors="using:OneLastSong.Selectors"
     mc:Ignorable="d"
     Background="Transparent">
 
@@ -18,6 +19,41 @@
             <Setter Property="BorderBrush" Value="{ThemeResource BG_LIGHT_TERTIARY}"/>
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
+
+        <DataTemplate x:Key="LoggedInTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
+                    <FontIcon Glyph="&#xEA8F;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                </Button>
+                <Button Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
+                    <FontIcon Glyph="&#xE716;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                </Button>
+                <Ellipse Width="40" Height="40" Margin="{StaticResource MediumRightMargin}">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="https://firebasestorage.googleapis.com/v0/b/intro-to-se.appspot.com/o/defaultUserAvatars%2F1.png?alt=media&amp;token=eee9309c-abcd-442a-b2ae-5575b577994a" Stretch="UniformToFill"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="LoggedOutTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
+                    <TextBlock l:Uids.Uid="SignUp_TextBlock" Foreground="{ThemeResource TEXT_LIGHT}" Style="{StaticResource TextBigButton}"/>
+                </Button>
+                <Border CornerRadius="10" Background="{ThemeResource BG_CONTRAST1}" Margin="{StaticResource MediumRightMargin}"
+                        Padding="2">
+                    <Button Style="{StaticResource IconButton}">
+                        <TextBlock l:Uids.Uid="SignIn_TextBlock" Foreground="{ThemeResource TEXT_CONTRAST1}" Style="{StaticResource TextBigButton}"/>
+                    </Button>
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+
+        <selectors:UserStateTemplateSelector
+            x:Key="UserStateTemplateSelectorKey"
+            LoggedInTemplate="{StaticResource LoggedInTemplate}"
+            LoggedOutTemplate="{StaticResource LoggedOutTemplate}"/>
     </Page.Resources>
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -118,24 +154,8 @@
         </Grid>
 
         <!--#Right-->
-        <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right"
-                    Margin="0 0 128 0">
-            <Button
-                Style="{StaticResource IconButton}"
-                Margin="{StaticResource MediumRightMargin}">
-                <FontIcon Glyph="&#xEA8F;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
-            </Button>
-            <Button
-                Style="{StaticResource IconButton}"
-                Margin="{StaticResource MediumRightMargin}">
-                <FontIcon Glyph="&#xE716;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
-            </Button>
-            <Ellipse Width="40" Height="40" Margin="{StaticResource MediumRightMargin}">
-                <Ellipse.Fill>
-                    <ImageBrush ImageSource="https://firebasestorage.googleapis.com/v0/b/intro-to-se.appspot.com/o/defaultUserAvatars%2F1.png?alt=media&amp;token=eee9309c-abcd-442a-b2ae-5575b577994a" Stretch="UniformToFill"/>
-                </Ellipse.Fill>
-            </Ellipse>
-        </StackPanel>
+        <ContentControl Grid.Column="2" HorizontalAlignment="Right" Margin="0 0 128 0"
+                Content="{Binding}" ContentTemplateSelector="{StaticResource UserStateTemplateSelectorKey}"/>
 
     </Grid>
 

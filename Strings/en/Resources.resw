@@ -147,4 +147,10 @@
   <data name="Theme_TextBox.Text" xml:space="preserve">
     <value>Theme</value>
   </data>
+  <data name="SignUp_TextBlock.Text" xml:space="preserve">
+    <value>Sign Up</value>
+  </data>
+  <data name="SignIn_TextBlock.Text" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
 </root>
