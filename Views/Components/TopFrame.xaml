@@ -38,12 +38,14 @@
 
         <DataTemplate x:Key="LoggedOutTemplate">
             <StackPanel Orientation="Horizontal">
-                <Button Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
+                <Button Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}"
+                        Click="signUpButton_Click">
                     <TextBlock l:Uids.Uid="SignUp_TextBlock" Foreground="{ThemeResource TEXT_LIGHT}" Style="{StaticResource TextBigButton}"/>
                 </Button>
                 <Border CornerRadius="10" Background="{ThemeResource BG_CONTRAST1}" Margin="{StaticResource MediumRightMargin}"
                         Padding="2">
-                    <Button Style="{StaticResource IconButton}">
+                    <Button Style="{StaticResource IconButton}"
+                            Click="signInButton_Click">
                         <TextBlock l:Uids.Uid="SignIn_TextBlock" Foreground="{ThemeResource TEXT_CONTRAST1}" Style="{StaticResource TextBigButton}"/>
                     </Button>
                 </Border>
@@ -99,16 +101,24 @@
                 </Button.Flyout>
             </Button>
 
+            <!--PrevPageButton-->
             <Button
+                IsEnabled="{x:Bind TopFrameViewModel.CanGoBack, Mode=TwoWay}"
                 Grid.Column="2" Margin="{StaticResource MediumRightMargin}"
-                Style="{StaticResource IconButton}">
-                <FontIcon Glyph="&#xE830;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                Style="{StaticResource IconButton}"
+                Click="{x:Bind TopFrameViewModel.prevPageButton_Click}"
+                >
+                <FontIcon Glyph="&#xE830;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{x:Bind TopFrameViewModel.GoBackButtonColor, Mode=TwoWay}"/>
             </Button>
             
+            <!--NextPageButton-->
             <Button
+                IsEnabled="{x:Bind TopFrameViewModel.CanGoForward, Mode=TwoWay}"
                 Grid.Column="2" Margin="{StaticResource MediumRightMargin}"
-                Style="{StaticResource IconButton}">
-                <FontIcon Glyph="&#xEA47;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                Style="{StaticResource IconButton}"
+                Click="{x:Bind TopFrameViewModel.nextPageButton_Click}"
+                >
+                <FontIcon Glyph="&#xEA47;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{x:Bind TopFrameViewModel.GoForwardButtonColor, Mode=TwoWay}"/>
             </Button>
             
         </StackPanel>
@@ -124,6 +134,7 @@
                 Grid.Column="0"
                 Style="{StaticResource IconButton}"
                 Margin="{StaticResource MediumRightMargin}"
+                Click="{x:Bind TopFrameViewModel.homeButton_Click}"
                 >
                 <FontIcon Glyph="&#xEA8A;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
             </Button>

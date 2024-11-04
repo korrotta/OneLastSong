@@ -38,5 +38,15 @@ namespace OneLastSong.Views.Components
         {
             TopFrameViewModel.XamlRoot = this.XamlRoot;
         }
+
+        public void signInButton_Click(object sender, RoutedEventArgs e)
+        {
+            TopFrameViewModel.Navigate(typeof(SignInPage));
+        }
+
+        public void signUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            TopFrameViewModel.Navigate(typeof(SignUpPage));
+        }
     }
 }

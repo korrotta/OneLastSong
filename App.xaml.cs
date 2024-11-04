@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OneLastSong.Db;
 using OneLastSong.DAOs;
 using OneLastSong.Views;
+using OneLastSong.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -48,6 +49,7 @@ namespace OneLastSong
             var services = new ServiceCollection();
             services.AddSingleton<IDb, PgDb>();
             services.AddSingleton<TestDAO>();
+            services.AddSingleton<NavigationService>();
             return services.BuildServiceProvider();
         }
 

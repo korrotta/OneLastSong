@@ -69,22 +69,6 @@ namespace OneLastSong.Views
             }
         }
 
-        //private void langComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    if (e.AddedItems.Count > 0)
-        //    {
-        //        string selectedLanguage = e.AddedItems[0].ToString();
-        //        LogUtils.Debug($"Selected Language: {selectedLanguage}");
-        //        Localizer.Get().SetLanguage(selectedLanguage);
-        //    }
-        //}
-
-        //private async void changeThemeButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var currentTheme = ThemeUtils.GetCurrentTheme();
-        //    var newTheme = currentTheme == ThemeUtils.LIGHT_THEME ? ThemeUtils.DARK_THEME : ThemeUtils.LIGHT_THEME;
-        //    ThemeUtils.ChangeTheme(newTheme, true);
-        //    await DialogUtils.ShowDialogAsync("Theme Changed", $"Theme changed to {newTheme}. You will need to restart to see the changes!", XamlRoot);
-        //}
+        
     }
 }

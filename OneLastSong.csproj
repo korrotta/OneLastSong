@@ -22,11 +22,14 @@
     <None Remove="Themes\DefaultTheme.xaml" />
     <None Remove="Themes\LightMode.xaml" />
     <None Remove="Views\Components\BodyFrame.xaml" />
-    <None Remove="Views\Components\CenterRegion.xaml" />
+    <None Remove="Views\Components\HomePage.xaml" />
     <None Remove="Views\Components\LeftRegion.xaml" />
     <None Remove="Views\Components\RightRegion.xaml" />
+    <None Remove="Views\Components\SignInPage.xaml" />
     <None Remove="Views\Components\TopFrame.xaml" />
+    <None Remove="Views\ContentFrame.xaml" />
     <None Remove="Views\MainPage.xaml" />
+    <None Remove="Views\SignUpPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -141,7 +144,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Components\CenterRegion.xaml">
+    <Page Update="Views\Components\HomePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -169,6 +172,21 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\SignInPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\ContentFrame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\SignUpPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Components\TopFrame.xaml">

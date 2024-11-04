@@ -11,6 +11,12 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\ContentFrame.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SignUpPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Components\TopFrame.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -29,7 +35,7 @@
     <Page Update="Views\Components\RightRegion.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\Components\CenterRegion.xaml">
+    <Page Update="Views\Components\HomePage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Components\LeftRegion.xaml">
