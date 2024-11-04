@@ -166,8 +166,8 @@
 
         <!--#Right-->
         <ContentControl Grid.Column="2" HorizontalAlignment="Right" Margin="0 0 128 0"
-                Content="{Binding}" ContentTemplateSelector="{StaticResource UserStateTemplateSelectorKey}"/>
-
+                Content="{x:Bind TopFrameViewModel.IsUserLoggedIn, Mode=OneWay}"
+                ContentTemplateSelector="{StaticResource UserStateTemplateSelectorKey}"/>
     </Grid>
 
 </Page>
