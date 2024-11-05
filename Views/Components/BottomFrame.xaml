@@ -8,9 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
-    <Page.Resources>
-        <BitmapImage x:Key="PlaceholderImage" UriSource="ms-appx:///Assets/images/default.jpg" />
-    </Page.Resources>
 
     <Grid
         Padding="10"
@@ -29,7 +26,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             Orientation="Horizontal">
-            <Image Margin="5" Source="{Binding CurrentSong.Thumbnail, Mode=OneWay, TargetNullValue={StaticResource PlaceholderImage}}" />
+            <Image Margin="5" Source="/Assets/images/default.jpg" />
 
             <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                 <TextBlock
