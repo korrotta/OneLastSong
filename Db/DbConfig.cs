@@ -18,7 +18,7 @@ namespace OneLastSong.Db
         }
 
         String Database = "postgres";
-        String Username = "postgres";
+        String Username = "restricted_user";
         String Server { get; set; } = "127.0.0.1";
         String Host { get; set; } = "127.0.0.1";
         int Port { get; set; } = 5432;

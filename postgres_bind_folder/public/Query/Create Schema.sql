@@ -26,6 +26,16 @@ CREATE TABLE users
     description TEXT
 );
 
+-- Sessions table
+CREATE TABLE sessions
+(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    session_token VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL
+);
+
 -- Albums table
 CREATE TABLE albums
 (
@@ -138,3 +148,166 @@ CREATE TRIGGER after_user_insert
 AFTER INSERT ON users
 FOR EACH ROW
 EXECUTE FUNCTION create_liked_playlist();
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE OR REPLACE FUNCTION generate_token()
+RETURNS UUID AS $$
+BEGIN
+    RETURN uuid_generate_v4();
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+
+
+
+-- Active: 1730799499974@@127.0.0.1@5432@postgres@public
+-- Sessions table
+CREATE TABLE sessions
+(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    session_token VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL
+);
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE OR REPLACE FUNCTION generate_token()
+RETURNS UUID AS $$
+BEGIN
+    RETURN uuid_generate_v4();
+END;
+$$ LANGUAGE plpgsql;
+
+-- Enable the uuid-ossp extension if not already enabled
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Create a function to generate a UUID token
+CREATE OR REPLACE FUNCTION generate_token()
+RETURNS UUID AS $$
+BEGIN
+    RETURN uuid_generate_v4();
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create the login function
+CREATE OR REPLACE FUNCTION user_login(username VARCHAR, password_hash VARCHAR)
+RETURNS VARCHAR AS $$
+DECLARE
+    user_id INTEGER;
+    session_token UUID;
+    expires_at TIMESTAMP;
+BEGIN
+    -- Verify the user's credentials
+    SELECT id INTO user_id
+    FROM users
+    WHERE username = username AND password_hash = password_hash;
+
+    -- If the user is found, create or update the session
+    IF user_id IS NOT NULL THEN
+        expires_at := CURRENT_TIMESTAMP + INTERVAL '30 days';
+
+        -- Check if a session already exists
+        SELECT session_token INTO session_token
+        FROM sessions
+        WHERE user_id = user_id;
+
+        IF session_token IS NOT NULL THEN
+            -- Update the existing session
+            UPDATE sessions
+            SET created_at = CURRENT_TIMESTAMP, expires_at = expires_at
+            WHERE user_id = user_id;
+        ELSE
+            -- Insert a new session
+            session_token := generate_token();
+            INSERT INTO sessions (user_id, session_token, created_at, expires_at)
+            VALUES (user_id, session_token, CURRENT_TIMESTAMP, expires_at);
+        END IF;
+
+        -- Return the session token
+        RETURN session_token::VARCHAR;
+    ELSE
+        -- If the user is not found, return NULL
+        RETURN NULL;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create the session validation function
+CREATE OR REPLACE FUNCTION validate_session(session_token UUID)
+RETURNS BOOLEAN AS $$
+DECLARE
+    user_id INTEGER;
+BEGIN
+    -- Check if the session token is valid and not expired
+    SELECT user_id INTO user_id
+    FROM sessions
+    WHERE session_token = session_token AND expires_at > CURRENT_TIMESTAMP;
+
+    -- If a valid session is found, return TRUE
+    IF user_id IS NOT NULL THEN
+        RETURN TRUE;
+    ELSE
+        -- If no valid session is found, return FALSE
+        RETURN FALSE;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create a function to retrieve user's data using the session token
+CREATE OR REPLACE FUNCTION get_user_data(session_token UUID)
+RETURNS TABLE (
+    user_id INTEGER,
+    username VARCHAR,
+    avatar_url VARCHAR,
+    profile_quote TEXT,
+    description TEXT,
+    playlists JSONB
+) AS $$
+DECLARE
+    uid INTEGER;
+BEGIN
+    -- Validate the session token and get the user ID
+    uid := validate_session(session_token);
+
+    -- If the session is valid, retrieve the user's data
+    IF uid IS NOT NULL THEN
+        RETURN QUERY
+        SELECT 
+            u.id,
+            u.username,
+            u.avatar_url,
+            u.profile_quote,
+            u.description,
+            (
+                SELECT jsonb_agg(jsonb_build_object('playlist_id', p.id, 'name', p.name, 'created_at', p.created_at))
+                FROM playlists p
+                WHERE p.user_id = u.id
+            ) AS playlists
+        FROM users u
+        WHERE u.id = uid;
+    ELSE
+        -- If the session is not valid, return an empty result
+        RETURN QUERY SELECT NULL::INTEGER, NULL::VARCHAR, NULL::VARCHAR, NULL::TEXT, NULL::TEXT, NULL::JSONB;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Security --
+-- Create the restricted_user role with login capabilities and a password
+CREATE ROLE restricted_user WITH LOGIN PASSWORD '12345678';
+-- Revoke all privileges from restricted_user
+REVOKE ALL ON ALL TABLES IN SCHEMA public FROM restricted_user;
+REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM restricted_user;
+REVOKE ALL ON ALL FUNCTIONS IN SCHEMA public FROM restricted_user;
+-- Grant execute permissions on specific functions to restricted_user
+GRANT EXECUTE ON FUNCTION user_login(VARCHAR, VARCHAR) TO restricted_user;
+GRANT EXECUTE ON FUNCTION validate_session(UUID) TO restricted_user;
+
