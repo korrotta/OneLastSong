@@ -138,4 +138,19 @@
   <data name="Likes_TextBlock.Text" xml:space="preserve">
     <value> Thích </value>
   </data>
+  <data name="What_do_you_want_to_play_TextBox.PlaceholderText" xml:space="preserve">
+    <value>Bạn muốn nghe gì?</value>
+  </data>
+  <data name="Language_TextBox.Text" xml:space="preserve">
+    <value>Ngôn ngữ</value>
+  </data>
+  <data name="Theme_TextBox.Text" xml:space="preserve">
+    <value>Chủ đề</value>
+  </data>
+  <data name="SignUp_TextBlock.Text" xml:space="preserve">
+    <value>Đăng ký</value>
+  </data>
+  <data name="SignIn_TextBlock.Text" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
 </root>

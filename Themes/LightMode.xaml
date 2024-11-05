@@ -9,6 +9,7 @@
     <SolidColorBrush x:Key="TEXT_LIGHT" Color="#88BADB"/>
     <SolidColorBrush x:Key="BG_TERTIARY" Color="#DDEBF4"/>
     <SolidColorBrush x:Key="BG_LIGHT_TERTIARY" Color="#6D83AC"/>
+    <SolidColorBrush x:Key="TEXT_DISABLED" Color="#2A2929"/>
 
     <Color x:Key="cMainBg">#ffffff</Color>
     <Color x:Key="cBG_PRIMARY">#CFE5FF</Color>
@@ -19,4 +20,5 @@
     <Color x:Key="cTEXT_LIGHT">#88BADB</Color>
     <Color x:Key="cBG_TERTIARY">#DDEBF4</Color>
     <Color x:Key="cBG_LIGHT_TERTIARY">#6D83AC</Color>
+    <Color x:Key="cTEXT_DISABLED">#2A2929</Color>
 </ResourceDictionary>

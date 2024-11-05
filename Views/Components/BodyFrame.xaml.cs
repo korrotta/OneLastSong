@@ -28,7 +28,7 @@ namespace OneLastSong.Views.Components
             this.InitializeComponent();
             LefRegion.Navigate(typeof(LeftRegion));
             RightRegion.Navigate(typeof(RightRegion));
-            CenterRegion.Navigate(typeof(CenterRegion));
+            ContentFrame.Navigate(typeof(ContentFrame));
         }
     }
 }

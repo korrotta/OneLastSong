@@ -4,8 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:l="using:WinUI3Localizer"
-    mc:Ignorable="d">
+    xmlns:l="using:WinUI3Localizer">
 
     <Page.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -16,7 +15,7 @@
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="87"/>
+            <RowDefinition Height="60"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="93"/>
         </Grid.RowDefinitions>
@@ -24,38 +23,16 @@
         <!--#Top bar-->
         <Frame x:Name="TopFrame" Grid.Row="0" Margin="{StaticResource MediumMargin}"/>
         <!--#end Top bar-->
-        
+
         <!--#Body-->
         <Frame x:Name="BodyFrame" Grid.Row="1"/>
         <!--#end Body-->
-        
+
         <!--#Bottom-->
         <Frame x:Name="BottomFrame" Grid.Row="2" Margin="{StaticResource MediumMargin}"/>
         <!--#end Bottom-->
-        
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Width="500" Height="200">
 
-            <TextBlock l:Uids.Uid="Author_TextBlock" Style="{StaticResource SongBigTitle}" Foreground="{ThemeResource cTextPrimary}"/>
-            <ComboBox SelectionChanged="langComboBox_SelectionChanged" Width="80"
-                    SelectedValue="{x:Bind MainPageViewModel.Language, Mode=TwoWay}"
-                    VerticalAlignment="Center"
-                    Foreground="{ThemeResource cMainBg}"
-                    Background="{ThemeResource cTextPrimary}"
-                    >
-                <x:String>en</x:String>
-                <x:String>vn</x:String>
-            </ComboBox>
-            <Rectangle Width="10" />
-            <Button
-                l:Uids.Uid="ChangeTheme_Button"
-                Background="{ThemeResource cTextPrimary}"
-                Click="changeThemeButton_Click"
-                Foreground="{ThemeResource cMainBg}" />
-
-        </StackPanel>
-
-        <!--  Bottom Bar  -->
+        <!--  Bottom Bar  --><!--
         <Grid
             Grid.Row="1"
             Padding="10"
@@ -64,14 +41,14 @@
             Background="Black">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="400" />
-                <!--  Left: Song Image + Info  -->
+                --><!--  Left: Song Image + Info  --><!--
                 <ColumnDefinition Width="*" />
-                <!--  Middle: Playback + Slider  -->
+                --><!--  Middle: Playback + Slider  --><!--
                 <ColumnDefinition Width="400" />
-                <!--  Right: Miscellaneous Controls  -->
+                --><!--  Right: Miscellaneous Controls  --><!--
             </Grid.ColumnDefinitions>
 
-            <!--  Left: Song Image and Info  -->
+            --><!--  Left: Song Image and Info  --><!--
             <StackPanel
                 Grid.Column="0"
                 HorizontalAlignment="Left"
@@ -97,15 +74,15 @@
                 </StackPanel>
             </StackPanel>
 
-            <!--  Middle: Playback Controls + Slider  -->
+            --><!--  Middle: Playback Controls + Slider  --><!--
             <StackPanel
                 Grid.Column="1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Orientation="Vertical">
-                <!--  Playback Controls  -->
+                --><!--  Playback Controls  --><!--
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                    <!--  Shuffle button  -->
+                    --><!--  Shuffle button  --><!--
                     <Button
                         x:Name="ShuffleButton"
                         Margin="0,0,0,5"
@@ -113,7 +90,7 @@
                         Content="&#xE8B1;"
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                         FontSize="13" />
-                    <!--  Previous button  -->
+                    --><!--  Previous button  --><!--
                     <Button
                         x:Name="PreviousButton"
                         Margin="5,0,5,5"
@@ -121,7 +98,7 @@
                         Content="&#xE892;"
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                         FontSize="13" />
-                    <!--  Playback button  -->
+                    --><!--  Playback button  --><!--
                     <Button
                         x:Name="PlaybackButton"
                         Margin="0,0,0,5"
@@ -129,7 +106,7 @@
                         Content="&#xEDB5;"
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                         FontSize="20" />
-                    <!--  Next button  -->
+                    --><!--  Next button  --><!--
                     <Button
                         x:Name="NextButton"
                         Margin="5,0,5,5"
@@ -137,7 +114,7 @@
                         Content="&#xE893;"
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                         FontSize="13" />
-                    <!--  Repeat button  -->
+                    --><!--  Repeat button  --><!--
                     <Button
                         x:Name="RepeatButton"
                         Margin="0,0,0,5"
@@ -147,21 +124,21 @@
                         FontSize="13" />
                 </StackPanel>
 
-                <!--  Progress Bar  -->
+                --><!--  Progress Bar  --><!--
                 <Grid
                     Width="300"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <!--  Current Time  -->
+                        --><!--  Current Time  --><!--
                         <ColumnDefinition Width="*" />
-                        <!--  Slider  -->
+                        --><!--  Slider  --><!--
                         <ColumnDefinition Width="Auto" />
-                        <!--  End Time  -->
+                        --><!--  End Time  --><!--
                     </Grid.ColumnDefinitions>
 
-                    <!--  Current Time  -->
+                    --><!--  Current Time  --><!--
                     <TextBlock
                         x:Name="CurrentTime"
                         Grid.Column="0"
@@ -171,7 +148,7 @@
                         Foreground="White"
                         Text="0:00" />
 
-                    <!--  Slider  -->
+                    --><!--  Slider  --><!--
                     <Slider
                         x:Name="ProgressBar"
                         Grid.Column="1"
@@ -181,7 +158,7 @@
                         Minimum="0"
                         Value="30" />
 
-                    <!--  End Time  -->
+                    --><!--  End Time  --><!--
                     <TextBlock
                         x:Name="EndTime"
                         Grid.Column="2"
@@ -193,52 +170,75 @@
                 </Grid>
             </StackPanel>
 
-            <!--  Right: Miscellaneous Options  -->
+            --><!--  Right: Miscellaneous Options  --><!--
             <StackPanel
                 Grid.Column="2"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
-                <!--  Lyrics button  -->
+                --><!--  Lyrics button  --><!--
                 <Button
                     x:Name="LyricsButton"
                     Background="Transparent"
                     Content="&#xE90B;"
                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                     FontSize="11" />
-                <!--  Playqueue button  -->
+                --><!--  Playqueue button  --><!--
                 <Button
                     x:Name="PlayqueueButton"
                     Background="Transparent"
                     Content="&#xE8F2;"
                     FontFamily="{ThemeResource SymbolThemeFontFamily}" />
-                <!--  Connect Device button  -->
+                --><!--  Connect Device button  --><!--
                 <Button
                     x:Name="ConnectDeviceButton"
                     Background="Transparent"
                     Content="&#xEBDE;"
                     FontFamily="{ThemeResource SymbolThemeFontFamily}" />
-                <!--  Volumne button  -->
+                --><!--  Volumne button  --><!--
                 <Button
                     x:Name="VolumeButton"
                     Background="Transparent"
                     Content="&#xE995;"
                     FontFamily="{ThemeResource SymbolThemeFontFamily}" />
-                <!--  Volume slider  -->
+                --><!--  Volume slider  --><!--
                 <Slider
                     x:Name="VolumeSlider"
                     Width="100"
                     Margin="5,0,5,0"
                     Maximum="100"
                     Value="100" />
-                <!--  Fullscreen button  -->
+                --><!--  Fullscreen button  --><!--
                 <Button
                     x:Name="FullscreenButton"
                     Background="Transparent"
                     Content="&#xE740;"
                     FontFamily="{ThemeResource SymbolThemeFontFamily}" />
             </StackPanel>
-        </Grid>
+        </Grid>-->
 
+
+        <!--
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
+                Width="500" Height="200">
+
+        <TextBlock l:Uids.Uid="Author_TextBlock" Style="{StaticResource SongBigTitle}" Foreground="{ThemeResource cTextPrimary}"/>
+        <ComboBox SelectionChanged="langComboBox_SelectionChanged" Width="80"
+                SelectedValue="{x:Bind MainPageViewModel.Language, Mode=TwoWay}"
+                VerticalAlignment="Center"
+                Foreground="{ThemeResource cMainBg}"
+                Background="{ThemeResource cTextPrimary}"
+                >
+            <x:String>en</x:String>
+            <x:String>vn</x:String>
+        </ComboBox>
+        <Rectangle Width="10"/>
+        <Button l:Uids.Uid="ChangeTheme_Button" Click="changeThemeButton_Click"
+        Foreground="{ThemeResource cMainBg}"
+        Background="{ThemeResource cTextPrimary}"/>
+
+    </StackPanel>
+-->
     </Grid>
+
 </Page>

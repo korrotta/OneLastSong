@@ -18,7 +18,7 @@
         </Grid.ColumnDefinitions>
 
         <Frame x:Name="LefRegion" Grid.Column="0" Margin="{StaticResource MediumLeftMargin}" Background="{ThemeResource BG_TERTIARY}" CornerRadius="13"/>
-        <Frame x:Name="CenterRegion" Grid.Column="1" Margin="{StaticResource MediumHorizontalMargin}" Background="{ThemeResource BG_TERTIARY}" CornerRadius="13"/>
+        <Frame x:Name="ContentFrame" Grid.Column="1" Margin="{StaticResource MediumHorizontalMargin}" Background="{ThemeResource BG_TERTIARY}" CornerRadius="13"/>
         <Frame x:Name="RightRegion" Grid.Column="2" Margin="{StaticResource MediumRightMargin}" Background="{ThemeResource BG_TERTIARY}" CornerRadius="13"/>
 
         <VisualStateManager.VisualStateGroups>

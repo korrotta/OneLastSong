@@ -138,4 +138,19 @@
   <data name="Likes_TextBlock.Text" xml:space="preserve">
     <value> Likes </value>
   </data>
+  <data name="What_do_you_want_to_play_TextBox.PlaceholderText" xml:space="preserve">
+    <value>What do you want to play?</value>
+  </data>
+  <data name="Language_TextBox.Text" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Theme_TextBox.Text" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SignUp_TextBlock.Text" xml:space="preserve">
+    <value>Sign Up</value>
+  </data>
+  <data name="SignIn_TextBlock.Text" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
 </root>

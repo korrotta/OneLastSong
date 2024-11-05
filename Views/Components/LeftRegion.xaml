@@ -132,6 +132,8 @@
                     BorderBrush="{ThemeResource BG_TERTIARY}"
                     CornerRadius="16"
                     Margin="-4 -4 0 0"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Center"
                     />
             </Grid>
             <TextBlock Style="{StaticResource Body2}" Foreground="{ThemeResource TEXT_LIGHT}" l:Uids.Uid="Recents_TextBlock" Grid.Column="1" Margin="{StaticResource MediumRightMargin}"/>
