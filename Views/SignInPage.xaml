@@ -62,7 +62,7 @@
             <!-- Sign Up Link -->
             <TextBlock HorizontalAlignment="Center" Foreground="{ThemeResource TEXT_PRIMARY}">
                 <Run l:Uids.Uid="Dont_have_an_account?_Run"/> 
-                <Hyperlink Click="SignUpButton_Click">
+                <Hyperlink Click="{x:Bind SignInPageViewModel.signUpButton_Click}">
                     <Run l:Uids.Uid="Sign_up_for_OneLastSong" />
                 </Hyperlink>
             </TextBlock>

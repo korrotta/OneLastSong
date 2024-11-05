@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using OneLastSong.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,6 +24,8 @@ namespace OneLastSong.Views.Components
     /// </summary>
     public sealed partial class SignInPage : Page
     {
+        public SignInPageViewModel SignInPageViewModel { get; set; } = new SignInPageViewModel();
+
         public SignInPage()
         {
             this.InitializeComponent();

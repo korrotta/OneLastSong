@@ -54,7 +54,7 @@
             <!-- Sign In Link -->
             <TextBlock HorizontalAlignment="Center" Foreground="{ThemeResource TEXT_PRIMARY}">
                 <Run l:Uids.Uid="Already_have_an_account?_Run"/>
-                <Hyperlink>
+                <Hyperlink Click="{x:Bind SignUpPageViewModel.logInButton_Click}">
                     <Run l:Uids.Uid="Log_in_here_Run" />
                 </Hyperlink>
             </TextBlock>
