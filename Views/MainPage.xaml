@@ -8,214 +8,35 @@
 
     <Page.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="{ThemeResource cBG_PRIMARY}" Offset="0.0" />
-            <GradientStop Color="{ThemeResource cBG_SECONDARY}" Offset="1.0" />
+            <GradientStop Offset="0.0" Color="{ThemeResource cBG_PRIMARY}" />
+            <GradientStop Offset="1.0" Color="{ThemeResource cBG_SECONDARY}" />
         </LinearGradientBrush>
     </Page.Background>
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="93"/>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
         </Grid.RowDefinitions>
 
-        <!--#Top bar-->
-        <Frame x:Name="TopFrame" Grid.Row="0" Margin="{StaticResource MediumMargin}"/>
-        <!--#end Top bar-->
+        <!--  #Top bar  -->
+        <Frame
+            x:Name="TopFrame"
+            Grid.Row="0"
+            Margin="{StaticResource MediumMargin}" />
+        <!--  #end Top bar  -->
 
-        <!--#Body-->
-        <Frame x:Name="BodyFrame" Grid.Row="1"/>
-        <!--#end Body-->
+        <!--  #Body  -->
+        <Frame x:Name="BodyFrame" Grid.Row="1" />
+        <!--  #end Body  -->
 
-        <!--#Bottom-->
-        <Frame x:Name="BottomFrame" Grid.Row="2" Margin="{StaticResource MediumMargin}"/>
-        <!--#end Bottom-->
-
-        <!--  Bottom Bar  --><!--
-        <Grid
-            Grid.Row="1"
-            Padding="10"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            Background="Black">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="400" />
-                --><!--  Left: Song Image + Info  --><!--
-                <ColumnDefinition Width="*" />
-                --><!--  Middle: Playback + Slider  --><!--
-                <ColumnDefinition Width="400" />
-                --><!--  Right: Miscellaneous Controls  --><!--
-            </Grid.ColumnDefinitions>
-
-            --><!--  Left: Song Image and Info  --><!--
-            <StackPanel
-                Grid.Column="0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Orientation="Horizontal">
-                <Image
-                    Width="70"
-                    Height="70"
-                    Margin="5"
-                    Source="{Binding CurrentSong.Thumbnail, Mode=OneWay, TargetNullValue={StaticResource PlaceholderImage}}" />
-
-                <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                    <TextBlock
-                        FontSize="16"
-                        Foreground="White"
-                        Text="{Binding CurrentSong.Title, Mode=OneWay}"
-                        TextAlignment="Left"
-                        TextTrimming="CharacterEllipsis" />
-                    <TextBlock
-                        FontSize="12"
-                        Foreground="LightGray"
-                        Text="{Binding CurrentSong.Artist, Mode=OneWay}" />
-                </StackPanel>
-            </StackPanel>
-
-            --><!--  Middle: Playback Controls + Slider  --><!--
-            <StackPanel
-                Grid.Column="1"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Orientation="Vertical">
-                --><!--  Playback Controls  --><!--
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                    --><!--  Shuffle button  --><!--
-                    <Button
-                        x:Name="ShuffleButton"
-                        Margin="0,0,0,5"
-                        Background="Transparent"
-                        Content="&#xE8B1;"
-                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                        FontSize="13" />
-                    --><!--  Previous button  --><!--
-                    <Button
-                        x:Name="PreviousButton"
-                        Margin="5,0,5,5"
-                        Background="Transparent"
-                        Content="&#xE892;"
-                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                        FontSize="13" />
-                    --><!--  Playback button  --><!--
-                    <Button
-                        x:Name="PlaybackButton"
-                        Margin="0,0,0,5"
-                        Background="Transparent"
-                        Content="&#xEDB5;"
-                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                        FontSize="20" />
-                    --><!--  Next button  --><!--
-                    <Button
-                        x:Name="NextButton"
-                        Margin="5,0,5,5"
-                        Background="Transparent"
-                        Content="&#xE893;"
-                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                        FontSize="13" />
-                    --><!--  Repeat button  --><!--
-                    <Button
-                        x:Name="RepeatButton"
-                        Margin="0,0,0,5"
-                        Background="Transparent"
-                        Content="&#xE8EE;"
-                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                        FontSize="13" />
-                </StackPanel>
-
-                --><!--  Progress Bar  --><!--
-                <Grid
-                    Width="300"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        --><!--  Current Time  --><!--
-                        <ColumnDefinition Width="*" />
-                        --><!--  Slider  --><!--
-                        <ColumnDefinition Width="Auto" />
-                        --><!--  End Time  --><!--
-                    </Grid.ColumnDefinitions>
-
-                    --><!--  Current Time  --><!--
-                    <TextBlock
-                        x:Name="CurrentTime"
-                        Grid.Column="0"
-                        Margin="5"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="White"
-                        Text="0:00" />
-
-                    --><!--  Slider  --><!--
-                    <Slider
-                        x:Name="ProgressBar"
-                        Grid.Column="1"
-                        Margin="5,0,5,0"
-                        VerticalAlignment="Center"
-                        Maximum="100"
-                        Minimum="0"
-                        Value="30" />
-
-                    --><!--  End Time  --><!--
-                    <TextBlock
-                        x:Name="EndTime"
-                        Grid.Column="2"
-                        Margin="5"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="White"
-                        Text="4:26" />
-                </Grid>
-            </StackPanel>
-
-            --><!--  Right: Miscellaneous Options  --><!--
-            <StackPanel
-                Grid.Column="2"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Orientation="Horizontal">
-                --><!--  Lyrics button  --><!--
-                <Button
-                    x:Name="LyricsButton"
-                    Background="Transparent"
-                    Content="&#xE90B;"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                    FontSize="11" />
-                --><!--  Playqueue button  --><!--
-                <Button
-                    x:Name="PlayqueueButton"
-                    Background="Transparent"
-                    Content="&#xE8F2;"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}" />
-                --><!--  Connect Device button  --><!--
-                <Button
-                    x:Name="ConnectDeviceButton"
-                    Background="Transparent"
-                    Content="&#xEBDE;"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}" />
-                --><!--  Volumne button  --><!--
-                <Button
-                    x:Name="VolumeButton"
-                    Background="Transparent"
-                    Content="&#xE995;"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}" />
-                --><!--  Volume slider  --><!--
-                <Slider
-                    x:Name="VolumeSlider"
-                    Width="100"
-                    Margin="5,0,5,0"
-                    Maximum="100"
-                    Value="100" />
-                --><!--  Fullscreen button  --><!--
-                <Button
-                    x:Name="FullscreenButton"
-                    Background="Transparent"
-                    Content="&#xE740;"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}" />
-            </StackPanel>
-        </Grid>-->
+        <!--  #Bottom  -->
+        <Frame
+            x:Name="BottomFrame"
+            Grid.Row="2"
+            Margin="{StaticResource MediumMargin}" />
+        <!--  #end Bottom  -->
 
 
         <!--
@@ -237,8 +58,7 @@
         Foreground="{ThemeResource cMainBg}"
         Background="{ThemeResource cTextPrimary}"/>
 
-    </StackPanel>
--->
+    </StackPanel>-->
     </Grid>
 
 </Page>

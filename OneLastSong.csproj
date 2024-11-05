@@ -23,6 +23,7 @@
     <None Remove="Themes\DefaultTheme.xaml" />
     <None Remove="Themes\LightMode.xaml" />
     <None Remove="Views\Components\BodyFrame.xaml" />
+    <None Remove="Views\Components\BottomFrame.xaml" />
     <None Remove="Views\Components\HomePage.xaml" />
     <None Remove="Views\Components\LeftRegion.xaml" />
     <None Remove="Views\Components\RightRegion.xaml" />
@@ -125,21 +126,20 @@
   <ItemGroup>
     <Content Remove="Assets\samples\Bazelgeuse.mp3" />
     <Content Remove="Assets\samples\Sweden C418.mp3" />
+    <Content Remove="Assets\samples\Sweden_C418.mp3" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="Assets\images\default.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-    <Compile Remove="Components\**" />
-    <EmbeddedResource Remove="Components\**" />
-    <None Remove="Components\**" />
-    <Page Remove="Components\**" />
-  </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Components\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Assets\samples\Sweden_C418.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Update="Strings\vn\Resources.vn.resw">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -183,6 +183,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\BottomFrame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Components\SignInPage.xaml">
