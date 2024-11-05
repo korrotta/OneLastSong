@@ -153,4 +153,25 @@
   <data name="SignIn_TextBlock.Text" xml:space="preserve">
     <value>Đăng nhập</value>
   </data>
+  <data name="Log_in_to_OneLastSong_TextBlock.Text" xml:space="preserve">
+    <value>Đăng nhập OneLastSong</value>
+  </data>
+  <data name="Username_TextBlock.Text" xml:space="preserve">
+    <value>Tên đăng nhập</value>
+  </data>
+  <data name="Username_TextBox.PlaceholderText" xml:space="preserve">
+    <value>Tên đăng nhập</value>
+  </data>
+  <data name="Password_TextBlock.Text" xml:space="preserve">
+    <value>Mật khẩu</value>
+  </data>
+  <data name="Password_PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Mật khẩu</value>
+  </data>
+  <data name="Forgot_your_password?_Run.Text" xml:space="preserve">
+    <value>Quên mật khẩu?</value>
+  </data>
+  <data name="Sign_up_for_OneLastSong.Text" xml:space="preserve">
+    <value>Đăng ký OneLastSong</value>
+  </data>
 </root>
