@@ -189,4 +189,7 @@
   <data name="Confirm_password_TextBlock.Text" xml:space="preserve">
     <value>Xác nhận</value>
   </data>
+  <data name="Dont_have_an_account?_Run.Text" xml:space="preserve">
+    <value>Bạn chưa có tài khoản?</value>
+  </data>
 </root>

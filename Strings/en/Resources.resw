@@ -189,4 +189,7 @@
   <data name="Confirm_password_TextBlock.Text" xml:space="preserve">
     <value>Confirm password</value>
   </data>
+  <data name="Dont_have_an_account?_Run.Text" xml:space="preserve">
+    <value>Don't have an account?</value>
+  </data>
 </root>
