@@ -7,10 +7,58 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource BG_TERTIARY}">
+    Background="{ThemeResource BG_TERTIARY}"
+    xmlns:l="using:WinUI3Localizer">
 
     <Grid>
-        <TextBlock Text="Sign Up" Style="{StaticResource Body2}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="500" Spacing="20"
+                Padding="{StaticResource MediumPadding}"
+                CornerRadius="13">
+            <StackPanel.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="{ThemeResource cBG_PRIMARY}" Offset="0.0" />
+                    <GradientStop Color="{ThemeResource cBG_TERTIARY}" Offset="0.8" />
+                </LinearGradientBrush>
+            </StackPanel.Background>
+
+            <!-- App Logo -->
+            <Image Source="ms-appx:///Assets/Logo.svg" Width="100" Height="100" HorizontalAlignment="Center"/>
+
+            <TextBlock HorizontalAlignment="Center" l:Uids.Uid="Sign_up_to_start_listening" Style="{StaticResource Body1}" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
+
+
+            <TextBlock l:Uids.Uid="Username_TextBlock" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
+            <!-- Username TextBox -->
+            <TextBox l:Uids.Uid="Username_TextBox" Height="40" VerticalAlignment="Center" Margin="0,-10,0,0"/>
+
+            <!-- Password TextBox -->
+            <TextBlock l:Uids.Uid="Password_TextBlock" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
+            <PasswordBox l:Uids.Uid="Password_PasswordBox" Height="40" VerticalAlignment="Center" Margin="0,-10,0,0"/>
+
+            <!-- Password TextBox -->
+            <TextBlock l:Uids.Uid="Confirm_password_TextBlock" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
+            <PasswordBox l:Uids.Uid="Confirm_password_PasswordBox" Height="40" VerticalAlignment="Center" Margin="0,-10,0,0"/>
+
+            <!-- Sign Up Button -->
+            <Border CornerRadius="16" Background="{ThemeResource BG_CONTRAST1}" Margin="{StaticResource MediumRightMargin}"
+            Padding="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Style="{StaticResource IconButton}" Width="200" Height="40">
+                    <TextBlock l:Uids.Uid="SignUp_TextBlock" Foreground="{ThemeResource TEXT_CONTRAST1}" Style="{StaticResource TextBigButton}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+            </Border>
+
+            <!-- Horizontal Line -->
+            <Rectangle Height="1" Fill="{ThemeResource TEXT_PRIMARY}" HorizontalAlignment="Stretch" Margin="0,10,0,10"/>
+
+            <!-- Sign In Link -->
+            <TextBlock HorizontalAlignment="Center" Foreground="{ThemeResource TEXT_PRIMARY}">
+                <Run l:Uids.Uid="Already_have_an_account?_Run"/>
+                <Hyperlink Click="{x:Bind SignUpPageViewModel.logInButton_Click}">
+                    <Run l:Uids.Uid="Log_in_here_Run" />
+                </Hyperlink>
+            </TextBlock>
+        </StackPanel>
     </Grid>
-    
+
 </Page>

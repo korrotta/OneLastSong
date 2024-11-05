@@ -64,11 +64,21 @@ namespace OneLastSong.Utils
                 newTheme[key] = originalTheme[key];
             }
 
-            // Clear the current resources and add the new theme
-            App.Current.Resources.Clear();
-            App.Current.Resources.MergedDictionaries.Add(newTheme);
+            // Remove the current theme and add the new theme
+            if(App.Current.Resources.ContainsKey(_currentTheme))
+            {
+                App.Current.Resources.Remove(_currentTheme);
+            }
+
+            if(!App.Current.Resources.MergedDictionaries.Contains(newTheme))
+            {
+                App.Current.Resources.MergedDictionaries.Add(newTheme);
+            }
+
+            // Update the current theme
             _currentTheme = themeKey;
 
+            // Store the setting if needed
             if (willStoreSetting)
             {
                 SetStoredLocalTheme(themeKey);

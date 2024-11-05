@@ -153,4 +153,43 @@
   <data name="SignIn_TextBlock.Text" xml:space="preserve">
     <value>Đăng nhập</value>
   </data>
+  <data name="Log_in_to_OneLastSong_TextBlock.Text" xml:space="preserve">
+    <value>Đăng nhập OneLastSong</value>
+  </data>
+  <data name="Username_TextBlock.Text" xml:space="preserve">
+    <value>Tên đăng nhập</value>
+  </data>
+  <data name="Username_TextBox.PlaceholderText" xml:space="preserve">
+    <value>Tên đăng nhập</value>
+  </data>
+  <data name="Password_TextBlock.Text" xml:space="preserve">
+    <value>Mật khẩu</value>
+  </data>
+  <data name="Password_PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Mật khẩu</value>
+  </data>
+  <data name="Forgot_your_password?_Run.Text" xml:space="preserve">
+    <value>Quên mật khẩu?</value>
+  </data>
+  <data name="Sign_up_for_OneLastSong.Text" xml:space="preserve">
+    <value>Đăng ký OneLastSong</value>
+  </data>
+  <data name="Sign_up_to_start_listening.Text" xml:space="preserve">
+    <value>Đăng ký để bắt đầu trải nghiệm</value>
+  </data>
+  <data name="Confirm_password_PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Xác nhận mật khẩu</value>
+  </data>
+  <data name="Log_in_here_Run.Text" xml:space="preserve">
+    <value>Đăng nhập tại đây</value>
+  </data>
+  <data name="Already_have_an_account?_Run.Text" xml:space="preserve">
+    <value>Bạn đã có tài khoản?</value>
+  </data>
+  <data name="Confirm_password_TextBlock.Text" xml:space="preserve">
+    <value>Xác nhận</value>
+  </data>
+  <data name="Dont_have_an_account?_Run.Text" xml:space="preserve">
+    <value>Bạn chưa có tài khoản?</value>
+  </data>
 </root>

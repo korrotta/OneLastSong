@@ -48,7 +48,7 @@
                         Foreground="{ThemeResource TEXT_PRIMARY}"
                         />
                     <TextBlock Text="{x:Bind Description}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}"
-                        TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
+                        HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
                         Foreground="{ThemeResource TEXT_LIGHT}"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind Views}" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,0,0,0"
@@ -104,19 +104,19 @@
             </Grid>
 
             <Grid
-        Background="{ThemeResource BG_LIGHT_TERTIARY}"
-        Margin="{StaticResource MediumBottomMargin}"
-        CornerRadius="5"
-        Padding="{StaticResource MediumPadding}">
+                Background="{ThemeResource BG_LIGHT_TERTIARY}"
+                Margin="{StaticResource MediumBottomMargin}"
+                CornerRadius="5"
+                Padding="{StaticResource MediumPadding}">
                 <TextBlock
-            l:Uids.Uid="Dicovery_TextBlock"
-            Foreground="{ThemeResource TEXT_LIGHT}"
-            Style="{StaticResource Body1}"/>
+                l:Uids.Uid="Dicovery_TextBlock"
+                Foreground="{ThemeResource TEXT_LIGHT}"
+                Style="{StaticResource Body1}"/>
             </Grid>
 
             <GridView
-        x:Name="StyledGrid"
-        ItemTemplate="{StaticResource ImageOverlayTemplate}">
+                x:Name="StyledGrid"
+                ItemTemplate="{StaticResource ImageOverlayTemplate}">
 
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -128,21 +128,20 @@
             </GridView>
 
             <Grid
-        Background="{ThemeResource BG_LIGHT_TERTIARY}"
-        Margin="{StaticResource MediumBottomMargin}"
-        CornerRadius="5"
-        Padding="{StaticResource MediumPadding}">
+                Background="{ThemeResource BG_LIGHT_TERTIARY}"
+                Margin="{StaticResource MediumBottomMargin}"
+                CornerRadius="5"
+                Padding="{StaticResource MediumPadding}">
                 <TextBlock
-            l:Uids.Uid="Search_result(s)_TextBlock"
-            Foreground="{ThemeResource TEXT_LIGHT}"
-            Style="{StaticResource Body1}"/>
+                    l:Uids.Uid="Search_result(s)_TextBlock"
+                    Foreground="{ThemeResource TEXT_LIGHT}"
+                    Style="{StaticResource Body1}"/>
             </Grid>
 
             <ListView
-        x:Name="ExampleList"
-        SelectionMode="Single"
-        ItemTemplate="{StaticResource DataTemplate2}"/>
-
+                x:Name="ExampleList"
+                SelectionMode="Single"
+                ItemTemplate="{StaticResource DataTemplate2}"/>
         </StackPanel>
     </ScrollViewer>
     

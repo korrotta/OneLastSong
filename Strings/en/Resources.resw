@@ -153,4 +153,43 @@
   <data name="SignIn_TextBlock.Text" xml:space="preserve">
     <value>Sign In</value>
   </data>
+  <data name="Log_in_to_OneLastSong_TextBlock.Text" xml:space="preserve">
+    <value>Log in to OneLastSong</value>
+  </data>
+  <data name="Username_TextBlock.Text" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Username_TextBox.PlaceholderText" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Password_TextBlock.Text" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Password_PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Forgot_your_password?_Run.Text" xml:space="preserve">
+    <value>Forgot your password?</value>
+  </data>
+  <data name="Sign_up_for_OneLastSong.Text" xml:space="preserve">
+    <value>Sign up for OneLastSong</value>
+  </data>
+  <data name="Sign_up_to_start_listening.Text" xml:space="preserve">
+    <value>Sign up to start listening</value>
+  </data>
+  <data name="Confirm_password_PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="Log_in_here_Run.Text" xml:space="preserve">
+    <value>Log in here</value>
+  </data>
+  <data name="Already_have_an_account?_Run.Text" xml:space="preserve">
+    <value>Already have an account?</value>
+  </data>
+  <data name="Confirm_password_TextBlock.Text" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="Dont_have_an_account?_Run.Text" xml:space="preserve">
+    <value>Don't have an account?</value>
+  </data>
 </root>

@@ -24,12 +24,75 @@ namespace OneLastSong.ViewModels
         private bool _isThemeComboBoxInitialized = false;
         public String Language { get; set; }
         public String Theme { get; set; }
-        public bool IsUserLoggedIn { get; set; }
+        private bool _isUserLoggedIn;
         public NavigationService NavigationService { get; set; }
-        public bool CanGoBack { get; set; } = false;
-        public bool CanGoForward { get; set; } = false;
-        public SolidColorBrush GoBackButtonColor { get; set; }
-        public SolidColorBrush GoForwardButtonColor { get; set; }
+        public bool IsUserLoggedIn
+        {
+            get => _isUserLoggedIn;
+            set
+            {
+                if (_isUserLoggedIn != value)
+                {
+                    _isUserLoggedIn = value;
+                    OnPropertyChanged(nameof(IsUserLoggedIn));
+                }
+            }
+        }
+        private bool _canGoBack;
+        public bool CanGoBack
+        {
+            get => _canGoBack;
+            set
+            {
+                if (_canGoBack != value)
+                {
+                    _canGoBack = value;
+                    OnPropertyChanged(nameof(CanGoBack));
+                }
+            }
+        }
+
+        private bool _canGoForward;
+        public bool CanGoForward
+        {
+            get => _canGoForward;
+            set
+            {
+                if (_canGoForward != value)
+                {
+                    _canGoForward = value;
+                    OnPropertyChanged(nameof(CanGoForward));
+                }
+            }
+        }
+
+        private SolidColorBrush _goBackButtonColor;
+        public SolidColorBrush GoBackButtonColor
+        {
+            get => _goBackButtonColor;
+            set
+            {
+                if (_goBackButtonColor != value)
+                {
+                    _goBackButtonColor = value;
+                    OnPropertyChanged(nameof(GoBackButtonColor));
+                }
+            }
+        }
+
+        private SolidColorBrush _goForwardButtonColor;
+        public SolidColorBrush GoForwardButtonColor
+        {
+            get => _goForwardButtonColor;
+            set
+            {
+                if (_goForwardButtonColor != value)
+                {
+                    _goForwardButtonColor = value;
+                    OnPropertyChanged(nameof(GoForwardButtonColor));
+                }
+            }
+        }
 
         private ResourceDictionary appRes = Application.Current.Resources;
 
@@ -147,11 +210,6 @@ namespace OneLastSong.ViewModels
             {
                 GoForwardButtonColor = GetBrush("TEXT_DISABLED");
             }
-
-            OnPropertyChanged(nameof(CanGoBack));
-            OnPropertyChanged(nameof(CanGoForward));
-            OnPropertyChanged(nameof(GoBackButtonColor));
-            OnPropertyChanged(nameof(GoForwardButtonColor));
         }
 
         protected void OnPropertyChanged(string propertyName)
