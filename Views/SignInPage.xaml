@@ -6,10 +6,43 @@
     xmlns:local="using:OneLastSong.Views.Components"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource BG_TERTIARY}">
+    mc:Ignorable="d">
+
+    <Page.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{ThemeResource cBG_PRIMARY}" Offset="0.0" />
+            <GradientStop Color="{ThemeResource cBG_TERTIARY}" Offset="1.0" />
+        </LinearGradientBrush>
+    </Page.Background>
 
     <Grid>
-        <TextBlock Text="Sign In" Style="{StaticResource Body2}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300" Spacing="20">
+            <!-- App Logo -->
+            <Image Source="ms-appx:///Assets/Logo.svg" Width="100" Height="100" HorizontalAlignment="Center"/>
+
+            <!-- Username TextBox -->
+            <TextBox PlaceholderText="Username"/>
+
+            <!-- Password TextBox -->
+            <PasswordBox PlaceholderText="Password"/>
+
+            <!-- Forgot Password Link -->
+            <TextBlock HorizontalAlignment="Right" Foreground="{ThemeResource TEXT_PRIMARY}">
+                <Hyperlink Click="ForgotPassword_Click">
+                    <Run Text="Forgot Password?" />
+                </Hyperlink>
+            </TextBlock>
+
+            <!-- Sign In Button -->
+            <Button Content="Sign In" Click="SignInButton_Click" />
+
+            <!-- Sign Up Link -->
+            <TextBlock HorizontalAlignment="Center" Foreground="{ThemeResource TEXT_PRIMARY}">
+                Don't have an account? 
+                <Hyperlink Click="SignUpButton_Click">
+                    <Run Text="Sign up for OneLastSong" />
+                </Hyperlink>
+            </TextBlock>
+        </StackPanel>
     </Grid>
 </Page>

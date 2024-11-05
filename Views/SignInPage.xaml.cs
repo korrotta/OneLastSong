@@ -27,5 +27,20 @@ namespace OneLastSong.Views.Components
         {
             this.InitializeComponent();
         }
+
+        private void ForgotPassword_Click(object sender, RoutedEventArgs e)
+        {
+            // Handle forgot password logic here
+        }
+
+        private void SignInButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Handle sign in logic here
+        }
+
+        private void SignUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Handle sign up navigation here
+        }
     }
 }

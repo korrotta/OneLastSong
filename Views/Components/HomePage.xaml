@@ -48,7 +48,7 @@
                         Foreground="{ThemeResource TEXT_PRIMARY}"
                         />
                     <TextBlock Text="{x:Bind Description}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}"
-                        TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
+                        HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
                         Foreground="{ThemeResource TEXT_LIGHT}"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind Views}" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,0,0,0"
