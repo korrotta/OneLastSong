@@ -1,39 +1,43 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OneLastSong.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:OneLastSong.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:l="using:WinUI3Localizer"
-    mc:Ignorable="d">
+    xmlns:l="using:WinUI3Localizer">
 
     <Page.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="{ThemeResource cBG_PRIMARY}" Offset="0.0" />
-            <GradientStop Color="{ThemeResource cBG_SECONDARY}" Offset="1.0" />
+            <GradientStop Offset="0.0" Color="{ThemeResource cBG_PRIMARY}" />
+            <GradientStop Offset="1.0" Color="{ThemeResource cBG_SECONDARY}" />
         </LinearGradientBrush>
     </Page.Background>
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="93"/>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
         </Grid.RowDefinitions>
 
-        <!--#Top bar-->
-        <Frame x:Name="TopFrame" Grid.Row="0" Margin="{StaticResource MediumMargin}"/>
-        <!--#end Top bar-->
+        <!--  #Top bar  -->
+        <Frame
+            x:Name="TopFrame"
+            Grid.Row="0"
+            Margin="{StaticResource MediumMargin}" />
+        <!--  #end Top bar  -->
 
-        <!--#Body-->
-        <Frame x:Name="BodyFrame" Grid.Row="1"/>
-        <!--#end Body-->
+        <!--  #Body  -->
+        <Frame x:Name="BodyFrame" Grid.Row="1" />
+        <!--  #end Body  -->
 
-        <!--#Bottom-->
-        <Frame x:Name="BottomFrame" Grid.Row="2" Margin="{StaticResource MediumMargin}"/>
-        <!--#end Bottom-->
+        <!--  #Bottom  -->
+        <Frame
+            x:Name="BottomFrame"
+            Grid.Row="2"
+            Margin="{StaticResource MediumTopMargin}" />
+        <!--  #end Bottom  -->
+
 
         <!--
     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -54,8 +58,7 @@
         Foreground="{ThemeResource cMainBg}"
         Background="{ThemeResource cTextPrimary}"/>
 
-    </StackPanel>
--->
+    </StackPanel>-->
     </Grid>
 
 </Page>

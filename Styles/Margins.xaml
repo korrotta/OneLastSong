@@ -14,5 +14,6 @@
     <Thickness x:Key="MediumLeftMargin">10,0,0,0</Thickness>
     <Thickness x:Key="MediumHorizontalMargin">10,0,10,0</Thickness>
     <Thickness x:Key="MediumRightMargin">0,0,10,0</Thickness>
+    <Thickness x:Key="MediumTopMargin">0,10,0,0</Thickness>
     <Thickness x:Key="MediumBottomMargin">0,0,0,10</Thickness>
 </ResourceDictionary>

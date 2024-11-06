@@ -24,6 +24,7 @@
     <None Remove="Themes\DefaultTheme.xaml" />
     <None Remove="Themes\LightMode.xaml" />
     <None Remove="Views\Components\BodyFrame.xaml" />
+    <None Remove="Views\Components\BottomFrame.xaml" />
     <None Remove="Views\Components\HomePage.xaml" />
     <None Remove="Views\Components\LeftRegion.xaml" />
     <None Remove="Views\Components\RightRegion.xaml" />
@@ -67,6 +68,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Components\" />
     <Folder Include="scripts\" />
     <Folder Include="Resources\Languages\" />
   </ItemGroup>
@@ -122,13 +124,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Components\**" />
-    <EmbeddedResource Remove="Components\**" />
-    <None Remove="Components\**" />
-    <Page Remove="Components\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Remove="Components\**" />
+    <Content Update="Assets\images\default.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Update="Strings\vn\Resources.vn.resw">
@@ -174,6 +172,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\BottomFrame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Components\SignInPage.xaml">

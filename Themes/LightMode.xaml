@@ -4,7 +4,7 @@
     <SolidColorBrush x:Key="BG_PRIMARY" Color="#CFE5FF"/>
     <SolidColorBrush x:Key="TEXT_PRIMARY" Color="#006C9D"/>
     <SolidColorBrush x:Key="BG_SECONDARY" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="BG_CONTRAST1" Color="#000000"/>
+    <SolidColorBrush x:Key="BG_CONTRAST1" Color="#006C9D"/>
     <SolidColorBrush x:Key="TEXT_CONTRAST1" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="TEXT_LIGHT" Color="#88BADB"/>
     <SolidColorBrush x:Key="BG_TERTIARY" Color="#DDEBF4"/>
@@ -15,7 +15,7 @@
     <Color x:Key="cBG_PRIMARY">#CFE5FF</Color>
     <Color x:Key="cTEXT_PRIMARY">#006C9D</Color>
     <Color x:Key="cBG_SECONDARY">#FFFFFF</Color>
-    <Color x:Key="cBG_CONTRAST1">#000000</Color>
+    <Color x:Key="cBG_CONTRAST1">#006C9D</Color>
     <Color x:Key="cTEXT_CONTRAST1">#FFFFFF</Color>
     <Color x:Key="cTEXT_LIGHT">#88BADB</Color>
     <Color x:Key="cBG_TERTIARY">#DDEBF4</Color>
