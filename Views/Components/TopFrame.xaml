@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
+    x:Name="TopFramePage"
     x:Class="OneLastSong.Views.Components.TopFrame"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -30,7 +31,7 @@
                 </Button>
                 <Ellipse Width="40" Height="40" Margin="{StaticResource MediumRightMargin}">
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="https://firebasestorage.googleapis.com/v0/b/intro-to-se.appspot.com/o/defaultUserAvatars%2F1.png?alt=media&amp;token=eee9309c-abcd-442a-b2ae-5575b577994a" Stretch="UniformToFill"/>
+                        <ImageBrush ImageSource="{Binding ElementName=TopFramePage, Path=TopFrameViewModel.User.AvatarUrl}" Stretch="UniformToFill"/>
                     </Ellipse.Fill>
                 </Ellipse>
             </StackPanel>

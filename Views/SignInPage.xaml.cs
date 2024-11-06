@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using OneLastSong.ViewModels;
+using OneLastSong.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,9 +37,17 @@ namespace OneLastSong.Views.Components
             // Handle forgot password logic here
         }
 
-        private void SignInButton_Click(object sender, RoutedEventArgs e)
+        private async void SignInButton_Click(object sender, RoutedEventArgs e)
         {
-            // Handle sign in logic here
+            try
+            {
+                SignInPageViewModel.SignInUser(tbUsername.Text, pbPassword.Password);
+            }
+            catch
+            (Exception ex)
+            {
+                await DialogUtils.ShowDialogAsync("Login", "Invalid username or password", XamlRoot);
+            }
         }
 
         private void SignUpButton_Click(object sender, RoutedEventArgs e)

@@ -21,6 +21,11 @@ namespace OneLastSong.Services
         {
         }
 
+        public void SetToken(String token)
+        {
+            this.token = token;
+        }
+
         public void SetUser(User user)
         {
             User = user;
