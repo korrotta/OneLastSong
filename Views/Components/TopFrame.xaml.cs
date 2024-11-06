@@ -25,6 +25,7 @@ namespace OneLastSong.Views.Components
     public sealed partial class TopFrame : Page
     {
         public TopFrameViewModel TopFrameViewModel { get; set; } = new TopFrameViewModel();
+        public String AvatarUrl { get; set; }
 
         public TopFrame()
         {

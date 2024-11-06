@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using OneLastSong.Contracts;
+using OneLastSong.Models;
 using OneLastSong.Services;
 using OneLastSong.Utils;
 using OneLastSong.Views;
@@ -18,7 +19,7 @@ using WinUI3Localizer;
 namespace OneLastSong.ViewModels
 {
 
-    public class TopFrameViewModel : INotifyPropertyChanged, INavChangeNotifier
+    public class TopFrameViewModel : INotifyPropertyChanged, INavChangeNotifier, IAuthChangeNotify
     {
         private bool _isLanguageComboBoxInitialized = false;
         private bool _isThemeComboBoxInitialized = false;
@@ -26,6 +27,8 @@ namespace OneLastSong.ViewModels
         public String Theme { get; set; }
         private bool _isUserLoggedIn;
         public NavigationService NavigationService { get; set; }
+        public User User { get; private set; } = new User();
+
         public bool IsUserLoggedIn
         {
             get => _isUserLoggedIn;
@@ -109,6 +112,7 @@ namespace OneLastSong.ViewModels
             GoForwardButtonColor = GetBrush("TEXT_DISABLED");
 
             NavigationService.RegisterNavChangeNotifier(this);
+            AuthService.Get().RegisterAuthChangeNotify(this);
         }
 
         private SolidColorBrush GetBrush(string color)
@@ -221,6 +225,23 @@ namespace OneLastSong.ViewModels
         public void Dispose()
         {
             NavigationService.UnregisterNavChangeNotifier(this);
+            AuthService.Get().UnregisterAuthChangeNotify(this);
+        }
+
+        public async void OnUserChange(User user)
+        {
+            if(user == null)
+            {
+                IsUserLoggedIn = false;
+                NavigationService.Navigate(typeof(SignInPage));
+                return;
+            }
+
+            User = user;
+            IsUserLoggedIn = user != null;
+            NavigationService.Navigate(typeof(HomePage));
+
+            await DialogUtils.ShowDialogAsync("Welcome", $"Welcome {user.Username}!", XamlRoot);
         }
     }
 }

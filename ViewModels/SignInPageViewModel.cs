@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using Windows.ApplicationModel.UserDataAccounts;
+using OneLastSong.DAOs;
 
 namespace OneLastSong.ViewModels
 {
@@ -25,6 +27,11 @@ namespace OneLastSong.ViewModels
         public void signUpButton_Click(Object sender, RoutedEventArgs e)
         {
             NavigationService.Navigate(typeof(SignUpPage));
+        }
+
+        public async void SignInUser(string text, string password)
+        {
+            await UserDAO.Get().SignInUser(text, password);
         }
     }
 

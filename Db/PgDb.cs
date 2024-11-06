@@ -1,4 +1,5 @@
 ﻿using Npgsql;
+using OneLastSong.Contracts;
 using OneLastSong.Models;
 using OneLastSong.Utils;
 using System;
@@ -25,6 +26,7 @@ namespace OneLastSong.Db
             try
             {
                 dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnectionString);
+                dataSourceBuilder.EnableRecordsAsTuples();
 
                 dataSource = dataSourceBuilder.Build();
 
@@ -66,6 +68,14 @@ namespace OneLastSong.Db
             return Task.CompletedTask;
         }
 
+        private void CheckConnection()
+        {
+            if (_conn == null)
+            {
+                throw new InvalidOperationException("Connection not established");
+            }
+        }
+
         public async Task<string> UserLogin(string username, string password)
         {
             if (_conn == null)
@@ -84,21 +94,16 @@ namespace OneLastSong.Db
 
                     LogUtils.Debug("Executing command: " + QUERY_USER_LOGIN);
 
+                    // Execute and log returned data
                     await using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         LogUtils.Debug("Command executed, reading results...");
 
-                        while (await reader.ReadAsync())
+                        if (await reader.ReadAsync())
                         {
-                            Debug.WriteLine("Row returned:" + reader.FieldCount.ToString());
-                            for (int i = 0; i < reader.FieldCount; i++)
-                            {
-                                res += reader.GetString(i) + " ";
-                                Debug.WriteLine($"Field {i}: {reader.GetString(i)}");
-                            }
+                            res = reader.GetString(0);
                         }
-
-                        if (string.IsNullOrEmpty(res))
+                        else
                         {
                             LogUtils.Debug("No rows returned.");
                         }
@@ -163,7 +168,57 @@ namespace OneLastSong.Db
             return res;
         }
 
+        public async Task<string> SignInUser(string username, string password)
+        {
+            CheckConnection();
+            String result = await UserLogin(username, password);
+            return result;
+        }
+
+        public async Task<User> GetUser(string sessionToken)
+        {
+            CheckConnection();
+            User res = new User();
+            String userJson = "";
+
+            try
+            {
+                await using (var cmd = dataSource.CreateCommand(QUERY_GET_USER))
+                {
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+                    LogUtils.Debug("Executing command: " + QUERY_GET_USER);
+
+                    // Execute and log returned data
+                    await using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        LogUtils.Debug("Command executed, reading results...");
+
+                        if (await reader.ReadAsync())
+                        {
+                            userJson = reader.GetString(0);
+                            LogUtils.Debug("Raw JSON data: " + userJson);
+
+                            res = User.FromJson(userJson);
+                        }
+                        else
+                        {
+                            LogUtils.Debug("No rows returned.");
+                        }
+                    }
+                }
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Debug($"Error executing query: {ex.Message}");
+                throw;
+            }
+        }
+
+
         // Our Query strings
         public static readonly string QUERY_USER_LOGIN = "SELECT user_login(@username, @password)";
+        public static readonly string QUERY_GET_USER = "SELECT get_user_data(@session_token)";
     }
 }
