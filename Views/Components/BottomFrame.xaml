@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:OneLastSong.Views.Components"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:OneLastSong.ViewModels"
+    d:DataContext="{d:DesignInstance Type=viewmodels:BottomFrameViewModel}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
@@ -15,9 +17,9 @@
         VerticalAlignment="Center"
         Background="{ThemeResource BG_PRIMARY}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="33*" />
-            <ColumnDefinition Width="33*" MinWidth="410"/>
-            <ColumnDefinition Width="33*" MinWidth="332"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <!--  Left: Song Image and Info  -->
@@ -29,126 +31,147 @@
             <Border
                 Width="Auto"
                 Height="Auto"
-                CornerRadius="5"
-                Margin="{StaticResource MediumRightMargin}">
-                <Image Source="/Assets/images/default.jpg"/>
+                Margin="{StaticResource MediumRightMargin}"
+                CornerRadius="5">
+                <Image Source="/Assets/images/default.jpg" />
             </Border>
 
             <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                 <TextBlock
-                    TextAlignment="Left"
+                    Foreground="{ThemeResource TEXT_PRIMARY}"
                     Style="{StaticResource Body2}"
-                    Foreground="{ThemeResource TEXT_PRIMARY}">
+                    TextAlignment="Left">
                     <Hyperlink Foreground="{ThemeResource TEXT_PRIMARY}">
-                        <Run Text="Testing Song"/>
+                        <Run Text="Sweden" />
                     </Hyperlink>
                 </TextBlock>
 
                 <TextBlock
-                    Style="{StaticResource BodySmall1}"
                     Foreground="{ThemeResource TEXT_LIGHT}"
-                    Text="Testing artist" />
+                    Style="{StaticResource BodySmall1}"
+                    Text="C418" />
             </StackPanel>
         </StackPanel>
 
         <!--  Middle: Playback Controls + Slider  -->
-        <StackPanel
-            Grid.Column="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Orientation="Vertical">
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
             <!--  Playback Controls  -->
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+            <StackPanel
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
 
                 <!--  Shuffle button  -->
-                
-                <Button
-                    Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
-                    <FontIcon Glyph="&#xE8B1;" Foreground="{ThemeResource TEXT_PRIMARY}" FontSize="{StaticResource MediumTextSize}"/>
-
+                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+                    <FontIcon
+                        FontSize="{StaticResource MediumTextSize}"
+                        Foreground="{ThemeResource TEXT_PRIMARY}"
+                        Glyph="&#xE8B1;" />
                 </Button>
+
                 <!--  Previous button  -->
-                <Button
-                    Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
-                    <FontIcon Glyph="&#xE892;" Foreground="{ThemeResource TEXT_PRIMARY}" FontSize="{StaticResource MediumTextSize}"/>
+                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+                    <FontIcon
+                        FontSize="{StaticResource MediumTextSize}"
+                        Foreground="{ThemeResource TEXT_PRIMARY}"
+                        Glyph="&#xE892;" />
                 </Button>
 
                 <!--  Playback button  -->
                 <Border
-                    Margin="{StaticResource MediumRightMargin}"
-                    CornerRadius="32"
-                    Background="{ThemeResource BG_CONTRAST1}"
                     Width="32"
                     Height="32"
-                   
-                    >
+                    Margin="{StaticResource MediumRightMargin}"
+                    Background="{ThemeResource BG_CONTRAST1}"
+                    CornerRadius="32">
                     <Button
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Style="{StaticResource IconButton}" >
-                        <FontIcon Glyph="&#xF5B0;" Foreground="{ThemeResource TEXT_CONTRAST1}" FontSize="{StaticResource LargeTextSize}"/>
+                        Click="PlaybackButton_Click"
+                        Style="{StaticResource IconButton}">
+                        <FontIcon
+                            x:Name="PlaybackIcon"
+                            FontSize="{StaticResource LargeTextSize}"
+                            Foreground="{ThemeResource TEXT_CONTRAST1}"
+                            Glyph="&#xE768;" />
                     </Button>
                 </Border>
-                
+
 
 
                 <!--  Next button  -->
-                <Button
-                    Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
-                    <FontIcon Glyph="&#xE893;" Foreground="{ThemeResource TEXT_PRIMARY}" FontSize="{StaticResource MediumTextSize}"/>
+                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+                    <FontIcon
+                        FontSize="{StaticResource MediumTextSize}"
+                        Foreground="{ThemeResource TEXT_PRIMARY}"
+                        Glyph="&#xE893;" />
                 </Button>
 
                 <!--  Repeat button  -->
                 <Button
-                    Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
-                    <FontIcon Glyph="&#xE8EE;" Foreground="{ThemeResource TEXT_PRIMARY}" FontSize="{StaticResource MediumTextSize}"/>
+                    Margin="{StaticResource MediumRightMargin}"
+                    Click="RepeatButton_Click"
+                    Style="{StaticResource IconButton}">
+                    <FontIcon
+                        x:Name="RepeatIcon"
+                        FontSize="{StaticResource MediumTextSize}"
+                        Foreground="{ThemeResource TEXT_PRIMARY}"
+                        Glyph="&#xF5E7;" />
                 </Button>
 
             </StackPanel>
 
             <!--  Progress Bar  -->
-            <Grid
-                Width="410"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+            <Grid Grid.Row="1" Margin="15,0,15,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <!--  Current Time  -->
                 <TextBlock
                     x:Name="CurrentTime"
                     Grid.Column="0"
-                    Margin="5"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Right"
                     VerticalAlignment="Center"
-                    Style="{StaticResource BodySmall1}"
+                    FontSize="14"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
-                    Text="0:00" />
+                    Style="{StaticResource BodySmall1}"
+                    Text="{Binding CurrentTimeFormatted}" />
 
                 <!--  Progress  -->
                 <Slider
                     x:Name="ProgressBar"
                     Grid.Column="1"
-                    Margin="5,0,5,0"
+                    Margin="10,0,10,0"
+                    HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
-                    Maximum="100"
+                    Loaded="ProgressBar_Loaded"
+                    Maximum="216"
                     Minimum="0"
-                    Value="30" />
+                    PointerMoved="ProgressBar_Moved"
+                    Value="{Binding CurrentTime.TotalSeconds}" />
 
                 <!--  End Time  -->
                 <TextBlock
                     x:Name="EndTime"
                     Grid.Column="2"
-                    Margin="5"
+                    Margin="0,0,5,0"
+                    HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Style="{StaticResource BodySmall1}"
+                    FontSize="14"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
-                    Text="4:26" />
+                    Style="{StaticResource BodySmall1}"
+                    Text="03:36" />
             </Grid>
-        </StackPanel>
+        </Grid>
 
         <!--  Right: Miscellaneous Options  -->
         <StackPanel
@@ -156,45 +179,61 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
             Orientation="Horizontal"
-            Spacing="5"
-            >
+            Spacing="5">
 
             <!--  Lyrics button  -->
-            <Button
-                Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
-                <FontIcon Glyph="&#xE90B;" Foreground="{ThemeResource TEXT_PRIMARY}" FontSize="{StaticResource MediumTextSize}"/>
+            <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+                <FontIcon
+                    FontSize="{StaticResource MediumTextSize}"
+                    Foreground="{ThemeResource TEXT_PRIMARY}"
+                    Glyph="&#xE90B;" />
             </Button>
 
             <!--  Playqueue button  -->
-            <Button
-                Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
-                <FontIcon Glyph="&#xE8F2;" Foreground="{ThemeResource TEXT_PRIMARY}" FontSize="{StaticResource MediumTextSize}"/>
+            <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+                <FontIcon
+                    FontSize="{StaticResource MediumTextSize}"
+                    Foreground="{ThemeResource TEXT_PRIMARY}"
+                    Glyph="&#xE8F2;" />
             </Button>
 
             <!--  Connect Device button  -->
-            <Button
-                Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
-                <FontIcon Glyph="&#xEBDE;" Foreground="{ThemeResource TEXT_PRIMARY}" FontSize="{StaticResource MediumTextSize}"/>
-            </Button>
-
-            <!--  Volume button  -->
-            <Button
-                Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
-                <FontIcon Glyph="&#xE995;" Foreground="{ThemeResource TEXT_PRIMARY}" FontSize="{StaticResource MediumTextSize}"/>
+            <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+                <FontIcon
+                    FontSize="{StaticResource MediumTextSize}"
+                    Foreground="{ThemeResource TEXT_PRIMARY}"
+                    Glyph="&#xEBDE;" />
             </Button>
 
             <!--  Volume slider  -->
-            <Slider
-            x:Name="VolumeSlider"
-            Width="100"
-            Margin="5,0,5,0"
-            Maximum="100"
-            Value="100" />
+            <Button>
+                <FontIcon Glyph="&#xE994;" />
+                <Button.Flyout>
+                    <Flyout>
+                        <StackPanel>
+                            <Slider
+                                x:Name="VolumeSlider"
+                                Width="150"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Maximum="100.0"
+                                Minimum="0"
+                                ValueChanged="VolumeSlider_ValueChanged"
+                                Value="{Binding ViewModel.Volume, Mode=TwoWay}" />
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
 
             <!--  Fullscreen button  -->
             <Button
-                Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
-                <FontIcon Glyph="&#xE740;" Foreground="{ThemeResource TEXT_PRIMARY}" FontSize="{StaticResource MediumTextSize}"/>
+                Margin="{StaticResource MediumRightMargin}"
+                Click="Fullscreen_Click"
+                Style="{StaticResource IconButton}">
+                <FontIcon
+                    FontSize="{StaticResource MediumTextSize}"
+                    Foreground="{ThemeResource TEXT_PRIMARY}"
+                    Glyph="&#xE740;" />
             </Button>
 
         </StackPanel>
