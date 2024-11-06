@@ -11,5 +11,53 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\Components\BottomFrame.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\ContentFrame.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SignUpPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\TopFrame.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Buttons.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Sizes.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Paddings.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Margins.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\RightRegion.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\HomePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\LeftRegion.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\BodyFrame.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Texts.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MainPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\LightMode.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\DarkMode.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 </Project>

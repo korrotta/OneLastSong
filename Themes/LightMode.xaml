@@ -1,0 +1,24 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="MainBg" Color="#ffffff"/>
+    <SolidColorBrush x:Key="BG_PRIMARY" Color="#CFE5FF"/>
+    <SolidColorBrush x:Key="TEXT_PRIMARY" Color="#006C9D"/>
+    <SolidColorBrush x:Key="BG_SECONDARY" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="BG_CONTRAST1" Color="#006C9D"/>
+    <SolidColorBrush x:Key="TEXT_CONTRAST1" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="TEXT_LIGHT" Color="#88BADB"/>
+    <SolidColorBrush x:Key="BG_TERTIARY" Color="#DDEBF4"/>
+    <SolidColorBrush x:Key="BG_LIGHT_TERTIARY" Color="#6D83AC"/>
+    <SolidColorBrush x:Key="TEXT_DISABLED" Color="#A5BDD6"/>
+
+    <Color x:Key="cMainBg">#ffffff</Color>
+    <Color x:Key="cBG_PRIMARY">#CFE5FF</Color>
+    <Color x:Key="cTEXT_PRIMARY">#006C9D</Color>
+    <Color x:Key="cBG_SECONDARY">#FFFFFF</Color>
+    <Color x:Key="cBG_CONTRAST1">#006C9D</Color>
+    <Color x:Key="cTEXT_CONTRAST1">#FFFFFF</Color>
+    <Color x:Key="cTEXT_LIGHT">#88BADB</Color>
+    <Color x:Key="cBG_TERTIARY">#DDEBF4</Color>
+    <Color x:Key="cBG_LIGHT_TERTIARY">#6D83AC</Color>
+    <Color x:Key="cTEXT_DISABLED">#A5BDD6</Color>
+</ResourceDictionary>

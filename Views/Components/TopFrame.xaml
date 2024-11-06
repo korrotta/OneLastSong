@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Name="TopFramePage"
+    x:Class="OneLastSong.Views.Components.TopFrame"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneLastSong.Views.Components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:l="using:WinUI3Localizer"
+    xmlns:selectors="using:OneLastSong.Selectors"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <Page.Resources>
+        <Style x:Key="CustomFlyoutPresenterStyle" TargetType="FlyoutPresenter">
+            <Setter Property="Background" Value="{ThemeResource BG_TERTIARY}"/>
+            <Setter Property="CornerRadius" Value="13"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource BG_LIGHT_TERTIARY}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <DataTemplate x:Key="LoggedInTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
+                    <FontIcon Glyph="&#xEA8F;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                </Button>
+                <Button Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
+                    <FontIcon Glyph="&#xE716;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                </Button>
+                <Ellipse Width="40" Height="40" Margin="{StaticResource MediumRightMargin}">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{Binding ElementName=TopFramePage, Path=TopFrameViewModel.User.AvatarUrl}" Stretch="UniformToFill"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="LoggedOutTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}"
+                        Click="signUpButton_Click">
+                    <TextBlock l:Uids.Uid="SignUp_TextBlock" Foreground="{ThemeResource TEXT_LIGHT}" Style="{StaticResource TextBigButton}"/>
+                </Button>
+                <Border CornerRadius="10" Background="{ThemeResource BG_CONTRAST1}" Margin="{StaticResource MediumRightMargin}"
+                        Padding="2">
+                    <Button Style="{StaticResource IconButton}"
+                            Click="signInButton_Click">
+                        <TextBlock l:Uids.Uid="SignIn_TextBlock" Foreground="{ThemeResource TEXT_CONTRAST1}" Style="{StaticResource TextBigButton}"/>
+                    </Button>
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+
+        <selectors:UserStateTemplateSelector
+            x:Key="UserStateTemplateSelectorKey"
+            LoggedInTemplate="{StaticResource LoggedInTemplate}"
+            LoggedOutTemplate="{StaticResource LoggedOutTemplate}"/>
+    </Page.Resources>
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <!-- Define your body content here -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="31*"/>
+            <ColumnDefinition Width="*" MinWidth="600"/>
+            <ColumnDefinition Width="31*"/>
+        </Grid.ColumnDefinitions>
+
+        <!--#Left-->
+        <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
+            <!--Left Menu button-->
+            <Button
+                 Grid.Column="2" Margin="{StaticResource MediumRightMargin}"
+                 Style="{StaticResource IconButton}">   
+                <FontIcon Glyph="&#xE712;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                <Button.Flyout>
+                    <Flyout FlyoutPresenterStyle="{StaticResource CustomFlyoutPresenterStyle}">
+                        <StackPanel>
+                            <TextBlock l:Uids.Uid="Language_TextBox" Margin="0,0,0,8" FontWeight="Bold" Style="{StaticResource Body2}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                            <ComboBox Width="200"
+                                      Background="{ThemeResource BG_LIGHT_TERTIARY}"
+                                      Foreground="{ThemeResource TEXT_LIGHT}"
+                                      SelectionChanged="{x:Bind TopFrameViewModel.langComboBox_SelectionChanged}"
+                                      SelectedValue="{x:Bind TopFrameViewModel.Language, Mode=TwoWay}"
+                                      SelectedValuePath="Tag">
+                                <ComboBoxItem Content="English" Tag="en"/>
+                                <ComboBoxItem Content="Vietnamese" Tag="vn"/>
+                            </ComboBox>
+                            <TextBlock l:Uids.Uid="Theme_TextBox" Margin="0,16,0,8" FontWeight="Bold" Style="{StaticResource Body2}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                            <ComboBox Width="200"
+                                      Background="{ThemeResource BG_LIGHT_TERTIARY}"
+                                      Foreground="{ThemeResource TEXT_LIGHT}"
+                                      SelectionChanged="{x:Bind TopFrameViewModel.themeComboBox_SelectionChanged}"
+                                      SelectedValue="{x:Bind TopFrameViewModel.Theme, Mode=TwoWay}"
+                                      SelectedValuePath="Tag">
+                                <ComboBoxItem Content="Dark" Tag="Dark"/>
+                                <ComboBoxItem Content="Light" Tag="Light"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+
+            <!--PrevPageButton-->
+            <Button
+                IsEnabled="{x:Bind TopFrameViewModel.CanGoBack, Mode=TwoWay}"
+                Grid.Column="2" Margin="{StaticResource MediumRightMargin}"
+                Style="{StaticResource IconButton}"
+                Click="{x:Bind TopFrameViewModel.prevPageButton_Click}"
+                >
+                <FontIcon Glyph="&#xE830;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{x:Bind TopFrameViewModel.GoBackButtonColor, Mode=TwoWay}"/>
+            </Button>
+            
+            <!--NextPageButton-->
+            <Button
+                IsEnabled="{x:Bind TopFrameViewModel.CanGoForward, Mode=TwoWay}"
+                Grid.Column="2" Margin="{StaticResource MediumRightMargin}"
+                Style="{StaticResource IconButton}"
+                Click="{x:Bind TopFrameViewModel.nextPageButton_Click}"
+                >
+                <FontIcon Glyph="&#xEA47;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{x:Bind TopFrameViewModel.GoForwardButtonColor, Mode=TwoWay}"/>
+            </Button>
+            
+        </StackPanel>
+
+        <!--#Center-->
+        <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!--Home button-->
+            <Button
+                Grid.Column="0"
+                Style="{StaticResource IconButton}"
+                Margin="{StaticResource MediumRightMargin}"
+                Click="{x:Bind TopFrameViewModel.homeButton_Click}"
+                >
+                <FontIcon Glyph="&#xEA8A;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+            </Button>
+            <!--Search textbox-->
+            <Grid
+                Grid.Column="1"
+                Background="{ThemeResource BG_TERTIARY}"
+                CornerRadius="16">
+                <Button
+                    Style="{StaticResource IconButton}">
+                    <FontIcon Glyph="&#xE721;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                </Button>
+                <TextBox
+                    MinWidth="580"
+                    MaxWidth="800"
+                    l:Uids.Uid="What_do_you_want_to_play_TextBox"
+                    Style="{StaticResource Body2}"
+                    Foreground="{ThemeResource TEXT_PRIMARY}"
+                    Background="{ThemeResource BG_TERTIARY}"
+                    BorderBrush="{ThemeResource BG_TERTIARY}"
+                    BorderThickness="1"
+                    CornerRadius="16"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Center"/>
+
+
+            </Grid>
+        </Grid>
+
+        <!--#Right-->
+        <ContentControl Grid.Column="2" HorizontalAlignment="Right" Margin="0 0 128 0"
+                Content="{x:Bind TopFrameViewModel.IsUserLoggedIn, Mode=OneWay}"
+                ContentTemplateSelector="{StaticResource UserStateTemplateSelectorKey}"/>
+    </Grid>
+
+</Page>
