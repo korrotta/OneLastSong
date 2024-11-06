@@ -1,4 +1,5 @@
 ﻿using Npgsql;
+using OneLastSong.Contracts;
 using OneLastSong.Models;
 using OneLastSong.Utils;
 using System;

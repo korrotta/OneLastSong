@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using OneLastSong.Db;
+using OneLastSong.Contracts;
 using OneLastSong.Services;
 using System;
 using System.Collections.Generic;

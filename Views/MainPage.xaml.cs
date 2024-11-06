@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using OneLastSong.Contracts;
 using OneLastSong.DAOs;
-using OneLastSong.Db;
 using OneLastSong.ModelViews;
 using OneLastSong.Utils;
 using OneLastSong.Views.Components;
@@ -37,7 +37,7 @@ namespace OneLastSong.Views
             MainPageViewModel = new MainPageViewModel();
 
             //this line is for testing purposes only
-            await DoDbTest();
+            //await DoDbTest();
         }
 
         private async Task DoDbTest()

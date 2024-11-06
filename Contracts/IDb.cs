@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OneLastSong.Db
+namespace OneLastSong.Contracts
 {
     public interface IDb
     {
@@ -15,5 +15,5 @@ namespace OneLastSong.Db
         public Task<string> DoTest();
         public Task<string> SignInUser(string username, string password);
         public Task<User> GetUser(string sessionToken);
-    }    
+    }
 }
