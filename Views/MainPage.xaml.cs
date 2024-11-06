@@ -35,6 +35,16 @@ namespace OneLastSong.Views
             BodyFrame.Navigate(typeof(BodyFrame));
             BottomFrame.Navigate(typeof(BottomFrame));
             MainPageViewModel = new MainPageViewModel();
+
+            //this line is for testing purposes only
+            await DoDbTest();
+        }
+
+        private async Task DoDbTest()
+        {
+            var testDAO = ((App)Application.Current).Services.GetService<TestDAO>();
+            var res = await testDAO.Test();
+            await DialogUtils.ShowDialogAsync("Testing db", res, XamlRoot);
         }
 
         private async Task InitializeDatabase()
@@ -44,6 +54,7 @@ namespace OneLastSong.Views
                 await _db.Connect();
                 LogUtils.Debug("Database initialized successfully");
                 ((App)Application.Current).Services.GetService<TestDAO>().Init();
+                ((App)Application.Current).Services.GetService<UserDAO>().Init();
             }
             catch (Exception ex)
             {

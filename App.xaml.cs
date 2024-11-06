@@ -47,9 +47,16 @@ namespace OneLastSong
         private static IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();
+
+            // Db
             services.AddSingleton<IDb, PgDb>();
+            // DAOs
             services.AddSingleton<TestDAO>();
+            services.AddSingleton<UserDAO>();
+            // Services
             services.AddSingleton<NavigationService>();
+            services.AddSingleton<AuthService>();
+
             return services.BuildServiceProvider();
         }
 

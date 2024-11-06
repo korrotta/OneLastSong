@@ -27,21 +27,10 @@ namespace OneLastSong.Views.Components
     /// </summary>
     public sealed partial class LeftRegion : Page
     {
-        TestDAO testDAO;
-
         public LeftRegion()
         {
             this.InitializeComponent();
-            this.Loaded += LeftRegion_Loaded;
-
             ExampleList.ItemsSource = GenerateRandomPlaylists(5);
-        }
-
-        private async void LeftRegion_Loaded(object sender, RoutedEventArgs e)
-        {
-            testDAO = ((App)Application.Current).Services.GetService<TestDAO>();
-            var res = await testDAO.Test();
-            await DialogUtils.ShowDialogAsync("Testing db", res, XamlRoot);
         }
 
         private List<Playlist> GenerateRandomPlaylists(int count)

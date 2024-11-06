@@ -13,5 +13,7 @@ namespace OneLastSong.Db
         public Task Connect();
         public Task Dispose();
         public Task<string> DoTest();
+        public Task<string> SignInUser(string username, string password);
+        public Task<User> GetUser(string sessionToken);
     }    
 }
