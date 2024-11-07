@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 using Windows.Media.Core;
@@ -32,7 +33,7 @@ namespace OneLastSong.ViewModels
             _timer.Tick += Timer_Tick;
 
             _mediaPlayer = new MediaPlayer();
-            _mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
+             _mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
             _mediaPlayer.CurrentStateChanged += MediaPlayer_CurrentStateChanged;
         }
 
