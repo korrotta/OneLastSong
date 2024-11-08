@@ -11,6 +11,11 @@ namespace OneLastSong.Utils
 {
     public class LocalizationUtils
     {
+        // Utils string for retrieving the current language
+        public static readonly string TEST_STRING = "Test_String";
+        public static readonly string LOGIN_STRING = "Login_String";
+        public static readonly string SIGN_IN_FAIL_STRING= "SignInFail_String";
+
         public static async Task InitializeLocalizer()
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;

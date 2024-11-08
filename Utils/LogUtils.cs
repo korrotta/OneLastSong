@@ -12,5 +12,15 @@ namespace OneLastSong.Utils
         {
             System.Diagnostics.Debug.WriteLine(message, "DEBUG");
         }
+
+        public static void Info(string message)
+        {
+            System.Diagnostics.Debug.WriteLine(message, "INFO");
+        }
+
+        public static void Error(string message)
+        {
+            System.Diagnostics.Debug.WriteLine(message, "ERROR");
+        }
     }
 }

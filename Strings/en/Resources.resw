@@ -192,4 +192,13 @@
   <data name="Dont_have_an_account?_Run.Text" xml:space="preserve">
     <value>Don't have an account?</value>
   </data>
+  <data name="Test_String" xml:space="preserve">
+    <value>this is a test EN</value>
+  </data>
+  <data name="Login_String" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="SignInFail_String" xml:space="preserve">
+    <value>Username or password is incorrect!</value>
+  </data>
 </root>

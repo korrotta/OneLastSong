@@ -13,7 +13,7 @@ namespace OneLastSong.Contracts
         public Task Connect();
         public Task Dispose();
         public Task<string> DoTest();
-        public Task<string> SignInUser(string username, string password);
+        public Task<string> UserLogin(string username, string password);
         public Task<User> GetUser(string sessionToken);
     }
 }

@@ -78,10 +78,7 @@ namespace OneLastSong.Db
 
         public async Task<string> UserLogin(string username, string password)
         {
-            if (_conn == null)
-            {
-                throw new InvalidOperationException("Connection not established");
-            }
+            CheckConnection();
 
             string res = "";
 
@@ -97,7 +94,6 @@ namespace OneLastSong.Db
                     // Execute and log returned data
                     await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        LogUtils.Debug("Command executed, reading results...");
 
                         if (await reader.ReadAsync())
                         {
@@ -168,13 +164,6 @@ namespace OneLastSong.Db
             return res;
         }
 
-        public async Task<string> SignInUser(string username, string password)
-        {
-            CheckConnection();
-            String result = await UserLogin(username, password);
-            return result;
-        }
-
         public async Task<User> GetUser(string sessionToken)
         {
             CheckConnection();
@@ -195,6 +184,12 @@ namespace OneLastSong.Db
 
                         if (await reader.ReadAsync())
                         {
+                            // if number of rows is 0, then the user is not found
+                            if(reader.FieldCount == 0)
+                            {
+                                return null;
+                            }
+
                             userJson = reader.GetString(0);
                             LogUtils.Debug("Raw JSON data: " + userJson);
 

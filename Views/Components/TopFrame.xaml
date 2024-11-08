@@ -40,13 +40,13 @@
         <DataTemplate x:Key="LoggedOutTemplate">
             <StackPanel Orientation="Horizontal">
                 <Button Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}"
-                        Click="signUpButton_Click">
+                        Command="{Binding ElementName=TopFramePage, Path=TopFrameViewModel.NavigateToSignUpPageCommand}">
                     <TextBlock l:Uids.Uid="SignUp_TextBlock" Foreground="{ThemeResource TEXT_LIGHT}" Style="{StaticResource TextBigButton}"/>
                 </Button>
                 <Border CornerRadius="10" Background="{ThemeResource BG_CONTRAST1}" Margin="{StaticResource MediumRightMargin}"
                         Padding="2">
                     <Button Style="{StaticResource IconButton}"
-                            Click="signInButton_Click">
+                            Command="{Binding ElementName=TopFramePage, Path=TopFrameViewModel.NavigateToSignInPageCommand}">
                         <TextBlock l:Uids.Uid="SignIn_TextBlock" Foreground="{ThemeResource TEXT_CONTRAST1}" Style="{StaticResource TextBigButton}"/>
                     </Button>
                 </Border>

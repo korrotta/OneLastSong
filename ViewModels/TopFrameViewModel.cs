@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using OneLastSong.Contracts;
@@ -14,6 +15,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using WinUI3Localizer;
 
 namespace OneLastSong.ViewModels
@@ -28,6 +30,25 @@ namespace OneLastSong.ViewModels
         private bool _isUserLoggedIn;
         public NavigationService NavigationService { get; set; }
         public User User { get; private set; } = new User();
+        public ICommand NavigateToSignUpPageCommand { get; }
+        public ICommand NavigateToSignInPageCommand { get; }
+
+        public TopFrameViewModel()
+        {
+            Language = Localizer.Get().GetCurrentLanguage();
+            Theme = ThemeUtils.GetStoredLocalTheme();
+            IsUserLoggedIn = false;
+            NavigationService = NavigationService.Get();
+
+            GoBackButtonColor = GetBrush("TEXT_DISABLED");
+            GoForwardButtonColor = GetBrush("TEXT_DISABLED");
+
+            NavigationService.RegisterNavChangeNotifier(this);
+            AuthService.Get().RegisterAuthChangeNotify(this);
+
+            NavigateToSignUpPageCommand = new RelayCommand(()=>Navigate(typeof(SignUpPage)));
+            NavigateToSignInPageCommand = new RelayCommand(() => Navigate(typeof(SignInPage)));
+        }
 
         public bool IsUserLoggedIn
         {
@@ -100,20 +121,6 @@ namespace OneLastSong.ViewModels
         private ResourceDictionary appRes = Application.Current.Resources;
 
         public XamlRoot XamlRoot { get; set; }
-
-        public TopFrameViewModel()
-        {
-            Language = Localizer.Get().GetCurrentLanguage();
-            Theme = ThemeUtils.GetStoredLocalTheme();
-            IsUserLoggedIn = false;
-            NavigationService = NavigationService.Get();
-
-            GoBackButtonColor = GetBrush("TEXT_DISABLED");
-            GoForwardButtonColor = GetBrush("TEXT_DISABLED");
-
-            NavigationService.RegisterNavChangeNotifier(this);
-            AuthService.Get().RegisterAuthChangeNotify(this);
-        }
 
         private SolidColorBrush GetBrush(string color)
         {
@@ -238,8 +245,9 @@ namespace OneLastSong.ViewModels
             }
 
             User = user;
-            IsUserLoggedIn = user != null;
+            IsUserLoggedIn = true;
             NavigationService.Navigate(typeof(HomePage));
+            NavigationService.ClearHistory();
 
             await DialogUtils.ShowDialogAsync("Welcome", $"Welcome {user.Username}!", XamlRoot);
         }

@@ -26,7 +26,13 @@ namespace OneLastSong.DAOs
 
         public async Task SignInUser(string username, string password)
         {
-            String token = await _db.SignInUser(username, password);
+            String token = await _db.UserLogin(username, password);
+
+            if(token == "")
+            {
+                throw new Exception("Invalid credentials");
+            }
+
             AuthService.Get().SetToken(token);
             var user = await _db.GetUser(token);
             AuthService.Get().SetUser(user);

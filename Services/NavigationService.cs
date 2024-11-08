@@ -114,6 +114,13 @@ namespace OneLastSong.Services
             NotifyNavChangeNotifiers();
         }
 
+        public void ClearHistory()
+        {
+            _backStack.Clear();
+            _forwardStack.Clear();
+            NotifyNavChangeNotifiers();
+        }
+
         private void NotifyNavChangeNotifiers()
         {
             foreach (var navChangeNotifier in navChangeNotifiers)

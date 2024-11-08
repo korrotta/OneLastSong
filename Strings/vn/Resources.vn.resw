@@ -192,4 +192,13 @@
   <data name="Dont_have_an_account?_Run.Text" xml:space="preserve">
     <value>Bạn chưa có tài khoản?</value>
   </data>
+  <data name="Test_String" xml:space="preserve">
+    <value>Đây là test VN</value>
+  </data>
+  <data name="Login_String" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="SignInFail_String" xml:space="preserve">
+    <value>Tên đăng nhập hoặc mật khẩu không đúng!</value>
+  </data>
 </root>
