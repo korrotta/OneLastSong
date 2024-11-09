@@ -27,22 +27,25 @@
             <TextBlock HorizontalAlignment="Center" l:Uids.Uid="Sign_up_to_start_listening" Style="{StaticResource Body1}" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
 
 
-            <TextBlock l:Uids.Uid="Username_TextBlock" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
             <!-- Username TextBox -->
-            <TextBox l:Uids.Uid="Username_TextBox" Height="40" VerticalAlignment="Center" Margin="0,-10,0,0"/>
+            <TextBlock l:Uids.Uid="Username_TextBlock" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
+            <TextBox Text="{x:Bind SignUpPageViewModel.Username, Mode=TwoWay}" TextChanged="{x:Bind SignUpPageViewModel.Username_TextChanged}" l:Uids.Uid="Username_TextBox" Height="40" VerticalAlignment="Center" Margin="0,-10,0,0"/>
+            <TextBlock Text="{x:Bind SignUpPageViewModel.UsernameValidationMessage, Mode=OneWay}" Foreground="Red" Margin="0,-10,0,0"/>
 
             <!-- Password TextBox -->
             <TextBlock l:Uids.Uid="Password_TextBlock" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
-            <PasswordBox l:Uids.Uid="Password_PasswordBox" Height="40" VerticalAlignment="Center" Margin="0,-10,0,0"/>
-
-            <!-- Password TextBox -->
+            <PasswordBox Password="{x:Bind SignUpPageViewModel.Password, Mode=TwoWay}" PasswordChanged="{x:Bind SignUpPageViewModel.Password_PasswordChanged}" l:Uids.Uid="Password_PasswordBox" Height="40" VerticalAlignment="Center" Margin="0,-10,0,0"/>
+            <TextBlock Text="{x:Bind SignUpPageViewModel.PasswordValidationMessage, Mode=OneWay}" Foreground="Red" Margin="0,-10,0,0"/>
+            
+            <!-- Confirm Password TextBox -->
             <TextBlock l:Uids.Uid="Confirm_password_TextBlock" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
-            <PasswordBox l:Uids.Uid="Confirm_password_PasswordBox" Height="40" VerticalAlignment="Center" Margin="0,-10,0,0"/>
-
+            <PasswordBox Password="{x:Bind SignUpPageViewModel.ConfirmPassword, Mode=TwoWay}" PasswordChanged="{x:Bind SignUpPageViewModel.ConfirmPassword_PasswordChanged}" l:Uids.Uid="Confirm_password_PasswordBox" Height="40" VerticalAlignment="Center" Margin="0,-10,0,0"/>
+            <TextBlock Text="{x:Bind SignUpPageViewModel.ConfirmPasswordValidationMessage, Mode=OneWay}" Foreground="Red" Margin="0,-10,0,0"/>
+            
             <!-- Sign Up Button -->
             <Border CornerRadius="16" Background="{ThemeResource BG_CONTRAST1}" Margin="{StaticResource MediumRightMargin}"
             Padding="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Style="{StaticResource IconButton}" Width="200" Height="40">
+                <Button Style="{StaticResource IconButton}" Width="200" Height="40" Command="{x:Bind SignUpPageViewModel.SignUpCommand}">
                     <TextBlock l:Uids.Uid="SignUp_TextBlock" Foreground="{ThemeResource TEXT_CONTRAST1}" Style="{StaticResource TextBigButton}"
                            HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Button>

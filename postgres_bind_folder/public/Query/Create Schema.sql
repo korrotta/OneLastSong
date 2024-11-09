@@ -14,6 +14,10 @@ DROP TABLE IF EXISTS categories CASCADE;
 DROP TABLE IF EXISTS friends CASCADE;
 DROP TABLE IF EXISTS followers CASCADE;
 
+-- Extensions
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- Users table
 CREATE TABLE users 
 (
@@ -158,8 +162,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Enable the uuid-ossp extension if not already enabled
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+DROP FUNCTION IF EXISTS public.get_encrypted_password;
+
+-- Create the get_encrypted_password function
+CREATE OR REPLACE FUNCTION get_encrypted_password(ip_password VARCHAR)
+RETURNS VARCHAR
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    RETURN crypt(ip_password, gen_salt('bf'));
+END;
 
 -- Create a function to generate a UUID token
 CREATE OR REPLACE FUNCTION generate_token()
@@ -172,7 +185,7 @@ $$ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS public.user_login;
 
 -- Create the login function
-CREATE OR REPLACE FUNCTION user_login(ip_username VARCHAR, ip_password_hash VARCHAR)
+CREATE OR REPLACE FUNCTION user_login(ip_username VARCHAR, ip_password VARCHAR)
 RETURNS VARCHAR
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -185,7 +198,7 @@ BEGIN
     -- Verify the user's credentials
     SELECT id INTO v_user_id
     FROM users
-    WHERE users.username = ip_username AND users.password_hash = ip_password_hash;
+    WHERE users.username = ip_username AND users.password_hash = crypt(ip_password, users.password_hash);
 
     -- If the user is found, create or update the session
     IF v_user_id IS NOT NULL THEN
@@ -280,6 +293,114 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Create a composite type for ResultMessage
+CREATE TYPE result_message AS (
+    status INT,
+    error_message VARCHAR,
+    json_data VARCHAR
+);
+
+CREATE OR REPLACE FUNCTION get_result_message(status INT, error_message VARCHAR, json_data JSONB)
+RETURNS JSONB 
+SECURITY DEFINER
+AS $$
+BEGIN
+    RETURN jsonb_build_object(
+        'Status', status,
+        'ErrorMessage', error_message,
+        'JsonData', json_data::TEXT
+    );
+END;
+$$ LANGUAGE plpgsql
+
+-- Create validate username function return empty string if username is valid, otherwise return an error message
+CREATE OR REPLACE FUNCTION validate_username(ip_username VARCHAR)
+RETURNS VARCHAR
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_error_message VARCHAR;
+BEGIN
+    -- Check if the username already exists
+    SELECT id INTO v_user_id
+    FROM users
+    WHERE users.username = ip_username;
+
+    -- If the username exists, return an error message
+    IF v_user_id IS NOT NULL THEN
+        v_error_message := 'Username already exists.';
+        RETURN v_error_message;
+    ELSE
+        -- If the username is valid, return an empty string
+        RETURN '';
+    END IF;
+END;
+
+-- Create validate password function return empty string if password is valid, otherwise return an error message
+CREATE OR REPLACE FUNCTION validate_password(ip_password VARCHAR)
+RETURNS VARCHAR
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_error_message VARCHAR;
+BEGIN
+    -- Check if the password is at least 8 characters long
+    IF LENGTH(ip_password) < 8 THEN
+        v_error_message := 'Password must be at least 8 characters long.';
+        RETURN v_error_message;
+    ELSE
+        -- If the password is valid, return an empty string
+        RETURN '';
+    END IF;
+END;
+
+DROP FUNCTION IF EXISTS public.get_encrypted_password;
+
+-- Create the get_encrypted_password function
+CREATE OR REPLACE FUNCTION get_encrypted_password(ip_password VARCHAR)
+RETURNS VARCHAR
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    RETURN crypt(ip_password, gen_salt('bf'));
+END;
+$$;
+
+-- Create the signup function, returns a message as json object with status 0 if successful, otherwise an error message and status 1
+CREATE OR REPLACE FUNCTION user_signup(ip_username VARCHAR, ip_password VARCHAR)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_error_message VARCHAR;
+    v_status INT;
+    v_user_id INTEGER;
+BEGIN
+    -- Validate the username
+    v_error_message := validate_username(ip_username);
+    IF v_error_message <> '' THEN
+        RETURN get_result_message(1, v_error_message, '{}'::JSONB);
+    END IF;
+
+    -- Validate the password
+    v_error_message := validate_password(ip_password);
+    IF v_error_message <> '' THEN
+        RETURN get_result_message(1, v_error_message, '{}'::JSONB);
+    END IF;
+
+    -- Insert the new user
+    INSERT INTO users (username, password_hash, avatar_url, profile_quote, description)
+    VALUES (ip_username, get_encrypted_password(ip_password),'', '', '')
+    RETURNING id INTO v_user_id;
+
+    -- Return success message
+    RETURN get_result_message(0, '', '{}'::JSONB);
+END;
+$$;
+
 -- Security --
 -- Create the restricted_user role with login capabilities and a password
 CREATE ROLE restricted_user WITH LOGIN PASSWORD '12345678';
@@ -291,6 +412,10 @@ REVOKE ALL ON ALL FUNCTIONS IN SCHEMA public FROM restricted_user;
 GRANT EXECUTE ON FUNCTION user_login(VARCHAR, VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION validate_session(VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_user_data(VARCHAR) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_result_message(INT, VARCHAR, JSONB) TO restricted_user;
+GRANT EXECUTE ON FUNCTION validate_username(VARCHAR) TO restricted_user;
+GRANT EXECUTE ON FUNCTION validate_password(VARCHAR) TO restricted_user;
+GRANT EXECUTE ON FUNCTION user_signup(VARCHAR, VARCHAR) TO restricted_user;
 
 SELECT user_login('test', 'test');
 SELECT validate_session('7d683b5d-6c62-474f-b666-7df5017edabc');

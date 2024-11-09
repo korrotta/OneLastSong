@@ -15,6 +15,10 @@ namespace OneLastSong.Utils
         public static readonly string TEST_STRING = "Test_String";
         public static readonly string LOGIN_STRING = "Login_String";
         public static readonly string SIGN_IN_FAIL_STRING= "SignInFail_String";
+        public static readonly string FEATURE_NOT_IMPLEMENTED_STRING = "FeatureNotImplemented_String";
+        public static readonly string INFO_STRING = "Info_String";
+        public static readonly string ERROR_STRING = "Error_String";
+        public static readonly string SIGN_UP_SUCCESS_STRING = "SignUpSuccess_String";
 
         public static async Task InitializeLocalizer()
         {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
+using OneLastSong.Models;
 using OneLastSong.Services;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,16 @@ namespace OneLastSong.DAOs
             AuthService.Get().SetToken(token);
             var user = await _db.GetUser(token);
             AuthService.Get().SetUser(user);
+        }
+
+        public async Task SignUpUser(string username, string password)
+        {
+            ResultMessage result = await _db.UserSignUp(username, password);
+
+            if (result.Status != ResultMessage.STATUS_OK)
+            {
+                throw new Exception(result.ErrorMessage);
+            }
         }
 
         public static UserDAO Get()

@@ -39,19 +39,18 @@ namespace OneLastSong.Views.Components
             SignInPageViewModel.XamlRoot = this.XamlRoot;
         }
 
-        private void ForgotPassword_Click(object sender, RoutedEventArgs e)
+        private async void ForgotPassword_Click(object sender, RoutedEventArgs e)
         {
-            // Handle forgot password logic here
+            await DialogUtils.ShowDialogAsync(
+                Localizer.Get().GetLocalizedString(LocalizationUtils.INFO_STRING),
+                Localizer.Get().GetLocalizedString(LocalizationUtils.FEATURE_NOT_IMPLEMENTED_STRING),
+                this.XamlRoot
+                );
         }
 
         private void SignInButton_Click(object sender, RoutedEventArgs e)
         {
             SignInPageViewModel.SignInUser(tbUsername.Text, pbPassword.Password);
-        }
-
-        private void SignUpButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Handle sign up navigation here
         }
     }
 }

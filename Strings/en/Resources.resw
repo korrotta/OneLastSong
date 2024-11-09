@@ -201,4 +201,16 @@
   <data name="SignInFail_String" xml:space="preserve">
     <value>Username or password is incorrect!</value>
   </data>
+  <data name="FeatureNotImplemented_String" xml:space="preserve">
+    <value>This feature is still under development. We are sorry for this inconvenience :(</value>
+  </data>
+  <data name="Info_String" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Error_String" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="SignUpSuccess_String" xml:space="preserve">
+    <value>Signed up successfully!</value>
+  </data>
 </root>

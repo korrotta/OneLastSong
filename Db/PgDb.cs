@@ -211,9 +211,51 @@ namespace OneLastSong.Db
             }
         }
 
+        public async Task<ResultMessage> UserSignUp(string username, string password)
+        {
+            CheckConnection();
+
+            try
+            {
+                await using (var cmd = dataSource.CreateCommand(QUERY_USER_SIGNUP))
+                {
+                    cmd.Parameters.AddWithValue("username", username);
+                    cmd.Parameters.AddWithValue("password", password);
+
+                    LogUtils.Debug("Executing command: " + QUERY_USER_SIGNUP);
+
+                    // Execute and log returned data
+                    await using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        LogUtils.Debug("Command executed, reading results...");
+
+                        if (await reader.ReadAsync())
+                        {
+                            string json = reader.GetString(0);
+                            LogUtils.Debug("Raw JSON data: " + json);
+
+                            return ResultMessage.FromJson(json);
+                        }
+                        else
+                        {
+                            LogUtils.Debug("No rows returned.");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Debug($"Error executing query: {ex.Message}");
+                throw;
+            }
+
+            return null;
+        }
+
 
         // Our Query strings
         public static readonly string QUERY_USER_LOGIN = "SELECT user_login(@username, @password)";
         public static readonly string QUERY_GET_USER = "SELECT get_user_data(@session_token)";
+        public static readonly string QUERY_USER_SIGNUP = "SELECT user_signup(@username, @password)";
     }
 }

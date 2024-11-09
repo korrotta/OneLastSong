@@ -15,5 +15,6 @@ namespace OneLastSong.Contracts
         public Task<string> DoTest();
         public Task<string> UserLogin(string username, string password);
         public Task<User> GetUser(string sessionToken);
+        public Task<ResultMessage> UserSignUp(string username, string password);
     }
 }

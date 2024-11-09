@@ -201,4 +201,16 @@
   <data name="SignInFail_String" xml:space="preserve">
     <value>Tên đăng nhập hoặc mật khẩu không đúng!</value>
   </data>
+  <data name="FeatureNotImplemented_String" xml:space="preserve">
+    <value>Tính năng này vẫn đang được phát triển. Chúng tôi xin lỗi vì sư bất tiện này :(</value>
+  </data>
+  <data name="Info_String" xml:space="preserve">
+    <value>Thông tin</value>
+  </data>
+  <data name="Error_String" xml:space="preserve">
+    <value>Lỗi</value>
+  </data>
+  <data name="SignUpSuccess_String" xml:space="preserve">
+    <value>Đăng ký thành công!</value>
+  </data>
 </root>

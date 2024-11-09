@@ -29,6 +29,12 @@ namespace OneLastSong.Views
         public SignUpPage()
         {
             this.InitializeComponent();
+            Loaded += SignUpPage_Loaded;
+        }
+
+        private void SignUpPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            SignUpPageViewModel.XamlRoot = this.XamlRoot;
         }
     }
 }
