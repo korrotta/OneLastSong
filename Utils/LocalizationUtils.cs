@@ -22,6 +22,7 @@ namespace OneLastSong.Utils
         public static readonly string ERROR_STRING = "Error_String";
         public static readonly string SIGN_UP_SUCCESS_STRING = "SignUpSuccess_String";
         public static readonly string SIGN_IN_SUCCESS_STRING = "SignInSuccess_String";
+        public static readonly string FORM_CONTAINING_ERROR_STRING = "FormContainingError_String";
 
         public static async Task InitializeLocalizer()
         {

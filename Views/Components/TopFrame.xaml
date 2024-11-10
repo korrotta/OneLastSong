@@ -29,11 +29,42 @@
                 <Button Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
                     <FontIcon Glyph="&#xE716;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
                 </Button>
-                <Ellipse Width="40" Height="40" Margin="{StaticResource MediumRightMargin}">
-                    <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding ElementName=TopFramePage, Path=TopFrameViewModel.User.AvatarUrl}" Stretch="UniformToFill"/>
-                    </Ellipse.Fill>
-                </Ellipse>
+                
+                <!--Avatar-->
+                <Button  Width="40" Height="40" Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}" Foreground="{ThemeResource TEXT_PRIMARY}">
+                    <Ellipse Width="40" Height="40">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{Binding ElementName=TopFramePage, Path=TopFrameViewModel.User.AvatarUrl}" Stretch="UniformToFill"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+
+                    <Button.Flyout>
+                        <Flyout FlyoutPresenterStyle="{StaticResource CustomFlyoutPresenterStyle}">
+                            <StackPanel Orientation="Vertical" Spacing="4">
+                                <Button Style="{StaticResource IconButton}" HorizontalContentAlignment="Left">
+                                    <StackPanel Orientation="Horizontal" Width="100">
+                                        <FontIcon Glyph="}" FontSize="16" Margin="0,0,8,0"  Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                                        <TextBlock l:Uids.Uid="Account_IconTextButton" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Style="{StaticResource IconButton}">
+                                    <StackPanel Orientation="Horizontal" Width="100">
+                                        <FontIcon Glyph="}" FontSize="16" Margin="0,0,8,0"  Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                                        <TextBlock l:Uids.Uid="Profile_IconTextButton" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                                    </StackPanel>
+                                </Button>
+                                <Rectangle Height="1" Fill="{ThemeResource BG_LIGHT_TERTIARY}" Margin="{StaticResource MediumMargin}"/>
+                                <Button Style="{StaticResource IconButton}" 
+                                        Command="{Binding ElementName=TopFramePage, Path=TopFrameViewModel.LogoutCommand}">
+                                    <StackPanel Orientation="Horizontal" Width="100">
+                                        <FontIcon Glyph="}" FontSize="16" Margin="0,0,8,0"  Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                                        <TextBlock l:Uids.Uid="Logout_IconTextButton" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>                
             </StackPanel>
         </DataTemplate>
 

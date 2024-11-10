@@ -54,5 +54,15 @@ namespace OneLastSong.Services
         {
             return (AuthService)((App)Application.Current).Services.GetService(typeof(AuthService));
         }
+
+        public void SignOut()
+        {
+            User = null;
+            token = null;
+            foreach (var notify in _authChangeNotifies)
+            {
+                notify.OnUserChange(null);
+            }
+        }
     }
 }

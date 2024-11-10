@@ -54,7 +54,7 @@ namespace OneLastSong.ViewModels
             {
                 if(!ValidateAll())
                 {
-                    SnackbarUtils.ShowSnackbar(Localizer.Get().GetLocalizedString(LocalizationUtils.ERROR_STRING),
+                    SnackbarUtils.ShowSnackbar(Localizer.Get().GetLocalizedString(LocalizationUtils.FORM_CONTAINING_ERROR_STRING),
                         SnackbarType.Error);
                     return;
                 }

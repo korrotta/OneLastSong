@@ -222,4 +222,16 @@
   <data name="SignInSuccess_String" xml:space="preserve">
     <value>Signed in successfully!</value>
   </data>
+  <data name="FormContainingError_String" xml:space="preserve">
+    <value>Form containing error(s).</value>
+  </data>
+  <data name="Account_IconTextButton.Text" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="Profile_IconTextButton.Text" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Logout_IconTextButton.Text" xml:space="preserve">
+    <value>Logout</value>
+  </data>
 </root>

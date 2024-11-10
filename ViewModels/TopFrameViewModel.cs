@@ -32,6 +32,7 @@ namespace OneLastSong.ViewModels
         public User User { get; private set; } = new User();
         public ICommand NavigateToSignUpPageCommand { get; }
         public ICommand NavigateToSignInPageCommand { get; }
+        public ICommand LogoutCommand { get; }
 
         public TopFrameViewModel()
         {
@@ -48,6 +49,7 @@ namespace OneLastSong.ViewModels
 
             NavigateToSignUpPageCommand = new RelayCommand(()=>Navigate(typeof(SignUpPage)));
             NavigateToSignInPageCommand = new RelayCommand(() => Navigate(typeof(SignInPage)));
+            LogoutCommand = new RelayCommand(LogOut);
         }
 
         public bool IsUserLoggedIn
@@ -231,7 +233,9 @@ namespace OneLastSong.ViewModels
             if(user == null)
             {
                 IsUserLoggedIn = false;
+                SnackbarUtils.ShowSnackbar("User logged out", SnackbarType.Info);
                 NavigationService.Navigate(typeof(SignInPage));
+                NavigationService.ClearHistory();
                 return;
             }
 
@@ -241,6 +245,11 @@ namespace OneLastSong.ViewModels
             NavigationService.ClearHistory();
 
             await DialogUtils.ShowDialogAsync("Welcome", $"Welcome {user.Username}!", XamlRoot);
+        }
+
+        public void LogOut()
+        {
+            AuthService.Get().SignOut();
         }
     }
 }

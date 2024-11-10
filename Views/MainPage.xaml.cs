@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using OneLastSong.Contracts;
 using OneLastSong.DAOs;
 using OneLastSong.ModelViews;
+using OneLastSong.Services;
 using OneLastSong.Utils;
 using OneLastSong.Views.Components;
 using System;
