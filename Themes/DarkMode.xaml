@@ -10,6 +10,10 @@
     <SolidColorBrush x:Key="BG_TERTIARY" Color="#1F1F1F"/>
     <SolidColorBrush x:Key="BG_LIGHT_TERTIARY" Color="#2A2929"/>
     <SolidColorBrush x:Key="TEXT_DISABLED" Color="#2A2929"/>
+    <SolidColorBrush x:Key="INFO_BRUSH" Color="LightBlue"/>
+    <SolidColorBrush x:Key="ERROR_BRUSH" Color="Red"/>
+    <SolidColorBrush x:Key="WARNING_BRUSH" Color="Yellow"/>
+    <SolidColorBrush x:Key="SUCCESS_BRUSH" Color="Green"/>
 
     <Color x:Key="cMainBg">#000000</Color>
     <Color x:Key="cBG_PRIMARY">#010B17</Color>
@@ -21,4 +25,8 @@
     <Color x:Key="cBG_TERTIARY">#1F1F1F</Color>
     <Color x:Key="cBG_LIGHT_TERTIARY">#2A2929</Color>
     <Color x:Key="cTEXT_DISABLED">#2A2929</Color>
+    <Color x:Key="cINFO_BRUSH">LightBlue</Color>
+    <Color x:Key="cERROR_BRUSH">Red</Color>
+    <Color x:Key="cWARNING_BRUSH">Yellow</Color>
+    <Color x:Key="cSUCCESS_BRUSH">Green</Color>
 </ResourceDictionary>

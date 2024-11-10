@@ -40,8 +40,8 @@ namespace OneLastSong.ViewModels
             IsUserLoggedIn = false;
             NavigationService = NavigationService.Get();
 
-            GoBackButtonColor = GetBrush("TEXT_DISABLED");
-            GoForwardButtonColor = GetBrush("TEXT_DISABLED");
+            GoBackButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_DISABLED);
+            GoForwardButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_DISABLED);
 
             NavigationService.RegisterNavChangeNotifier(this);
             AuthService.Get().RegisterAuthChangeNotify(this);
@@ -122,15 +122,6 @@ namespace OneLastSong.ViewModels
 
         public XamlRoot XamlRoot { get; set; }
 
-        private SolidColorBrush GetBrush(string color)
-        {
-            if (appRes.TryGetValue(color, out object brush))
-            {
-                return (SolidColorBrush)brush;
-            }
-            return null;
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void langComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -206,20 +197,20 @@ namespace OneLastSong.ViewModels
 
             if (CanGoBack)
             {
-                GoBackButtonColor = GetBrush("TEXT_PRIMARY");
+                GoBackButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_PRIMARY);
             }
             else
             {
-                GoBackButtonColor = GetBrush("TEXT_DISABLED");
+                GoBackButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_DISABLED);
             }
 
             if (CanGoForward)
             {
-                GoForwardButtonColor = GetBrush("TEXT_PRIMARY");
+                GoForwardButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_PRIMARY);
             }
             else
             {
-                GoForwardButtonColor = GetBrush("TEXT_DISABLED");
+                GoForwardButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_DISABLED);
             }
         }
 

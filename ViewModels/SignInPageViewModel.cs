@@ -38,6 +38,7 @@ namespace OneLastSong.ViewModels
             try
             {
                 await UserDAO.Get().SignInUser(text, password);
+                SnackbarUtils.ShowSnackbar(Localizer.Get().GetLocalizedString(LocalizationUtils.SIGN_IN_SUCCESS_STRING), SnackbarType.Success);
             }
             catch (Exception ex)
             {

@@ -213,4 +213,13 @@
   <data name="SignUpSuccess_String" xml:space="preserve">
     <value>Đăng ký thành công!</value>
   </data>
+  <data name="Warning_String" xml:space="preserve">
+    <value>Cảnh báo</value>
+  </data>
+  <data name="Success_String" xml:space="preserve">
+    <value>Thành công</value>
+  </data>
+  <data name="SignInSuccess_String" xml:space="preserve">
+    <value>Đăng nhập thành công!</value>
+  </data>
 </root>

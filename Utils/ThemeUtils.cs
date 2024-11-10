@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -11,6 +12,14 @@ namespace OneLastSong.Utils
         public static readonly string DARK_THEME = "Dark";
         public static readonly string LIGHT_THEME = "Light";
         private static string _currentTheme = DARK_THEME;
+
+        public readonly static string TEXT_PRIMARY = "TEXT_PRIMARY";
+        public readonly static string TEXT_DISABLED = "TEXT_DISABLED";
+
+        public readonly static string INFO_BRUSH = "INFO_BRUSH";
+        public readonly static string SUCCESS_BRUSH = "SUCCESS_BRUSH";
+        public readonly static string WARNING_BRUSH = "WARNING_BRUSH";
+        public readonly static string ERROR_BRUSH = "ERROR_BRUSH";
 
         public static string GetStoredLocalTheme()
         {
@@ -94,6 +103,16 @@ namespace OneLastSong.Utils
         {
             string storedTheme = GetStoredLocalTheme();
             ChangeTheme(storedTheme, true);
+        }
+
+        public static SolidColorBrush GetBrush(string color)
+        {
+            if (App.Current.Resources.TryGetValue(color, out object brush))
+            {
+                return (SolidColorBrush)brush;
+            }
+            //return white brush if color not found
+            return new SolidColorBrush(Microsoft.UI.Colors.White);
         }
     }
 }

@@ -213,4 +213,13 @@
   <data name="SignUpSuccess_String" xml:space="preserve">
     <value>Signed up successfully!</value>
   </data>
+  <data name="Warning_String" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Success_String" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="SignInSuccess_String" xml:space="preserve">
+    <value>Signed in successfully!</value>
+  </data>
 </root>

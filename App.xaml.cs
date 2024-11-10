@@ -80,9 +80,9 @@ namespace OneLastSong
             mainWindow.NavigateMainFrameTo(typeof(MainPage));
         }
 
-        private Window _window;
+        private MainWindow _window;
 
-        public Window MainWindow
+        public MainWindow MainWindow
         {
             get
             {
