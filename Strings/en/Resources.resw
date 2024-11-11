@@ -234,4 +234,13 @@
   <data name="Logout_IconTextButton.Text" xml:space="preserve">
     <value>Logout</value>
   </data>
+  <data name="Items_TextBlock.Text" xml:space="preserve">
+    <value>Item(s)</value>
+  </data>
+  <data name="Discovery_album(s)_TextBlock.Text" xml:space="preserve">
+    <value>Discovery album(s)</value>
+  </data>
+  <data name="Discovery_song(s)_TextBlock.Text" xml:space="preserve">
+    <value>Discovery song(s)</value>
+  </data>
 </root>

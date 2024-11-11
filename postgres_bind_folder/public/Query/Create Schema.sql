@@ -46,6 +46,7 @@ CREATE TABLE albums
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     artist VARCHAR(255) NOT NULL,
+    cover_image_url VARCHAR(255),
     release_date DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id INTEGER REFERENCES users(id) ON DELETE SET NULL
@@ -69,8 +70,10 @@ CREATE TABLE audios
     category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
     duration INTEGER NOT NULL, -- Duration in seconds
     url VARCHAR(255) NOT NULL,
+    cover_image_url VARCHAR(255),
     author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    description TEXT
 );
 
 -- Playlists table
@@ -401,6 +404,109 @@ BEGIN
 END;
 $$;
 
+-- Create a function to get the top n most liked audios
+DROP FUNCTION IF EXISTS get_most_like_audios(n INT);
+CREATE OR REPLACE FUNCTION get_most_like_audios(n INT)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_json_data JSONB;
+BEGIN
+    -- Use a CTE to calculate the number of likes for each audio
+    WITH audio_likes AS (
+        SELECT 
+            a.id,
+            a.title,
+            a.artist,
+            a.album_id,
+            a.category_id,
+            a.duration,
+            a.url,
+            a.cover_image_url,
+            a.author_id,
+            a.created_at,
+            a.description,
+            COUNT(l.audio_id) AS likes
+        FROM audios a
+        LEFT JOIN likes l ON a.id = l.audio_id
+        GROUP BY a.id
+        ORDER BY COUNT(l.audio_id) DESC
+        LIMIT n
+    )
+    -- Select the top n audios sorted by the number of likes
+    SELECT json_agg(json_build_object(
+        'AudioId', al.id,
+        'Title', al.title,
+        'Artist', al.artist,
+        'AlbumId', al.album_id,
+        'CategoryId', al.category_id,
+        'Duration', al.duration,
+        'Url', al.url,
+        'CoverImageUrl', al.cover_image_url,
+        'AuthorId', al.author_id,
+        'CreatedAt', al.created_at,
+        'Description', al.description,
+        'Likes', al.likes
+    )) INTO v_json_data
+    FROM audio_likes al;
+
+    -- Return the result message
+    RETURN get_result_message(0, '', v_json_data);
+
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION get_album_item_count(album_id INTEGER)
+RETURNS INTEGER AS $$
+DECLARE
+    count INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO count
+    FROM audios
+    WHERE audios.album_id = album_id;
+    RETURN count;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to get first n albums
+-- Create a function to get the first n albums
+CREATE OR REPLACE FUNCTION get_first_n_albums(n INT)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_json_data JSONB;
+BEGIN
+    -- Select the first n albums
+    SELECT json_agg(json_build_object(
+        'AlbumId', a.id,
+        'Title', a.title,
+        'Artist', a.artist,
+        'CoverImageUrl', a.cover_image_url,
+        'ReleaseDate', a.release_date,
+        'CreatedAt', a.created_at,
+        'UserId', a.user_id,
+        'ItemCount', (
+            SELECT COUNT(*)
+            FROM audios au
+            WHERE au.album_id = a.id
+        )
+    )) INTO v_json_data
+    FROM (
+        SELECT *
+        FROM albums a
+        ORDER BY a.created_at DESC
+        LIMIT n
+    ) a;
+
+    -- Return the result message
+    RETURN get_result_message(0, '', v_json_data);
+END;
+$$;
+
 -- Security --
 -- Create the restricted_user role with login capabilities and a password
 CREATE ROLE restricted_user WITH LOGIN PASSWORD '12345678';
@@ -416,6 +522,9 @@ GRANT EXECUTE ON FUNCTION get_result_message(INT, VARCHAR, JSONB) TO restricted_
 GRANT EXECUTE ON FUNCTION validate_username(VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION validate_password(VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION user_signup(VARCHAR, VARCHAR) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_most_like_audios(INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_album_item_count(INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_first_n_albums(INT) TO restricted_user;
 
 SELECT user_login('test', 'test');
 SELECT validate_session('7d683b5d-6c62-474f-b666-7df5017edabc');

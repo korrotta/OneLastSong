@@ -234,4 +234,13 @@
   <data name="Logout_IconTextButton.Text" xml:space="preserve">
     <value>Đăng xuất</value>
   </data>
+  <data name="Items_TextBlock.Text" xml:space="preserve">
+    <value>Bài</value>
+  </data>
+  <data name="Discovery_album(s)_TextBlock.Text" xml:space="preserve">
+    <value>Khám phá album</value>
+  </data>
+  <data name="Discovery_song(s)_TextBlock.Text" xml:space="preserve">
+    <value>Khám phá bài hát</value>
+  </data>
 </root>

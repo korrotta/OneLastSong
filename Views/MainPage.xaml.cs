@@ -56,6 +56,8 @@ namespace OneLastSong.Views
                 LogUtils.Debug("Database initialized successfully");
                 ((App)Application.Current).Services.GetService<TestDAO>().Init();
                 ((App)Application.Current).Services.GetService<UserDAO>().Init();
+                ((App)Application.Current).Services.GetService<AudioDAO>().Init();
+                ((App)Application.Current).Services.GetService<AlbumDAO>().Init();
             }
             catch (Exception ex)
             {

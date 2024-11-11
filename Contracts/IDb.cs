@@ -9,12 +9,13 @@ namespace OneLastSong.Contracts
 {
     public interface IDb
     {
-        public Task<AudioData> GetAudioDataByIdAsync(string id);
         public Task Connect();
         public Task Dispose();
         public Task<string> DoTest();
         public Task<string> UserLogin(string username, string password);
         public Task<User> GetUser(string sessionToken);
         public Task<ResultMessage> UserSignUp(string username, string password);
+        public Task<ResultMessage> GetMostLikeAudios(int limit=1000);
+        public Task<ResultMessage> GetFirstNAlbums(int limit = 20);
     }
 }

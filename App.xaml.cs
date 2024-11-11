@@ -54,6 +54,8 @@ namespace OneLastSong
             // DAOs
             services.AddSingleton<TestDAO>();
             services.AddSingleton<UserDAO>();
+            services.AddSingleton<AudioDAO>();
+            services.AddSingleton<AlbumDAO>();
             // Services
             services.AddSingleton<NavigationService>();
             services.AddSingleton<AuthService>();

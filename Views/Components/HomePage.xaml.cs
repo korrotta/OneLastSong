@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using OneLastSong.Models;
+using OneLastSong.DAOs;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,8 +28,16 @@ namespace OneLastSong.Views.Components
         public HomePage()
         {
             this.InitializeComponent();
-            StyledGrid.ItemsSource = GenerateRandomData(10);
-            ExampleList.ItemsSource = GenerateRandomData(10);
+            Loaded += HomePage_Loaded;
+        }
+
+        private async void HomePage_Loaded(object sender, RoutedEventArgs e)
+        {
+            List<Audio> listAudios = await AudioDAO.Get().GetMostLikeAudios();
+            DiscoveryList.ItemsSource = listAudios;
+
+            List<Album> listAlbums = await AlbumDAO.Get().GetMostLikeAlbums();
+            AlbumList.ItemsSource = listAlbums;
         }
 
         private List<CustomDataObject> GenerateRandomData(int count)
