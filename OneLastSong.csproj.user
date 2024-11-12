@@ -11,6 +11,12 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\Dialogs\SimpleMessageThemedDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Dialogs\CreateNewPlaylistDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Components\IconTextButton.xaml">
       <SubType>Designer</SubType>
     </Page>

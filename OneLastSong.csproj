@@ -32,6 +32,8 @@
     <None Remove="Views\Components\SignInPage.xaml" />
     <None Remove="Views\Components\TopFrame.xaml" />
     <None Remove="Views\ContentFrame.xaml" />
+    <None Remove="Views\Dialogs\CreateNewPlaylistDialog.xaml" />
+    <None Remove="Views\Dialogs\SimpleMessageThemedDialog.xaml" />
     <None Remove="Views\MainPage.xaml" />
     <None Remove="Views\SignUpPage.xaml" />
   </ItemGroup>
@@ -174,6 +176,16 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\SimpleMessageThemedDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\CreateNewPlaylistDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Components\IconTextButton.xaml">

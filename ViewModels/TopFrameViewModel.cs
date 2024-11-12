@@ -161,7 +161,7 @@ namespace OneLastSong.ViewModels
                 {
                     string selectedTheme = comboBoxItem.Tag.ToString();
                     LogUtils.Debug($"Selected Theme: {selectedTheme}");
-                    ThemeUtils.ChangeTheme(selectedTheme, true);
+                    ThemeUtils.ChangeTheme(selectedTheme);
 
 
                     if (XamlRoot != null)

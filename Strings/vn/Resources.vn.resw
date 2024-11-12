@@ -243,4 +243,19 @@
   <data name="Discovery_song(s)_TextBlock.Text" xml:space="preserve">
     <value>Khám phá bài hát</value>
   </data>
+  <data name="New_Playlist_ContentDialog.Title" xml:space="preserve">
+    <value>Tạo Playlist mới</value>
+  </data>
+  <data name="Enter_playlist_name_TextBox.PlaceholderText" xml:space="preserve">
+    <value>Nhập vào tên playlist</value>
+  </data>
+  <data name="Ok_Button.Content" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="Cancel_Button.Content" xml:space="preserve">
+    <value>Bỏ</value>
+  </data>
+  <data name="NotSignedInError_String" xml:space="preserve">
+    <value>Bạn cần đăng nhập để sử dụng chức năng này!</value>
+  </data>
 </root>

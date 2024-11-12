@@ -21,6 +21,8 @@ namespace OneLastSong.Utils
         public readonly static string WARNING_BRUSH = "WARNING_BRUSH";
         public readonly static string ERROR_BRUSH = "ERROR_BRUSH";
 
+        private static bool _isInitialized = false;
+
         public static string GetStoredLocalTheme()
         {
             try
@@ -54,7 +56,19 @@ namespace OneLastSong.Utils
             }
         }
 
-        public static void ChangeTheme(String themeKey, bool willStoreSetting = false)
+        // Currently we cannot change theme in runtime, so this method is not implemented
+        public static void ChangeTheme(String themeKey, bool willStoreSetting)
+        {
+            throw new NotImplementedException();
+            DoChangeTheme(themeKey);
+
+            if (willStoreSetting)
+            {
+                SetStoredLocalTheme(themeKey);
+            }
+        }
+
+        private static void DoChangeTheme(String themeKey)
         {
             // Retrieve the theme dictionary from the application's resources
             ResourceDictionary originalTheme = App.Current.Resources.ThemeDictionaries[themeKey] as ResourceDictionary;
@@ -68,30 +82,42 @@ namespace OneLastSong.Utils
 
             // Create a new ResourceDictionary and copy the resources from the original theme
             ResourceDictionary newTheme = new ResourceDictionary();
+
             foreach (var key in originalTheme.Keys)
             {
                 newTheme[key] = originalTheme[key];
             }
-
             // Remove the current theme and add the new theme
-            if(App.Current.Resources.ContainsKey(_currentTheme))
+            if (App.Current.Resources.ContainsKey(_currentTheme))
             {
                 App.Current.Resources.Remove(_currentTheme);
             }
 
-            if(!App.Current.Resources.MergedDictionaries.Contains(newTheme))
+            if (!App.Current.Resources.MergedDictionaries.Contains(newTheme))
             {
                 App.Current.Resources.MergedDictionaries.Add(newTheme);
             }
 
             // Update the current theme
             _currentTheme = themeKey;
+        }
 
-            // Store the setting if needed
-            if (willStoreSetting)
+        // We need to restart the app to apply the new theme
+        public static void ChangeTheme(String themeKey)
+        {
+            // Update the current theme
+            _currentTheme = themeKey;
+
+            SetStoredLocalTheme(themeKey);
+
+            // Apply the theme when the app is initialized only
+            if(_isInitialized)
             {
-                SetStoredLocalTheme(themeKey);
+                return;
             }
+
+            _isInitialized = true;
+            DoChangeTheme(themeKey);
         }
 
         public static string GetCurrentTheme()
@@ -102,7 +128,7 @@ namespace OneLastSong.Utils
         public static void LoadStoredTheme()
         {
             string storedTheme = GetStoredLocalTheme();
-            ChangeTheme(storedTheme, true);
+            ChangeTheme(storedTheme);
         }
 
         public static SolidColorBrush GetBrush(string color)

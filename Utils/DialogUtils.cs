@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using OneLastSong.Views.Dialogs;
 using System;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace OneLastSong.Utils
     {
         public static async Task ShowDialogAsync(string title, string content, XamlRoot xamlRoot)
         {
-            ContentDialog dialog = new ContentDialog
+            SimpleMessageThemedDialog dialog = new SimpleMessageThemedDialog
             {
                 Title = title,
                 Content = content,

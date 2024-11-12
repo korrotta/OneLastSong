@@ -67,18 +67,20 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <FontIcon Glyph="&#xE8F1;" FontSize="{StaticResource SubheaderTextSize}" Foreground="{ThemeResource TEXT_LIGHT}" Grid.Column="0" Margin="0 0 16 0" />
-            <TextBlock Style="{StaticResource Body1}" Foreground="{ThemeResource TEXT_LIGHT}" l:Uids.Uid="Your_library_TextBlock" Grid.Column="1"/>
+            <TextBlock l:Uids.Uid="Your_library_TextBlock" Grid.Column="1" Style="{StaticResource Body1}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+            
+            <!-- Create new playlist -->
             <Button
                 Grid.Column="2" Margin="{StaticResource MediumRightMargin}"
                 Style="{StaticResource IconButton}"
-                >
+                Command="{x:Bind ViewModel.CreateNewPlaylistCommand}">
                 <FontIcon Glyph="&#xE710;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
             </Button>
 
+            <!-- Sort -->
             <Button
                 Grid.Column="3"
-                Style="{StaticResource IconButton}"
-                >
+                Style="{StaticResource IconButton}">
                 <FontIcon Glyph="&#xE89F;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
             </Button>
         </Grid>

@@ -33,8 +33,8 @@ namespace OneLastSong.ViewModels
             _timer.Tick += Timer_Tick;
 
             _mediaPlayer = new MediaPlayer();
-             _mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
-            _mediaPlayer.CurrentStateChanged += MediaPlayer_CurrentStateChanged;
+             //_mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
+            //_mediaPlayer.CurrentStateChanged += MediaPlayer_CurrentStateChanged;
         }
 
         public bool IsPlaying

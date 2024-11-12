@@ -33,6 +33,12 @@ namespace OneLastSong.Views.Components
         public LeftRegion()
         {
             this.InitializeComponent();
+            Loaded += LeftRegion_Loaded;
+        }
+
+        private void LeftRegion_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.XamlRoot = XamlRoot;
         }
     }
 

@@ -23,6 +23,9 @@ namespace OneLastSong.Utils
         public static readonly string SIGN_UP_SUCCESS_STRING = "SignUpSuccess_String";
         public static readonly string SIGN_IN_SUCCESS_STRING = "SignInSuccess_String";
         public static readonly string FORM_CONTAINING_ERROR_STRING = "FormContainingError_String";
+        public static readonly string Ok_Button_Content = "Ok_Button.Content";
+        public static readonly string Cancel_Button_Content = "Cancel_Button.Content";
+        public static readonly string NOT_SIGNED_IN_ERROR_STRING = "NotSignedInError_String";
 
         public static async Task InitializeLocalizer()
         {
@@ -52,6 +55,11 @@ namespace OneLastSong.Utils
                     LogUtils.Debug($"Language: {dictionary.Language}, Keys: {string.Join(", ", dictionary.GetItems())}");
                 }
             }
+        }
+
+        internal static string GetString(string v)
+        {
+            return Localizer.Get().GetLocalizedString(v);
         }
 
         private static async Task CreateStringResourceFileIfNotExists(StorageFolder stringsFolder, string language, string resourceFileName)

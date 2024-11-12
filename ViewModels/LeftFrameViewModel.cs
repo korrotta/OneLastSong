@@ -1,8 +1,12 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using OneLastSong.Contracts;
 using OneLastSong.DAOs;
 using OneLastSong.Models;
 using OneLastSong.Services;
+using OneLastSong.Utils;
+using OneLastSong.Views.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,14 +14,19 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace OneLastSong.ViewModels
 {
     public class LeftFrameViewModel : IAuthChangeNotify, INotifyPropertyChanged
     {
+        public ICommand CreateNewPlaylistCommand { get; set; }
+        public XamlRoot XamlRoot { get; set; }
+
         public LeftFrameViewModel()
         {
             AuthService.Get().RegisterAuthChangeNotify(this);
+            CreateNewPlaylistCommand = new RelayCommand(CreateNewPlaylist);
         }
 
         private ObservableCollection<Playlist> _playlistList;
@@ -44,8 +53,10 @@ namespace OneLastSong.ViewModels
 
         public async void OnUserChange(User user)
         {
-            if(user == null)
+            // User is null when logged out, reset the playlist list
+            if (user == null)
             {
+                PlaylistList.Clear();
                 return;
             }
 
@@ -76,6 +87,36 @@ namespace OneLastSong.ViewModels
         public void Dispose()
         {
             AuthService.Get().UnregisterAuthChangeNotify(this);
+        }
+
+        public async void CreateNewPlaylist()
+        {
+            // if player is not signed in show error message
+            if (AuthService.Get().GetUser() == null)
+            {
+                await DialogUtils.ShowDialogAsync(
+                    LocalizationUtils.GetString(LocalizationUtils.ERROR_STRING),
+                    LocalizationUtils.GetString(LocalizationUtils.NOT_SIGNED_IN_ERROR_STRING),
+                    XamlRoot
+                );
+                return;
+            }
+            // Show the create new playlist dialog
+            await ShowCreateNewPlaylistDialogAsync();
+        }
+
+        public async Task ShowCreateNewPlaylistDialogAsync()
+        {
+            var dialog = new CreateNewPlaylistDialog
+            {
+                XamlRoot = this.XamlRoot
+            };
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                LogUtils.Debug($"Create new playlist: {dialog.PlaylistName}");
+            }
         }
     }
 }
