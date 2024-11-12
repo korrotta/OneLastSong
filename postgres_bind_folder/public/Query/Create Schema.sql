@@ -82,6 +82,7 @@ CREATE TABLE playlists
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
+    cover_image_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -507,6 +508,45 @@ BEGIN
 END;
 $$;
 
+-- Function get all user's playlists
+DROP FUNCTION IF EXISTS get_all_user_playlists(VARCHAR);
+
+CREATE OR REPLACE FUNCTION get_all_user_playlists(ip_session_token VARCHAR)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INT;
+    v_json_data JSONB;
+BEGIN
+    -- Get the user id
+    v_user_id := validate_session(ip_session_token);
+
+    IF v_user_id IS NULL THEN
+        RETURN get_result_message(1, 'Invalid session token', '[]'::JSONB);
+    END IF;
+
+    -- Select all user's playlists
+    SELECT json_agg(json_build_object(
+        'PlaylistId', p.id,
+        'Name', p.name,
+        'CoverImageUrl', p.cover_image_url,
+        'ItemCount', (
+            SELECT COUNT(*)
+            FROM playlist_audios pa
+            WHERE pa.playlist_id = p.id
+        ),
+        'CreatedAt', p.created_at
+    )) INTO v_json_data
+    FROM playlists p
+    WHERE p.user_id = v_user_id;
+
+    -- Return the result message
+    RETURN get_result_message(0, '', v_json_data);
+END;
+$$;
+
 -- Security --
 -- Create the restricted_user role with login capabilities and a password
 CREATE ROLE restricted_user WITH LOGIN PASSWORD '12345678';
@@ -525,6 +565,7 @@ GRANT EXECUTE ON FUNCTION user_signup(VARCHAR, VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_most_like_audios(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_album_item_count(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_first_n_albums(INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_all_user_playlists(VARCHAR) TO restricted_user;
 
 SELECT user_login('test', 'test');
 SELECT validate_session('7d683b5d-6c62-474f-b666-7df5017edabc');

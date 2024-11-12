@@ -58,6 +58,7 @@ namespace OneLastSong.Views
                 ((App)Application.Current).Services.GetService<UserDAO>().Init();
                 ((App)Application.Current).Services.GetService<AudioDAO>().Init();
                 ((App)Application.Current).Services.GetService<AlbumDAO>().Init();
+                ((App)Application.Current).Services.GetService<PlaylistDAO>().Init();
             }
             catch (Exception ex)
             {

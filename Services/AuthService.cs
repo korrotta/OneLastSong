@@ -26,6 +26,11 @@ namespace OneLastSong.Services
             this.token = token;
         }
 
+        public String SessionToken()
+        {
+            return token;
+        }
+
         public void SetUser(User user)
         {
             User = user;

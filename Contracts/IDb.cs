@@ -17,5 +17,6 @@ namespace OneLastSong.Contracts
         public Task<ResultMessage> UserSignUp(string username, string password);
         public Task<ResultMessage> GetMostLikeAudios(int limit=1000);
         public Task<ResultMessage> GetFirstNAlbums(int limit = 20);
+        public Task<ResultMessage> GetAllUserPlaylists(string sessionToken);
     }
 }

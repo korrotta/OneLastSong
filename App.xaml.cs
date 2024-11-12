@@ -56,6 +56,7 @@ namespace OneLastSong
             services.AddSingleton<UserDAO>();
             services.AddSingleton<AudioDAO>();
             services.AddSingleton<AlbumDAO>();
+            services.AddSingleton<PlaylistDAO>();
             // Services
             services.AddSingleton<NavigationService>();
             services.AddSingleton<AuthService>();

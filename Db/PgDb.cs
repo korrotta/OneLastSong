@@ -323,11 +323,53 @@ namespace OneLastSong.Db
             }
         }
 
+        public async Task<ResultMessage> GetAllUserPlaylists(string sessionToken)
+        {
+            CheckConnection();
+
+            try
+            {
+                await using (var cmd = dataSource.CreateCommand(QUERY_GET_ALL_USER_PLAYLISTS))
+                {
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+
+                    LogUtils.Debug("Executing command: " + QUERY_GET_ALL_USER_PLAYLISTS);
+
+                    // Execute and log returned data
+                    await using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        LogUtils.Debug("Command executed, reading results...");
+
+                        if (await reader.ReadAsync())
+                        {
+                            string json = reader.GetString(0);
+                            LogUtils.Debug("Raw JSON data: " + json);
+
+                            return ResultMessage.FromJson(json);
+                        }
+                        else
+                        {
+                            throw new Exception("No rows returned. While executing " + QUERY_GET_ALL_USER_PLAYLISTS);
+                        }
+                    }
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+                LogUtils.Debug($"Error executing query: {ex.Message}");
+            };
+
+            return null;
+        }
+
         // Our Query strings
         public static readonly string QUERY_USER_LOGIN = "SELECT user_login(@username, @password)";
         public static readonly string QUERY_GET_USER = "SELECT get_user_data(@session_token)";
         public static readonly string QUERY_USER_SIGNUP = "SELECT user_signup(@username, @password)";
         public static readonly string QUERY_GET_MOST_LIKE_AUDIOS = "SELECT get_most_like_audios(@limit)";
         public static readonly string QUERY_GET_FIRST_N_ALBUMS = "SELECT get_first_n_albums(@limit)";
+        public static readonly string QUERY_GET_ALL_USER_PLAYLISTS = "SELECT get_all_user_playlists(@session_token)";
     }
 }
