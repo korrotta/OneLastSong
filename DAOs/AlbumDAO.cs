@@ -26,17 +26,14 @@ namespace OneLastSong.DAOs
         {
             if (willRefresh || _audios.Count == 0)
             {
-                try
+                ResultMessage result = await _db.GetFirstNAlbums(limit);
+                if (result.Status == ResultMessage.STATUS_OK)
                 {
-                    ResultMessage result = await _db.GetFirstNAlbums();
-                    if (result.Status == ResultMessage.STATUS_OK)
-                    {
-                        _audios = JsonSerializer.Deserialize<List<Album>>(result.JsonData);
-                    }
+                    _audios = JsonSerializer.Deserialize<List<Album>>(result.JsonData);
                 }
-                catch (Exception ex)
+                else
                 {
-                    LogUtils.Error($"Error initializing AlbumDAO: {ex.Message}");
+                    throw new Exception(result.ErrorMessage);
                 }
             }
 
