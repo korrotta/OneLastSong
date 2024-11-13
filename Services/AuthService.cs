@@ -72,6 +72,13 @@ namespace OneLastSong.Services
             {
                 notify.OnUserChange(null);
             }
+            ClearStoredToken();
+        }
+
+        private void ClearStoredToken()
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.Values.Remove(STORED_TOKEN_PATH);
         }
 
         public void SaveCurrentSessionToken()
