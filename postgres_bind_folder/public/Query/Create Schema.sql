@@ -140,22 +140,18 @@ CREATE TABLE followers
     PRIMARY KEY (user_id, follower_id)
 );
 
+DROP FUNCTION IF EXISTS create_liked_playlist;
+
 -- ### Procedures region ###
 -- Function to create a "Liked playlist" for each new user
 CREATE OR REPLACE FUNCTION create_liked_playlist()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO playlists (user_id, name, created_at)
-    VALUES (NEW.id, 'Liked Playlist', CURRENT_TIMESTAMP);
+    INSERT INTO playlists (user_id, name, created_at, cover_image_url)
+    VALUES (NEW.id, 'Liked Playlist', CURRENT_TIMESTAMP, 'https://firebasestorage.googleapis.com/v0/b/onelastsong-5d5a8.appspot.com/o/images%2FLikedPlaylist.png?alt=media&token=f72e241d-a82d-40a5-86b3-df6f81f6dd40');
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
--- Trigger to call the function after a new user is inserted
-CREATE TRIGGER after_user_insert
-AFTER INSERT ON users
-FOR EACH ROW
-EXECUTE FUNCTION create_liked_playlist();
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -592,6 +588,14 @@ BEGIN
     END IF;
 END;
 $$;
+
+
+-- ### Triggers region ###
+-- Trigger to call the function after a new user is inserted
+CREATE TRIGGER after_user_insert
+AFTER INSERT ON users
+FOR EACH ROW
+EXECUTE FUNCTION create_liked_playlist();
 
 -- Security --
 -- Create the restricted_user role with login capabilities and a password

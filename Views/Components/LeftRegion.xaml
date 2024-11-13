@@ -101,7 +101,7 @@
                 Style="{StaticResource IconButton}"
                 Margin="{StaticResource MediumRightMargin}">
                 <Border Background="{ThemeResource BG_LIGHT_TERTIARY}" Style="{StaticResource Badge}">
-                    <TextBlock Style="{StaticResource BodySmall1}" TextAlignment="Center">Podcasts</TextBlock>
+                    <TextBlock Style="{StaticResource BodySmall1}" TextAlignment="Center">Albums</TextBlock>
                 </Border>
             </Button>
 

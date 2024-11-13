@@ -365,6 +365,46 @@ namespace OneLastSong.Db
             return null;
         }
 
+        public async Task<ResultMessage> AddUserPlaylist(string sessionToken, string playlistName, string coverImageUrl)
+        {
+            CheckConnection();
+
+            try
+            {
+                await using (var cmd = dataSource.CreateCommand(QUERY_ADD_USER_PLAYLIST))
+                {
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+                    cmd.Parameters.AddWithValue("playlist_name", playlistName);
+                    cmd.Parameters.AddWithValue("cover_image_url", coverImageUrl);
+
+                    LogUtils.Debug("Executing command: " + QUERY_ADD_USER_PLAYLIST);
+
+                    // Execute and log returned data
+                    await using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        LogUtils.Debug("Command executed, reading results...");
+
+                        if (await reader.ReadAsync())
+                        {
+                            string json = reader.GetString(0);
+                            LogUtils.Debug("Raw JSON data: " + json);
+
+                            return ResultMessage.FromJson(json);
+                        }
+                        else
+                        {
+                            throw new Exception("No rows returned. While executing " + QUERY_ADD_USER_PLAYLIST);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Debug($"Error executing query: {ex.Message}");
+                throw;
+            }
+        }
+
         // Our Query strings
         public static readonly string QUERY_USER_LOGIN = "SELECT user_login(@username, @password)";
         public static readonly string QUERY_GET_USER = "SELECT get_user_data(@session_token)";
@@ -372,5 +412,6 @@ namespace OneLastSong.Db
         public static readonly string QUERY_GET_MOST_LIKE_AUDIOS = "SELECT get_most_like_audios(@limit)";
         public static readonly string QUERY_GET_FIRST_N_ALBUMS = "SELECT get_first_n_albums(@limit)";
         public static readonly string QUERY_GET_ALL_USER_PLAYLISTS = "SELECT get_all_user_playlists(@session_token)";
+        public static readonly string QUERY_ADD_USER_PLAYLIST = "SELECT add_user_playlist(@session_token, @playlist_name, @cover_image_url)";
     }
 }

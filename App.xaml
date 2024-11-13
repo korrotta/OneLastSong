@@ -16,6 +16,8 @@
                 <ResourceDictionary Source="Styles/Paddings.xaml" />
                 <ResourceDictionary Source="Styles/Sizes.xaml" />
                 <ResourceDictionary Source="Styles/Buttons.xaml" />
+                <!--  Configuration values -->
+                <ResourceDictionary Source="ConfigRes/Strings.xaml" />
                 <!--  Microsoft.UI.Xaml.Controls library  -->
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
             </ResourceDictionary.MergedDictionaries>

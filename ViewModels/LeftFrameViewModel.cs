@@ -115,7 +115,22 @@ namespace OneLastSong.ViewModels
 
             if (result == ContentDialogResult.Primary)
             {
-                LogUtils.Debug($"Create new playlist: {dialog.PlaylistName}");
+                var sessionToken = AuthService.Get().SessionToken();
+                var playlistName = dialog.PlaylistName;
+
+                try
+                {
+                    var playlist = await PlaylistDAO.Get().AddUserPlaylist(sessionToken, playlistName);
+                    PlaylistList.Add(playlist);
+                }
+                catch (Exception e)
+                {
+                    await DialogUtils.ShowDialogAsync(
+                        LocalizationUtils.GetString(LocalizationUtils.ERROR_STRING),
+                        e.Message,
+                        XamlRoot
+                    );
+                }
             }
         }
     }

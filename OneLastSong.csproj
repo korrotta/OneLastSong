@@ -15,6 +15,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="ConfigRes\Strings.xaml" />
     <None Remove="Styles\Buttons.xaml" />
     <None Remove="Styles\Margins.xaml" />
     <None Remove="Styles\Paddings.xaml" />
@@ -176,6 +177,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Config\Strings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Dialogs\SimpleMessageThemedDialog.xaml">

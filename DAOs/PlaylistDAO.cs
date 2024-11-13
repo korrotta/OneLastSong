@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
 using OneLastSong.Models;
+using OneLastSong.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,26 @@ namespace OneLastSong.DAOs
             }
 
             return _playlistList;
+        }
+
+        public async Task<Playlist> AddUserPlaylist(string sessionToken, string playlistName, string coverImageUrl = null)
+        {
+            if(coverImageUrl == null)
+            {
+                coverImageUrl = ConfigValueUtils.GetConfigValue(ConfigValueUtils.DEFAULT_PLAYLIST_COVER_IMAGE_URL_KEY);
+            }
+
+            ResultMessage result = await _db.AddUserPlaylist(sessionToken, playlistName, coverImageUrl);
+            if (result.Status == ResultMessage.STATUS_OK)
+            {
+                Playlist playlist = JsonSerializer.Deserialize<Playlist>(result.JsonData);
+                _playlistList.Add(playlist);
+                return playlist;
+            }
+            else
+            {
+                throw new Exception(result.ErrorMessage);
+            }
         }
 
         public static PlaylistDAO Get()
