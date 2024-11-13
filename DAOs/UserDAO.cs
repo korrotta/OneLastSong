@@ -34,9 +34,13 @@ namespace OneLastSong.DAOs
                 throw new Exception("Invalid credentials");
             }
 
-            AuthService.Get().SetToken(token);
             var user = await _db.GetUser(token);
-            AuthService.Get().SetUser(user);
+            AuthService.Get().SetSession(user, token);
+        }
+
+        public async Task<User> GetUser(string sessionToken)
+        {
+            return await _db.GetUser(sessionToken);
         }
 
         public async Task SignUpUser(string username, string password)

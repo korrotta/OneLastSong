@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
+using OneLastSong.DAOs;
 using OneLastSong.Models;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace OneLastSong.Services
     {
         private List<IAuthChangeNotify> _authChangeNotifies = new List<IAuthChangeNotify>();
         private String token = null;
+        private static readonly String STORED_TOKEN_PATH = "Session token";
 
         public User User { private set; get; } = null;
 
@@ -21,22 +23,24 @@ namespace OneLastSong.Services
         {
         }
 
-        public void SetToken(String token)
-        {
-            this.token = token;
-        }
-
         public String SessionToken()
         {
             return token;
         }
 
-        public void SetUser(User user)
+        public void SetSession(User user, String token, bool willStoredToken = true)
         {
             User = user;
+            this.token = token;
+
             foreach (var notify in _authChangeNotifies)
             {
                 notify.OnUserChange(user);
+            }
+
+            if (willStoredToken)
+            {
+                SaveCurrentSessionToken();
             }
         }
 
@@ -68,6 +72,35 @@ namespace OneLastSong.Services
             {
                 notify.OnUserChange(null);
             }
+        }
+
+        public void SaveCurrentSessionToken()
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.Values[STORED_TOKEN_PATH] = token;
+        }
+        
+        public async Task<bool> TryToLoadStoredToken()
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            if (localSettings.Values.TryGetValue(STORED_TOKEN_PATH, out var storedToken))
+            {
+                var loadedToken = storedToken as String;
+                var user = await UserDAO.Get().GetUser(loadedToken);
+                // If the token is invalid, the user will be null
+                // We only set user and token if the user is not null
+                if (user != null)
+                {
+                    User = user;
+                    token = loadedToken;
+                    foreach (var notify in _authChangeNotifies)
+                    {
+                        notify.OnUserChange(user);
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

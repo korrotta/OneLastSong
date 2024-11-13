@@ -202,7 +202,8 @@ namespace OneLastSong.Db
             catch (Exception ex)
             {
                 LogUtils.Debug($"Error executing query: {ex.Message}");
-                throw;
+                // Error occurred or invalid session token, simply return null
+                return null;
             }
         }
 

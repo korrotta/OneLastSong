@@ -547,6 +547,52 @@ BEGIN
 END;
 $$;
 
+-- Add a new playlist for a user with a name and a cover image URL
+DROP FUNCTION IF EXISTS add_user_playlist;
+
+CREATE OR REPLACE FUNCTION add_user_playlist(ip_session_token VARCHAR, ip_name VARCHAR, ip_cover_image_url VARCHAR)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_playlist_id INTEGER;
+    v_playlist JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, insert the new playlist
+    IF v_user_id IS NOT NULL THEN
+        INSERT INTO playlists (user_id, name, cover_image_url, created_at)
+        VALUES (v_user_id, ip_name, ip_cover_image_url, CURRENT_TIMESTAMP)
+        RETURNING id INTO v_playlist_id;
+
+        -- Retrieve the newly-added playlist details
+        SELECT json_build_object(
+            'PlaylistId', p.id,
+            'Name', p.name,
+            'CoverImageUrl', p.cover_image_url,
+            'ItemCount', (
+                SELECT COUNT(*)
+                FROM playlist_audios pa
+                WHERE pa.playlist_id = p.id
+            ),
+            'CreatedAt', p.created_at
+        ) INTO v_playlist
+        FROM playlists p
+        WHERE p.id = v_playlist_id;
+
+        -- Return the new playlist details
+        RETURN get_result_message(0, '', v_playlist);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
 -- Security --
 -- Create the restricted_user role with login capabilities and a password
 CREATE ROLE restricted_user WITH LOGIN PASSWORD '12345678';
@@ -566,6 +612,7 @@ GRANT EXECUTE ON FUNCTION get_most_like_audios(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_album_item_count(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_first_n_albums(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_all_user_playlists(VARCHAR) TO restricted_user;
+GRANT EXECUTE ON FUNCTION add_user_playlist(VARCHAR, VARCHAR, VARCHAR) TO restricted_user;
 
 SELECT user_login('test', 'test');
 SELECT validate_session('7d683b5d-6c62-474f-b666-7df5017edabc');

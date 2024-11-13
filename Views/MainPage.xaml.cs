@@ -37,8 +37,14 @@ namespace OneLastSong.Views
             BottomFrame.Navigate(typeof(BottomFrame));
             MainPageViewModel = new MainPageViewModel();
 
+            await OnServiceInitialized();
+        }
+
+        private async Task OnServiceInitialized()
+        {
             //this line is for testing purposes only
             //await DoDbTest();
+            await AuthService.Get().TryToLoadStoredToken();
         }
 
         private async Task DoDbTest()
