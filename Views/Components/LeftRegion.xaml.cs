@@ -33,12 +33,21 @@ namespace OneLastSong.Views.Components
         public LeftRegion()
         {
             this.InitializeComponent();
+            this.DataContext = ViewModel;
             Loaded += LeftRegion_Loaded;
         }
 
         private void LeftRegion_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.XamlRoot = XamlRoot;
+        }
+
+        private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var grid = sender as Grid;
+            var playlist = grid.DataContext as Playlist;
+            var viewModel = DataContext as LeftFrameViewModel;
+            ViewModel?.OpenPlaylistOptionsMenu(sender, e, playlist);
         }
     }
 

@@ -1,17 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using OneLastSong.Contracts;
 using OneLastSong.DAOs;
 using OneLastSong.Models;
 using OneLastSong.Services;
 using OneLastSong.Utils;
+using OneLastSong.Views.Components;
 using OneLastSong.Views.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -20,13 +23,19 @@ namespace OneLastSong.ViewModels
 {
     public class LeftFrameViewModel : IAuthChangeNotify, INotifyPropertyChanged
     {
-        public ICommand CreateNewPlaylistCommand { get; set; }
         public XamlRoot XamlRoot { get; set; }
+        public ICommand CreateNewPlaylistCommand { get; set; }
 
         public LeftFrameViewModel()
         {
             AuthService.Get().RegisterAuthChangeNotify(this);
             CreateNewPlaylistCommand = new RelayCommand(CreateNewPlaylist);
+        }
+
+        public void OpenPlaylistOptionsMenu(object sender, RightTappedRoutedEventArgs e, Playlist playlist)
+        {
+            var flyout = new PlaylistMenuFlyout(XamlRoot, playlist);
+            flyout.ShowAt(sender as FrameworkElement, e.GetPosition(sender as UIElement));
         }
 
         private ObservableCollection<Playlist> _playlistList;

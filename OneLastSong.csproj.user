@@ -1,6 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup />
+  <PropertyGroup>
+    <Source>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</Source>
+    <SmallTileSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</SmallTileSource>
+    <MediumTileSource>I:\Repos\WinUI\OneLastSong\Assets\App44x44Logo.scale-400.png</MediumTileSource>
+    <WideTileSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</WideTileSource>
+    <LargeTileSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</LargeTileSource>
+    <AppIconSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</AppIconSource>
+    <SplashScreenSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</SplashScreenSource>
+    <PackageLogoSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</PackageLogoSource>
+    <BadgeLogoSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</BadgeLogoSource>
+  </PropertyGroup>
   <ItemGroup>
     <None Update="App.xaml">
       <SubType>Designer</SubType>
@@ -11,6 +21,15 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\Dialogs\EditPlaylistDetailsDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\PlaylistMenuFlyout.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SearchPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Dialogs\SimpleMessageThemedDialog.xaml">
       <SubType>Designer</SubType>
     </Page>

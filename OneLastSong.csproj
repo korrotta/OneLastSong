@@ -15,6 +15,11 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Assets\BadgeLogo.scale-100.png" />
+    <None Remove="Assets\BadgeLogo.scale-125.png" />
+    <None Remove="Assets\BadgeLogo.scale-150.png" />
+    <None Remove="Assets\BadgeLogo.scale-200.png" />
+    <None Remove="Assets\BadgeLogo.scale-400.png" />
     <None Remove="ConfigRes\Strings.xaml" />
     <None Remove="Styles\Buttons.xaml" />
     <None Remove="Styles\Margins.xaml" />
@@ -29,13 +34,16 @@
     <None Remove="Views\Components\HomePage.xaml" />
     <None Remove="Views\Components\IconTextButton.xaml" />
     <None Remove="Views\Components\LeftRegion.xaml" />
+    <None Remove="Views\Components\PlaylistMenuFlyout.xaml" />
     <None Remove="Views\Components\RightRegion.xaml" />
     <None Remove="Views\Components\SignInPage.xaml" />
     <None Remove="Views\Components\TopFrame.xaml" />
     <None Remove="Views\ContentFrame.xaml" />
     <None Remove="Views\Dialogs\CreateNewPlaylistDialog.xaml" />
+    <None Remove="Views\Dialogs\EditPlaylistDetailsDialog.xaml" />
     <None Remove="Views\Dialogs\SimpleMessageThemedDialog.xaml" />
     <None Remove="Views\MainPage.xaml" />
+    <None Remove="Views\SearchPage.xaml" />
     <None Remove="Views\SignUpPage.xaml" />
   </ItemGroup>
 
@@ -177,6 +185,21 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\EditPlaylistDetailsDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\PlaylistMenuFlyout.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\SearchPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Config\Strings.xaml">

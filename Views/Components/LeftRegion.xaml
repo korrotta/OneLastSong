@@ -17,7 +17,7 @@
         <!-- DataTemplate used: -->
 
         <DataTemplate x:Key="PlaylistListViewTemplate" x:DataType="models:Playlist">
-            <Grid>
+            <Grid RightTapped="Grid_RightTapped">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>

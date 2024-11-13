@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="OneLastSong.Views.Dialogs.EditPlaylistDetailsDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneLastSong.Views.Dialogs"
+    xmlns:l="using:WinUI3Localizer"
+    Background="{ThemeResource BG_PRIMARY}"
+    Foreground="{ThemeResource TEXT_PRIMARY}"
+    SecondaryButtonText="Cancel"
+    CornerRadius="13">
+
+    <Grid>
+        <TextBlock Foreground="{ThemeResource TEXT_PRIMARY}">Testing</TextBlock>
+    </Grid>
+</ContentDialog>

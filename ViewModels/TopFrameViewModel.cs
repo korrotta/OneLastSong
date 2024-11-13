@@ -27,12 +27,14 @@ namespace OneLastSong.ViewModels
         private bool _isThemeComboBoxInitialized = false;
         public String Language { get; set; }
         public String Theme { get; set; }
+        public String SearchQuery { get; set; }
         private bool _isUserLoggedIn;
         public NavigationService NavigationService { get; set; }
         public User User { get; private set; } = new User();
         public ICommand NavigateToSignUpPageCommand { get; }
         public ICommand NavigateToSignInPageCommand { get; }
         public ICommand LogoutCommand { get; }
+        public ICommand SearchCommand { get; }
 
         public TopFrameViewModel()
         {
@@ -250,6 +252,11 @@ namespace OneLastSong.ViewModels
         public void LogOut()
         {
             AuthService.Get().SignOut();
+        }
+
+        public void Search()
+        {
+            NavigationService.Navigate(typeof(SearchPage), SearchQuery);
         }
     }
 }
