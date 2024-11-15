@@ -25,6 +25,7 @@ namespace OneLastSong
         public MainWindow()
         {
             this.InitializeComponent();
+            AppWindow.SetIcon("Assets/AppIcon.ico");
             SnackbarMessages = new ObservableCollection<SnackbarMessage>();
         }
 
