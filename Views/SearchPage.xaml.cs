@@ -31,6 +31,7 @@ namespace OneLastSong.Views
         public SearchPage()
         {
             this.InitializeComponent();
+            DataContext = SearchPageViewModel;
         }
 
         public object GetCurrentParameterState()

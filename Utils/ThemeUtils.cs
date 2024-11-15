@@ -15,11 +15,15 @@ namespace OneLastSong.Utils
 
         public readonly static string TEXT_PRIMARY = "TEXT_PRIMARY";
         public readonly static string TEXT_DISABLED = "TEXT_DISABLED";
+        public readonly static string TEXT_CONTRAST1 = "TEXT_CONTRAST1";
 
         public readonly static string INFO_BRUSH = "INFO_BRUSH";
         public readonly static string SUCCESS_BRUSH = "SUCCESS_BRUSH";
         public readonly static string WARNING_BRUSH = "WARNING_BRUSH";
         public readonly static string ERROR_BRUSH = "ERROR_BRUSH";
+
+        public readonly static string BG_TERTIARY = "BG_TERTIARY";
+        public readonly static string BG_CONTRAST1 = "BG_CONTRAST1";
 
         private static bool _isInitialized = false;
 

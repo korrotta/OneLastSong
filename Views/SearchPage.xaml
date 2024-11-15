@@ -6,11 +6,31 @@
     xmlns:local="using:OneLastSong.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:components="using:OneLastSong.Views.Components"
+    xmlns:l="using:WinUI3Localizer"
+    xmlns:converters="using:OneLastSong.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource BG_PRIMARY}">
 
-    <StackPanel Orientation="Horizontal">
-        <TextBlock Text="Searching for " Foreground="{ThemeResource TEXT_LIGHT}" Style="{StaticResource SongBigTitle}" Margin="{StaticResource MediumRightMargin}"/>
-        <TextBlock Text="{x:Bind SearchPageViewModel.CurrentSearchQuery, Mode=OneWay}" Foreground="{ThemeResource TEXT_PRIMARY}" Style="{StaticResource SongBigTitle}"/>
+    <Page.Resources>
+        <converters:CategoryVisibilityConverter x:Key="CategoryVisibilityConverter"/>
+    </Page.Resources>
+
+    <!-- Vertical Stackpanel-->
+    <StackPanel Orientation="Vertical"
+                Padding="{StaticResource MediumPadding}">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Searching for " Foreground="{ThemeResource TEXT_LIGHT}" Style="{StaticResource SongBigTitle}" Margin="{StaticResource MediumRightMargin}"/>
+            <TextBlock Text="{x:Bind SearchPageViewModel.CurrentSearchQuery, Mode=OneWay}" Foreground="{ThemeResource TEXT_PRIMARY}" Style="{StaticResource SongBigTitle}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <components:Chip Text="All" Tag="ALL_CATEGORY" IsSelected="{x:Bind SearchPageViewModel.IsAllSelected, Mode=OneWay}" OnSelected="{x:Bind SearchPageViewModel.OnCategorySelected}"/>
+            <components:Chip Text="Songs" Tag="SONG_CATEGORY" IsSelected="{x:Bind SearchPageViewModel.IsSongSelected, Mode=OneWay}" OnSelected="{x:Bind SearchPageViewModel.OnCategorySelected}"/>
+            <components:Chip Text="Artists" Tag="ARTIST_CATEGORY" IsSelected="{x:Bind SearchPageViewModel.IsArtistSelected, Mode=OneWay}" OnSelected="{x:Bind SearchPageViewModel.OnCategorySelected}"/>
+            <components:Chip Text="Albums" Tag="ALBUM_CATEGORY" IsSelected="{x:Bind SearchPageViewModel.IsAlbumSelected, Mode=OneWay}" OnSelected="{x:Bind SearchPageViewModel.OnCategorySelected}"/>
+        </StackPanel>
+        <TextBlock Text="Songs" Foreground="{ThemeResource TEXT_LIGHT}" Style="{StaticResource Body1}" Visibility="{x:Bind SearchPageViewModel.CurrentCategory, Mode=OneWay, Converter={StaticResource CategoryVisibilityConverter}, ConverterParameter=SONG_CATEGORY}"/>
+        <TextBlock Text="Artists" Foreground="{ThemeResource TEXT_LIGHT}" Style="{StaticResource Body1}" Visibility="{x:Bind SearchPageViewModel.CurrentCategory, Mode=OneWay, Converter={StaticResource CategoryVisibilityConverter}, ConverterParameter=ARTIST_CATEGORY}"/>
+        <TextBlock Text="Albums" Foreground="{ThemeResource TEXT_LIGHT}" Style="{StaticResource Body1}" Visibility="{x:Bind SearchPageViewModel.CurrentCategory, Mode=OneWay, Converter={StaticResource CategoryVisibilityConverter}, ConverterParameter=ALBUM_CATEGORY}"/>
     </StackPanel>
 </Page>

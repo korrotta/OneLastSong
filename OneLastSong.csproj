@@ -31,6 +31,7 @@
     <None Remove="Themes\LightMode.xaml" />
     <None Remove="Views\Components\BodyFrame.xaml" />
     <None Remove="Views\Components\BottomFrame.xaml" />
+    <None Remove="Views\Components\Chip.xaml" />
     <None Remove="Views\Components\HomePage.xaml" />
     <None Remove="Views\Components\IconTextButton.xaml" />
     <None Remove="Views\Components\LeftRegion.xaml" />
@@ -185,6 +186,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\Chip.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Dialogs\EditPlaylistDetailsDialog.xaml">
