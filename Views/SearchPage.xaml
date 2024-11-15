@@ -9,7 +9,8 @@
     mc:Ignorable="d"
     Background="{ThemeResource BG_PRIMARY}">
 
-    <Grid>
-        <TextBlock Text="Hello from SearchPage" Foreground="{ThemeResource TEXT_PRIMARY}" Style="{StaticResource SongBigTitle}"/>
-    </Grid>
+    <StackPanel Orientation="Horizontal">
+        <TextBlock Text="Searching for " Foreground="{ThemeResource TEXT_LIGHT}" Style="{StaticResource SongBigTitle}" Margin="{StaticResource MediumRightMargin}"/>
+        <TextBlock Text="{x:Bind SearchPageViewModel.CurrentSearchQuery, Mode=OneWay}" Foreground="{ThemeResource TEXT_PRIMARY}" Style="{StaticResource SongBigTitle}"/>
+    </StackPanel>
 </Page>

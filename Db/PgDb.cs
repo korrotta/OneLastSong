@@ -63,6 +63,11 @@ namespace OneLastSong.Db
             return Task.CompletedTask;
         }
 
+        ~PgDb()
+        {
+            Dispose();
+        }
+
         private void CheckConnection()
         {
             if (_conn == null)

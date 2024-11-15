@@ -32,12 +32,24 @@ namespace OneLastSong.Views
         {
             _db = ((App)Application.Current).Services.GetService<IDb>();
             await InitializeDatabase();
+            MainPageViewModel = new MainPageViewModel();
             TopFrame.Navigate(typeof(TopFrame));
             BodyFrame.Navigate(typeof(BodyFrame));
             BottomFrame.Navigate(typeof(BottomFrame));
-            MainPageViewModel = new MainPageViewModel();
+
+            (TopFrame.Content as TopFrame)?.TopFrameViewModel.SubscribeToSearchEvent(OnSearchEventTrigger);
 
             await OnServiceInitialized();
+        }
+
+        private void OnSearchEventTrigger(object sender, string newSearchQuery)
+        {
+            SearchPage searchPage = NavigationService.Get().Navigate(typeof(SearchPage), newSearchQuery) as SearchPage;
+           
+            if(searchPage != null)
+            {
+                searchPage.SearchPageViewModel.OnSearchEventTrigger(newSearchQuery);
+            }
         }
 
         private async Task OnServiceInitialized()

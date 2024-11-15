@@ -98,6 +98,11 @@ namespace OneLastSong.ViewModels
             AuthService.Get().UnregisterAuthChangeNotify(this);
         }
 
+        ~LeftFrameViewModel()
+        {
+            Dispose();
+        }
+
         public async void CreateNewPlaylist()
         {
             // if player is not signed in show error message

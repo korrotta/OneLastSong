@@ -20,14 +20,14 @@ using WinUI3Localizer;
 
 namespace OneLastSong.ViewModels
 {
-
+    [Serializable]
     public class TopFrameViewModel : INotifyPropertyChanged, INavChangeNotifier, IAuthChangeNotify
     {
         private bool _isLanguageComboBoxInitialized = false;
         private bool _isThemeComboBoxInitialized = false;
         public String Language { get; set; }
         public String Theme { get; set; }
-        public String SearchQuery { get; set; }
+        private string _searchQuery;
         private bool _isUserLoggedIn;
         public NavigationService NavigationService { get; set; }
         public User User { get; private set; } = new User();
@@ -52,6 +52,7 @@ namespace OneLastSong.ViewModels
             NavigateToSignUpPageCommand = new RelayCommand(()=>Navigate(typeof(SignUpPage)));
             NavigateToSignInPageCommand = new RelayCommand(() => Navigate(typeof(SignInPage)));
             LogoutCommand = new RelayCommand(LogOut);
+            SearchCommand = new RelayCommand(Search);
         }
 
         public bool IsUserLoggedIn
@@ -127,6 +128,7 @@ namespace OneLastSong.ViewModels
         public XamlRoot XamlRoot { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler<string> OnSearchEventHandler;
 
         public void langComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -230,6 +232,11 @@ namespace OneLastSong.ViewModels
             AuthService.Get().UnregisterAuthChangeNotify(this);
         }
 
+        ~TopFrameViewModel()
+        {
+            Dispose();
+        }
+
         public async void OnUserChange(User user)
         {
             if(user == null)
@@ -254,9 +261,38 @@ namespace OneLastSong.ViewModels
             AuthService.Get().SignOut();
         }
 
+        public string SearchQuery
+        {
+            get => _searchQuery;
+            set
+            {
+                if (_searchQuery != value)
+                {
+                    _searchQuery = value;
+                    OnPropertyChanged(nameof(SearchQuery));
+                }
+            }
+        }
+
         public void Search()
         {
-            NavigationService.Navigate(typeof(SearchPage), SearchQuery);
+            OnSearchEventHandler?.Invoke(this, SearchQuery);
+        }
+
+        public void SubscribeToSearchEvent(EventHandler<string> handler)
+        {
+            OnSearchEventHandler += handler;
+        }
+
+        public void UnsubscribeFromSearchEvent(EventHandler<string> handler)
+        {
+            OnSearchEventHandler -= handler;
+        }
+
+        public void OnSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SearchQuery = (sender as TextBox).Text;
+            SearchQuery = SearchQuery.Trim();
         }
     }
 }

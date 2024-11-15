@@ -180,6 +180,8 @@
                     <FontIcon Glyph="&#xE721;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
                 </Button>
                 <TextBox
+                    TextChanged="{x:Bind TopFrameViewModel.OnSearchBox_TextChanged}"
+                    KeyDown="SearchTextBox_KeyDown"
                     MinWidth="580"
                     MaxWidth="800"
                     l:Uids.Uid="What_do_you_want_to_play_TextBox"

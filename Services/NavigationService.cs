@@ -42,7 +42,16 @@ namespace OneLastSong.Services
         {
             if (CanGoBack)
             {
-                var currentEntry = (_frame.CurrentSourcePageType, _frame.GetNavigationState());
+                object currentState = _frame.GetNavigationState();
+
+                {
+                    if (_frame.Content is INavigationStateSavable savable)
+                    {
+                        currentState = savable.GetCurrentParameterState();
+                    }
+                }
+
+                var currentEntry = (_frame.CurrentSourcePageType, currentState);
                 _forwardStack.Push(currentEntry);
 
                 var (pageType, parameter) = _backStack.Pop();
@@ -57,6 +66,15 @@ namespace OneLastSong.Services
                     }
                 };
                 _frame.Navigate(pageType, parameter);
+
+                // Restore state
+                {
+                    if (_frame.Content is INavigationStateSavable savable)
+                    {
+                        savable.OnStateLoad(parameter);
+                    }
+                }
+
                 NotifyNavChangeNotifiers();
             }
         }
@@ -65,7 +83,16 @@ namespace OneLastSong.Services
         {
             if (CanGoForward)
             {
-                var currentEntry = (_frame.CurrentSourcePageType, _frame.GetNavigationState());
+                object currentState = _frame.GetNavigationState();
+
+                {
+                    if (_frame.Content is INavigationStateSavable savable)
+                    {
+                        currentState = savable.GetCurrentParameterState();
+                    }
+                }
+
+                var currentEntry = (_frame.CurrentSourcePageType, currentState);
                 _backStack.Push(currentEntry);
 
                 var (pageType, parameter) = _forwardStack.Pop();
@@ -80,16 +107,25 @@ namespace OneLastSong.Services
                     }
                 };
                 _frame.Navigate(pageType, parameter);
+
+                // Restore state
+                {
+                    if (_frame.Content is INavigationStateSavable savable)
+                    {
+                        savable.OnStateLoad(parameter);
+                    }
+                }
+
                 NotifyNavChangeNotifiers();
             }
         }
 
-        public void Navigate(Type pageType, object parameter = null)
+        public Page Navigate(Type pageType, object parameter = null)
         {
             // if requested page is the same as current page, do nothing
             if (_frame.CurrentSourcePageType == pageType)
             {
-                return;
+                return _frame.Content as Page;
             }
 
             if (_frame.CurrentSourcePageType != null)
@@ -112,6 +148,9 @@ namespace OneLastSong.Services
             _frame.Navigate(pageType, parameter);
 
             NotifyNavChangeNotifiers();
+
+            // Return the instance of the navigated-to page
+            return _frame.Content as Page;
         }
 
         public void ClearHistory()

@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using OneLastSong.ViewModels;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,6 +39,14 @@ namespace OneLastSong.Views.Components
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             TopFrameViewModel.XamlRoot = this.XamlRoot;
+        }
+
+        private void SearchTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+            {
+                TopFrameViewModel?.SearchCommand?.Execute(null);
+            }
         }
     }
 }
