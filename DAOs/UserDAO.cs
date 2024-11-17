@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace OneLastSong.DAOs
@@ -15,6 +16,7 @@ namespace OneLastSong.DAOs
     public class UserDAO
     {
         IDb _db = null;
+        List<User> _artists = new List<User>();
 
         public UserDAO()
         {
@@ -51,6 +53,24 @@ namespace OneLastSong.DAOs
             {
                 throw new Exception(result.ErrorMessage);
             }
+        }
+
+        public async Task<List<User>> GetAllArtists(bool willReload = false)
+        {
+            if(_artists.Count == 0 || willReload)
+            {
+                ResultMessage result = await _db.GetAllArtists();
+                if (result.Status == ResultMessage.STATUS_OK)
+                {
+                    _artists = JsonSerializer.Deserialize<List<User>>(result.JsonData);
+                }
+                else
+                {
+                    throw new Exception(result.ErrorMessage);
+                }
+            }
+
+            return _artists;
         }
 
         public static UserDAO Get()

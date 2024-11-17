@@ -1,9 +1,12 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using OneLastSong.Contracts;
+using OneLastSong.DAOs;
+using OneLastSong.Models;
 using OneLastSong.Utils;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -21,7 +24,76 @@ namespace OneLastSong.ViewModels
         public static readonly string ARTIST_CATEGORY = "ARTIST_CATEGORY";
         public static readonly string ALBUM_CATEGORY = "ALBUM_CATEGORY";
 
+        private bool _isInitialized = false;
+
+        private ObservableCollection<Audio> _filteredListAudios;
+        public ObservableCollection<Audio> FilteredListAudios
+        {
+            get => _filteredListAudios;
+            set
+            {
+                if (_filteredListAudios != value)
+                {
+                    _filteredListAudios = value;
+                    OnPropertyChanged(nameof(FilteredListAudios));
+                }
+            }
+        }
+        public ObservableCollection<Album> _filteredListAlbum;
+        public ObservableCollection<Album> FilteredListAlbums
+        {
+            get => _filteredListAlbum;
+            set
+            {
+                if (_filteredListAlbum != value)
+                {
+                    _filteredListAlbum = value;
+                    OnPropertyChanged(nameof(FilteredListAlbums));
+                }
+            }
+        }
+
+        private ObservableCollection<Audio> _listAudios;
+        public ObservableCollection<Audio> ListAudios
+        {
+            get => _listAudios;
+            set
+            {
+                if (_listAudios != value)
+                {
+                    _listAudios = value;
+                    FilteredListAudios = new ObservableCollection<Audio>(value);
+                    OnPropertyChanged(nameof(ListAudios));
+                }
+            }
+        }
+
+        private ObservableCollection<Album> _listAlbums;
+        public ObservableCollection<Album> ListAlbums
+        {
+            get => _listAlbums;
+            set
+            {
+                if (_listAlbums != value)
+                {
+                    _listAlbums = value;
+                    FilteredListAlbums = new ObservableCollection<Album>(value);
+                    OnPropertyChanged(nameof(ListAlbums));
+                }
+            }
+        }
+
         private string _currentCategory = ALL_CATEGORY;
+        public async void Init()
+        {
+            List<Audio> audios = await AudioDAO.Get().GetMostLikeAudios();
+            List<Album> albums = await AlbumDAO.Get().GetMostLikeAlbums();
+
+            ListAudios = new ObservableCollection<Audio>(audios);
+            ListAlbums = new ObservableCollection<Album>(albums);
+
+            _isInitialized = true;
+        }
 
         public String CurrentCategory
         {
@@ -62,14 +134,24 @@ namespace OneLastSong.ViewModels
 
         public void OnSearchEventTrigger(string newSearchQuery)
         {
-            if(CurrentSearchQuery.Equals(newSearchQuery.Trim()))
+            if (!_isInitialized)
             {
-                return;
+                Init();
             }
 
             CurrentSearchQuery = newSearchQuery.Trim();
+            FilteredListAudios = new ObservableCollection<Audio>(FilterAudioByTitle(ListAudios.ToList(), CurrentSearchQuery));
+            FilteredListAlbums = new ObservableCollection<Album>(FilterAlbumByTitle(ListAlbums.ToList(), CurrentSearchQuery));
+        }
 
-            LogUtils.Debug($"SearchPageViewModel received {newSearchQuery}");
+        public List<Audio> FilterAudioByTitle(List<Audio> audios, string searchQuery)
+        {
+            return audios.Where(audio => audio.Title.ToLower().Contains(searchQuery.ToLower())).ToList();
+        }
+
+        public List<Album> FilterAlbumByTitle(List<Album> albums, string searchQuery)
+        {
+            return albums.Where(album => album.Title.ToLower().Contains(searchQuery.ToLower())).ToList();
         }
 
         public bool IsAllSelected

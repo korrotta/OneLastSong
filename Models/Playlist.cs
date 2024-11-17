@@ -17,6 +17,9 @@ namespace OneLastSong.Models
         [JsonPropertyName("ItemCount")]
         public int ItemCount { get; set; }
 
+        [JsonPropertyName("Deletable")]
+        bool Deletable { get; set; }
+
         [JsonPropertyName("CreatedAt")]
         public DateTime CreatedAt { get; set; }
     }

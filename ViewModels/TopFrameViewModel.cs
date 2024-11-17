@@ -27,7 +27,7 @@ namespace OneLastSong.ViewModels
         private bool _isThemeComboBoxInitialized = false;
         public String Language { get; set; }
         public String Theme { get; set; }
-        private string _searchQuery;
+        private string _searchQuery = "";
         private bool _isUserLoggedIn;
         public NavigationService NavigationService { get; set; }
         public User User { get; private set; } = new User();

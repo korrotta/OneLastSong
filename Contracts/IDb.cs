@@ -19,5 +19,6 @@ namespace OneLastSong.Contracts
         public Task<ResultMessage> GetFirstNAlbums(int limit = 20);
         public Task<ResultMessage> GetAllUserPlaylists(string sessionToken);
         public Task<ResultMessage> AddUserPlaylist(string sessionToken, string playlistName, string coverImageUrl);
+        public Task<ResultMessage> GetAllArtists();
     }
 }

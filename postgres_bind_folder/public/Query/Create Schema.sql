@@ -27,6 +27,7 @@ CREATE TABLE users
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     avatar_url VARCHAR(255),
     profile_quote TEXT,
+    is_artist BOOLEAN DEFAULT FALSE,
     description TEXT
 );
 
@@ -83,7 +84,8 @@ CREATE TABLE playlists
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     cover_image_url VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    deletable BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
 
 -- Playlist audios table (many-to-many relationship between playlists and audios)
@@ -147,8 +149,8 @@ DROP FUNCTION IF EXISTS create_liked_playlist;
 CREATE OR REPLACE FUNCTION create_liked_playlist()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO playlists (user_id, name, created_at, cover_image_url)
-    VALUES (NEW.id, 'Liked Playlist', CURRENT_TIMESTAMP, 'https://firebasestorage.googleapis.com/v0/b/onelastsong-5d5a8.appspot.com/o/images%2FLikedPlaylist.png?alt=media&token=f72e241d-a82d-40a5-86b3-df6f81f6dd40');
+    INSERT INTO playlists (user_id, name, created_at, cover_image_url, deletable)
+    VALUES (NEW.id, 'Liked Playlist', CURRENT_TIMESTAMP, 'https://firebasestorage.googleapis.com/v0/b/onelastsong-5d5a8.appspot.com/o/images%2FLikedPlaylist.png?alt=media&token=f72e241d-a82d-40a5-86b3-df6f81f6dd40', false);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -280,7 +282,8 @@ BEGIN
             'CreatedAt', u.created_at,
             'AvatarUrl', u.avatar_url,
             'ProfileQuote', u.profile_quote,
-            'Description', u.description
+            'Description', u.description,
+            'IsArtist', u.is_artist
         ) INTO user_data
         FROM users u
         WHERE u.id = uid;
@@ -589,6 +592,35 @@ BEGIN
 END;
 $$;
 
+-- Get all artists
+DROP FUNCTION IF EXISTS get_all_artists();
+
+CREATE OR REPLACE FUNCTION get_all_artists()
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_json_data JSONB;
+BEGIN
+    -- Select from users where u.is_artist = true
+    SELECT json_agg(json_build_object(
+        'Id', u.id,
+        'Username', u.username,
+        'CreatedAt', u.created_at,
+        'AvatarUrl', u.avatar_url,
+        'ProfileQuote', u.profile_quote,
+        'Description', u.description,
+        'IsArtist', u.is_artist
+    )) INTO v_json_data
+    FROM users u
+    WHERE u.is_artist = true;
+
+    -- Return the result message
+    RETURN get_result_message(0, '', v_json_data);
+END;
+$$;
+
 
 -- ### Triggers region ###
 -- Trigger to call the function after a new user is inserted
@@ -617,6 +649,7 @@ GRANT EXECUTE ON FUNCTION get_album_item_count(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_first_n_albums(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_all_user_playlists(VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION add_user_playlist(VARCHAR, VARCHAR, VARCHAR) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_all_artists() TO restricted_user;
 
 SELECT user_login('test', 'test');
 SELECT validate_session('7d683b5d-6c62-474f-b666-7df5017edabc');

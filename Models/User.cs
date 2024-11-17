@@ -19,6 +19,7 @@ namespace OneLastSong.Models
         public String AvatarUrl { get; set; }
         public String ProfileQuote { get; set; }
         public String Description { get; set; }
+        public bool IsArtist { get; set; }
 
         public static User FromJson(String json)
         {

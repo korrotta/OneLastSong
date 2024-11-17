@@ -32,6 +32,12 @@ namespace OneLastSong.Views
         {
             this.InitializeComponent();
             DataContext = SearchPageViewModel;
+            Loaded += SearchPage_Loaded;
+        }
+
+        private void SearchPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            // SearchPageViewModel.Init();
         }
 
         public object GetCurrentParameterState()

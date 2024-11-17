@@ -410,6 +410,45 @@ namespace OneLastSong.Db
             }
         }
 
+        public Task<ResultMessage> GetAllArtists()
+        {
+            CheckConnection();
+
+            try
+            {
+                return Task.Run(() =>
+                {
+                    using (var cmd = dataSource.CreateCommand(QUERY_GET_ALL_ARTISTS))
+                    {
+                        LogUtils.Debug("Executing command: " + QUERY_GET_ALL_ARTISTS);
+
+                        // Execute and log returned data
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            LogUtils.Debug("Command executed, reading results...");
+
+                            if (reader.Read())
+                            {
+                                string json = reader.GetString(0);
+                                LogUtils.Debug("Raw JSON data: " + json);
+
+                                return ResultMessage.FromJson(json);
+                            }
+                            else
+                            {
+                                throw new Exception("No rows returned. While executing " + QUERY_GET_ALL_ARTISTS);
+                            }
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Debug($"Error executing query: {ex.Message}");
+                throw;
+            }
+        }
+
         // Our Query strings
         public static readonly string QUERY_USER_LOGIN = "SELECT user_login(@username, @password)";
         public static readonly string QUERY_GET_USER = "SELECT get_user_data(@session_token)";
@@ -418,5 +457,6 @@ namespace OneLastSong.Db
         public static readonly string QUERY_GET_FIRST_N_ALBUMS = "SELECT get_first_n_albums(@limit)";
         public static readonly string QUERY_GET_ALL_USER_PLAYLISTS = "SELECT get_all_user_playlists(@session_token)";
         public static readonly string QUERY_ADD_USER_PLAYLIST = "SELECT add_user_playlist(@session_token, @playlist_name, @cover_image_url)";
+        public static readonly string QUERY_GET_ALL_ARTISTS = "SELECT get_all_artists()";
     }
 }
