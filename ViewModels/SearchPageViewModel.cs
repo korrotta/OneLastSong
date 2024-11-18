@@ -39,6 +39,21 @@ namespace OneLastSong.ViewModels
                 }
             }
         }
+
+        private ObservableCollection<User> _filteredListArtists;
+        public ObservableCollection<User> FilteredListArtists
+        {
+            get => _filteredListArtists;
+            set
+            {
+                if (_filteredListArtists != value)
+                {
+                    _filteredListArtists = value;
+                    OnPropertyChanged(nameof(FilteredListArtists));
+                }
+            }
+        }
+
         public ObservableCollection<Album> _filteredListAlbum;
         public ObservableCollection<Album> FilteredListAlbums
         {
@@ -68,6 +83,21 @@ namespace OneLastSong.ViewModels
             }
         }
 
+        private ObservableCollection<User> _listArtists;
+        public ObservableCollection<User> ListArtists
+        {
+            get => _listArtists;
+            set
+            {
+                if (_listArtists != value)
+                {
+                    _listArtists = value;
+                    FilteredListArtists = new ObservableCollection<User>(value);
+                    OnPropertyChanged(nameof(ListArtists));
+                }
+            }
+        }
+
         private ObservableCollection<Album> _listAlbums;
         public ObservableCollection<Album> ListAlbums
         {
@@ -84,12 +114,14 @@ namespace OneLastSong.ViewModels
         }
 
         private string _currentCategory = ALL_CATEGORY;
-        public async void Init()
+        public async Task Init()
         {
             List<Audio> audios = await AudioDAO.Get().GetMostLikeAudios();
+            List<User> artists = await UserDAO.Get().GetAllArtists();
             List<Album> albums = await AlbumDAO.Get().GetMostLikeAlbums();
 
             ListAudios = new ObservableCollection<Audio>(audios);
+            ListArtists = new ObservableCollection<User>(artists);
             ListAlbums = new ObservableCollection<Album>(albums);
 
             _isInitialized = true;
@@ -132,21 +164,27 @@ namespace OneLastSong.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void OnSearchEventTrigger(string newSearchQuery)
+        public async void OnSearchEventTrigger(string newSearchQuery)
         {
             if (!_isInitialized)
             {
-                Init();
+                await Init();
             }
 
             CurrentSearchQuery = newSearchQuery.Trim();
             FilteredListAudios = new ObservableCollection<Audio>(FilterAudioByTitle(ListAudios.ToList(), CurrentSearchQuery));
+            FilteredListArtists = new ObservableCollection<User>(FilterArtistByTitle(ListArtists.ToList(), CurrentSearchQuery));
             FilteredListAlbums = new ObservableCollection<Album>(FilterAlbumByTitle(ListAlbums.ToList(), CurrentSearchQuery));
         }
 
         public List<Audio> FilterAudioByTitle(List<Audio> audios, string searchQuery)
         {
             return audios.Where(audio => audio.Title.ToLower().Contains(searchQuery.ToLower())).ToList();
+        }
+
+        public List<User> FilterArtistByTitle(List<User> artists, string searchQuery)
+        {
+            return artists.Where(artist => artist.Username.ToLower().Contains(searchQuery.ToLower())).ToList();
         }
 
         public List<Album> FilterAlbumByTitle(List<Album> albums, string searchQuery)
