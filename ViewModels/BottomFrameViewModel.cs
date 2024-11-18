@@ -2,6 +2,7 @@
 using OneLastSong.Contracts;
 using OneLastSong.Models;
 using OneLastSong.Services;
+using OneLastSong.Utils;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,6 +10,8 @@ using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml.Controls;
 
 namespace OneLastSong.ViewModels
 {
@@ -18,6 +21,9 @@ namespace OneLastSong.ViewModels
 
         private ListeningService _listeningService;
         private Audio _currentAudio = Audio.Default;
+        private int _currentProgress = 0;
+        private DispatcherQueue _dispatcherQueue;
+        private Slider _slider;
 
         public Audio CurrentAudio
         {
@@ -32,10 +38,25 @@ namespace OneLastSong.ViewModels
             }
         }
 
-        public BottomFrameViewModel()
+        public int CurrentProgress
+        {
+            get => _currentProgress;
+            set
+            {
+                if (_currentProgress != value)
+                {
+                    _currentProgress = value;
+                    OnPropertyChanged(nameof(CurrentProgress));
+                }
+            }
+        }
+
+        public BottomFrameViewModel(DispatcherQueue dispatcherQueue, Slider slider)
         {
             _listeningService = ListeningService.Get();
             _listeningService.RegisterAudioStateChangeListeners(this);
+            this._dispatcherQueue = dispatcherQueue;
+            this._slider = slider;
         }
 
         public void OnPropertyChanged(string propertyName)
@@ -54,14 +75,34 @@ namespace OneLastSong.ViewModels
             throw new NotImplementedException();
         }
 
-        public void OnAudioProgressChanged(TimeSpan progress)
+        public void OnAudioProgressChanged(int progress)
         {
-            throw new NotImplementedException();
+            if (_dispatcherQueue.HasThreadAccess)
+            {
+                // If already on the UI thread, update directly
+                _slider.Value = progress;
+                CurrentProgress = progress;
+            }
+            else
+            {
+                // Otherwise, marshal the call to the UI thread
+                _dispatcherQueue.TryEnqueue(() =>
+                {
+                    _slider.Value = progress;
+                    CurrentProgress = progress;
+                });
+            }
         }
 
         public void Dispose()
         {
             _listeningService.UnregisterAudioStateChangeListeners(this);
+        }
+
+        public void OnSliderValueChanged(int newValue)
+        {
+            // Add any additional logic you need when the slider value changes
+            _listeningService.Seek(newValue);
         }
     }
 }

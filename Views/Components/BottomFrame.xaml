@@ -7,9 +7,14 @@
     xmlns:local="using:OneLastSong.Views.Components"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:OneLastSong.ViewModels"
+    xmlns:converters="using:OneLastSong.Converters"
     d:DataContext="{d:DesignInstance Type=viewmodels:BottomFrameViewModel}"
     Background="White"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:DurationToTimeConverter x:Key="DurationToTimeConverter"/>
+    </Page.Resources>
 
     <Grid
         HorizontalAlignment="Stretch"
@@ -140,6 +145,7 @@
                     VerticalAlignment="Center"
                     FontSize="14"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
+                    Text="{x:Bind ViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource DurationToTimeConverter}}"
                     Style="{StaticResource BodySmall1}"/>
 
                 <!--  Progress  -->
@@ -149,7 +155,11 @@
                     Margin="10,0,10,0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
-                    Maximum="216"
+                    Maximum="{x:Bind ViewModel.CurrentAudio.Duration, Mode=OneWay}"
+                    Value="{Binding CurrentProgress, Mode=OneWay}"
+                    PointerCaptureLost="Slider_PointerCaptureLost"
+                    StepFrequency="1"
+                    SmallChange="1"
                     Minimum="0"/>
 
                 <!--  End Time  -->
@@ -160,6 +170,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     FontSize="14"
+                    Text="{x:Bind ViewModel.CurrentAudio.Duration, Mode=OneWay, Converter={StaticResource DurationToTimeConverter}}"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
                     Style="{StaticResource BodySmall1}"/>
             </Grid>

@@ -11,6 +11,6 @@ namespace OneLastSong.Contracts
     {
         public void OnAudioChanged(Audio audio);
         public void OnAudioPlayStateChanged(bool isPlaying);
-        public void OnAudioProgressChanged(TimeSpan progress);
+        public void OnAudioProgressChanged(int progress);
     }
 }

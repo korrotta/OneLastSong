@@ -20,6 +20,8 @@ namespace OneLastSong.Services
         private bool _isPlaying = false;
         private bool _shouldRun = true;
         private bool _shouldContinuePlayingCurrentAudio = true;
+        private MediaFoundationReader mf = null;
+        private WasapiOut wo = null;
 
         private List<IAudioStateChanged> _audioStateChangeNotifiers = new List<IAudioStateChanged>();
 
@@ -29,6 +31,15 @@ namespace OneLastSong.Services
             _shouldContinuePlayingCurrentAudio = false;
             _currentAudio = audio;
             NotifyAudioChanged(audio);
+            NotifyProgressChanged(0);
+        }
+
+        public void NotifyProgressChanged(int progress)
+        {
+            foreach (var notifier in _audioStateChangeNotifiers)
+            {
+                notifier.OnAudioProgressChanged(progress);
+            }
         }
 
         private void NotifyAudioChanged(Audio audio)
@@ -74,15 +85,20 @@ namespace OneLastSong.Services
         private void PlayAudioUrl(string url)
         {
             // play audio from url
-            using (var mf = new MediaFoundationReader(url))
-            using (var wo = new WasapiOut())
+            mf = new MediaFoundationReader(url);
+            wo = new WasapiOut();
             {
                 wo.Init(mf);
                 wo.Play();
                 _shouldContinuePlayingCurrentAudio = true;
                 while (wo.PlaybackState == PlaybackState.Playing && _shouldContinuePlayingCurrentAudio)
                 {
-                    Thread.Sleep(50);
+                    Thread.Sleep(1000);
+
+                    foreach (var notifier in _audioStateChangeNotifiers)
+                    {
+                        notifier.OnAudioProgressChanged((int)(mf.CurrentTime.TotalSeconds));
+                    }
                 }
                 wo.Stop();
             }
@@ -91,6 +107,15 @@ namespace OneLastSong.Services
         public static ListeningService Get()
         {
             return (ListeningService)((App)Application.Current).Services.GetService(typeof(ListeningService));
+        }
+
+        public void Seek(int seconds)
+        {
+            if (mf != null)
+            {
+                mf.CurrentTime = TimeSpan.FromSeconds(seconds);
+                NotifyProgressChanged(seconds);
+            }
         }
     }
 }
