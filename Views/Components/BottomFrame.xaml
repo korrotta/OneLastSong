@@ -8,13 +8,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:OneLastSong.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewmodels:BottomFrameViewModel}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Background="White"
     mc:Ignorable="d">
 
     <Grid
-        Padding="10"
         HorizontalAlignment="Stretch"
-        VerticalAlignment="Center"
+        VerticalAlignment="Stretch"        
         Background="{ThemeResource BG_PRIMARY}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -33,28 +32,28 @@
                 Height="Auto"
                 Margin="{StaticResource MediumRightMargin}"
                 CornerRadius="5">
-                <Image Source="/Assets/images/default.jpg" />
+                <Image Source="{x:Bind ViewModel.CurrentAudio.CoverImageUrl, Mode=OneWay}" />
             </Border>
 
             <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                 <TextBlock
-                    Foreground="{ThemeResource TEXT_PRIMARY}"
-                    Style="{StaticResource Body2}"
-                    TextAlignment="Left">
+                Foreground="{ThemeResource TEXT_PRIMARY}"
+                Style="{StaticResource Body2}"
+                TextAlignment="Left">
                     <Hyperlink Foreground="{ThemeResource TEXT_PRIMARY}">
-                        <Run Text="Sweden" />
+                        <Run Text="{x:Bind ViewModel.CurrentAudio.Title, Mode=OneWay}" />
                     </Hyperlink>
                 </TextBlock>
 
                 <TextBlock
                     Foreground="{ThemeResource TEXT_LIGHT}"
                     Style="{StaticResource BodySmall1}"
-                    Text="C418" />
+                    Text="{x:Bind ViewModel.CurrentAudio.Artist, Mode=OneWay}" />
             </StackPanel>
         </StackPanel>
 
         <!--  Middle: Playback Controls + Slider  -->
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="1" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -92,7 +91,6 @@
                     <Button
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Click="PlaybackButton_Click"
                         Style="{StaticResource IconButton}">
                         <FontIcon
                             x:Name="PlaybackIcon"
@@ -115,7 +113,6 @@
                 <!--  Repeat button  -->
                 <Button
                     Margin="{StaticResource MediumRightMargin}"
-                    Click="RepeatButton_Click"
                     Style="{StaticResource IconButton}">
                     <FontIcon
                         x:Name="RepeatIcon"
@@ -143,8 +140,7 @@
                     VerticalAlignment="Center"
                     FontSize="14"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
-                    Style="{StaticResource BodySmall1}"
-                    Text="{Binding CurrentTimeFormatted}" />
+                    Style="{StaticResource BodySmall1}"/>
 
                 <!--  Progress  -->
                 <Slider
@@ -153,11 +149,8 @@
                     Margin="10,0,10,0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
-                    Loaded="ProgressBar_Loaded"
                     Maximum="216"
-                    Minimum="0"
-                    PointerMoved="ProgressBar_Moved"
-                    Value="{Binding CurrentTime.TotalSeconds}" />
+                    Minimum="0"/>
 
                 <!--  End Time  -->
                 <TextBlock
@@ -168,8 +161,7 @@
                     VerticalAlignment="Center"
                     FontSize="14"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
-                    Style="{StaticResource BodySmall1}"
-                    Text="03:36" />
+                    Style="{StaticResource BodySmall1}"/>
             </Grid>
         </Grid>
 
@@ -217,9 +209,7 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Maximum="100.0"
-                                Minimum="0"
-                                ValueChanged="VolumeSlider_ValueChanged"
-                                Value="{Binding ViewModel.Volume, Mode=TwoWay}" />
+                                Minimum="0"/>
                         </StackPanel>
                     </Flyout>
                 </Button.Flyout>
@@ -228,7 +218,6 @@
             <!--  Fullscreen button  -->
             <Button
                 Margin="{StaticResource MediumRightMargin}"
-                Click="Fullscreen_Click"
                 Style="{StaticResource IconButton}">
                 <FontIcon
                     FontSize="{StaticResource MediumTextSize}"

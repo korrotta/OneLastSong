@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="OneLastSong.Views.Components.HomePage"
+    x:Name="HomePageName"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:OneLastSong.Views.Components"
@@ -50,8 +51,8 @@
                             Foreground="{ThemeResource TEXT_PRIMARY}"
                             />
                         <TextBlock Text="{x:Bind Description}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}"
-        HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
-        Foreground="{ThemeResource TEXT_LIGHT}"/>
+                            HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
+                            Foreground="{ThemeResource TEXT_LIGHT}"/>
                         <TextBlock Text="{x:Bind Artist}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}"
                             HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
                             Foreground="{ThemeResource TEXT_LIGHT}"/>
@@ -81,7 +82,11 @@
                     <Button Style="{StaticResource IconButton}">
                         <FontIcon Glyph="&#xE712;" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                     </Button>
-                    <Button Style="{StaticResource IconButton}">
+                    <!-- Play button -->
+                    <Button Style="{StaticResource IconButton}"
+                            Command="{Binding ElementName=HomePageName, Path=ViewModel.PlayCommand}"
+                            CommandParameter="{x:Bind}"
+                            >
                         <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource BG_PRIMARY}">
                             <FontIcon Glyph="&#xF5B0;" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                         </Border>                        

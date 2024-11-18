@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.UI.Xaml;
+using OneLastSong.Contracts;
 
 namespace OneLastSong.Services
 {
@@ -18,14 +19,34 @@ namespace OneLastSong.Services
         private Task _workerTask;
         private bool _isPlaying = false;
         private bool _shouldRun = true;
+        private bool _shouldContinuePlayingCurrentAudio = true;
+
+        private List<IAudioStateChanged> _audioStateChangeNotifiers = new List<IAudioStateChanged>();
 
         public void PlayAudio(Audio audio)
         {
             _playingQueue.Add(audio);
-            if (_currentAudio == null)
+            _shouldContinuePlayingCurrentAudio = false;
+            _currentAudio = audio;
+            NotifyAudioChanged(audio);
+        }
+
+        private void NotifyAudioChanged(Audio audio)
+        {
+            foreach (var notifier in _audioStateChangeNotifiers)
             {
-                _currentAudio = audio;
+                notifier.OnAudioChanged(audio);
             }
+        }
+
+        public void RegisterAudioStateChangeListeners(IAudioStateChanged audioStateChangeNotifier)
+        {
+            _audioStateChangeNotifiers.Add(audioStateChangeNotifier);
+        }
+
+        public void UnregisterAudioStateChangeListeners(IAudioStateChanged audioStateChangeNotifier)
+        {
+            _audioStateChangeNotifiers.Remove(audioStateChangeNotifier);
         }
 
         public ListeningService()
@@ -34,17 +55,10 @@ namespace OneLastSong.Services
             {
                 while (_shouldRun)
                 {
-                    if (_currentAudio != null && !_isPlaying)
+                    if (_currentAudio != null)
                     {
                         // play audio
                         PlayAudioUrl(_currentAudio.Url);
-                        // wait for audio to finish
-                        _isPlaying = true;
-                        // remove audio from queue
-                        _playingQueue.Remove(_currentAudio);
-                        // set current audio to null
-                        _currentAudio = null;
-                        _isPlaying = false;
                     }
                 }
             });
@@ -65,12 +79,13 @@ namespace OneLastSong.Services
             {
                 wo.Init(mf);
                 wo.Play();
-                while (wo.PlaybackState == PlaybackState.Playing)
+                _shouldContinuePlayingCurrentAudio = true;
+                while (wo.PlaybackState == PlaybackState.Playing && _shouldContinuePlayingCurrentAudio)
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(50);
                 }
+                wo.Stop();
             }
-            _isPlaying = true;
         }
 
         public static ListeningService Get()
