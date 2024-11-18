@@ -60,6 +60,7 @@ namespace OneLastSong
             // Services
             services.AddSingleton<NavigationService>();
             services.AddSingleton<AuthService>();
+            services.AddSingleton<ListeningService>();
 
             return services.BuildServiceProvider();
         }

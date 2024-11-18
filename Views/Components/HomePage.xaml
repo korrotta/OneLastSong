@@ -139,6 +139,7 @@
 
             <GridView
                 x:Name="AlbumList"
+                ItemsSource="{x:Bind ViewModel.ListAlbums, Mode=OneWay}"
                 ItemTemplate="{StaticResource AlbumTemplate}">
 
                 <GridView.ItemsPanel>
@@ -162,6 +163,7 @@
             <ListView
                 x:Name="DiscoveryList"
                 SelectionMode="Single"
+                ItemsSource="{x:Bind ViewModel.ListAudios, Mode=OneWay}"
                 ItemTemplate="{StaticResource SongTemplate}"/>
         </StackPanel>
     </ScrollViewer>

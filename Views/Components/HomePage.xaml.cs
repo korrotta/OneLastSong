@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using OneLastSong.Models;
 using OneLastSong.DAOs;
+using OneLastSong.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,6 +26,8 @@ namespace OneLastSong.Views.Components
     /// </summary>
     public sealed partial class HomePage : Page
     {
+        public HomePageViewModel ViewModel { get; set; } = new HomePageViewModel();
+
         public HomePage()
         {
             this.InitializeComponent();
@@ -33,31 +36,7 @@ namespace OneLastSong.Views.Components
 
         private async void HomePage_Loaded(object sender, RoutedEventArgs e)
         {
-            List<Audio> listAudios = await AudioDAO.Get().GetMostLikeAudios();
-            DiscoveryList.ItemsSource = listAudios;
-
-            List<Album> listAlbums = await AlbumDAO.Get().GetMostLikeAlbums();
-            AlbumList.ItemsSource = listAlbums;
-        }
-
-        private List<CustomDataObject> GenerateRandomData(int count)
-        {
-            var random = new Random();
-            var dataList = new List<CustomDataObject>();
-
-            for (int i = 0; i < count; i++)
-            {
-                dataList.Add(new CustomDataObject
-                {
-                    Title = $"Title {i + 1}",
-                    ImageLocation = "/Assets/LikedPlaylist.png",
-                    Views = random.Next(0, 10000).ToString(),
-                    Likes = random.Next(0, 5000).ToString(),
-                    Description = $"Description for item {i + 1}"
-                });
-            }
-
-            return dataList;
+            await ViewModel.Load();
         }
     }
 }
