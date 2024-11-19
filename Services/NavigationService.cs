@@ -130,7 +130,16 @@ namespace OneLastSong.Services
 
             if (_frame.CurrentSourcePageType != null)
             {
-                var currentEntry = (_frame.CurrentSourcePageType, _frame.GetNavigationState());
+                object currentState = _frame.GetNavigationState();
+
+                {
+                    if (_frame.Content is INavigationStateSavable savable)
+                    {
+                        currentState = savable.GetCurrentParameterState();
+                    }
+                }
+
+                var currentEntry = (_frame.CurrentSourcePageType, currentState);
                 _backStack.Push(currentEntry);
                 _forwardStack.Clear();
             }
