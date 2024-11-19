@@ -12,6 +12,8 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 
 namespace OneLastSong.ViewModels
 {
@@ -24,6 +26,8 @@ namespace OneLastSong.ViewModels
         private int _currentProgress = 0;
         private DispatcherQueue _dispatcherQueue;
         private Slider _slider;
+        private bool _isPlaying = false;
+        public ICommand ChangePlayStateCommand { get; set; }
 
         public Audio CurrentAudio
         {
@@ -51,12 +55,31 @@ namespace OneLastSong.ViewModels
             }
         }
 
+        public bool IsPlaying
+        {
+            get => _isPlaying;
+            set
+            {
+                if (_isPlaying != value)
+                {
+                    _isPlaying = value;
+                    OnPropertyChanged(nameof(IsPlaying));
+                }
+            }
+        }
+
         public BottomFrameViewModel(DispatcherQueue dispatcherQueue, Slider slider)
         {
             _listeningService = ListeningService.Get();
             _listeningService.RegisterAudioStateChangeListeners(this);
             this._dispatcherQueue = dispatcherQueue;
             this._slider = slider;
+            ChangePlayStateCommand = new RelayCommand(ChangePlayState);
+        }
+
+        private void ChangePlayState()
+        {
+            _listeningService.ChangePlayState();
         }
 
         public void OnPropertyChanged(string propertyName)
@@ -72,7 +95,10 @@ namespace OneLastSong.ViewModels
 
         public void OnAudioPlayStateChanged(bool isPlaying)
         {
-            throw new NotImplementedException();
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                IsPlaying = isPlaying;
+            });            
         }
 
         public void OnAudioProgressChanged(int progress)

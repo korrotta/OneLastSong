@@ -14,6 +14,7 @@
 
     <Page.Resources>
         <converters:DurationToTimeConverter x:Key="DurationToTimeConverter"/>
+        <converters:PlayStateToIconConverter x:Key="PlayStateToIconConverter"/>
     </Page.Resources>
 
     <Grid
@@ -96,12 +97,13 @@
                     <Button
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Style="{StaticResource IconButton}">
+                        Style="{StaticResource IconButton}"
+                        Command="{x:Bind ViewModel.ChangePlayStateCommand}">
                         <FontIcon
                             x:Name="PlaybackIcon"
                             FontSize="{StaticResource LargeTextSize}"
                             Foreground="{ThemeResource TEXT_CONTRAST1}"
-                            Glyph="&#xE768;" />
+                            Glyph="{x:Bind ViewModel.IsPlaying, Mode=OneWay, Converter={StaticResource PlayStateToIconConverter}}" />
                     </Button>
                 </Border>
 

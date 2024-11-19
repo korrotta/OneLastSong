@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
+using OneLastSong.Utils;
 
 namespace OneLastSong.Services
 {
@@ -34,6 +35,19 @@ namespace OneLastSong.Services
             NotifyProgressChanged(0);
         }
 
+        public bool IsPlaying
+        {
+            get => _isPlaying;
+            set
+            {
+                if (_isPlaying != value)
+                {
+                    _isPlaying = value;
+                    NotifyPlayStateChanged(value);
+                }
+            }
+        }
+
         public void NotifyProgressChanged(int progress)
         {
             foreach (var notifier in _audioStateChangeNotifiers)
@@ -47,6 +61,14 @@ namespace OneLastSong.Services
             foreach (var notifier in _audioStateChangeNotifiers)
             {
                 notifier.OnAudioChanged(audio);
+            }
+        }
+
+        public void NotifyPlayStateChanged(bool isPlaying)
+        {
+            foreach (var notifier in _audioStateChangeNotifiers)
+            {
+                notifier.OnAudioPlayStateChanged(isPlaying);
             }
         }
 
@@ -91,7 +113,8 @@ namespace OneLastSong.Services
                 wo.Init(mf);
                 wo.Play();
                 _shouldContinuePlayingCurrentAudio = true;
-                while (wo.PlaybackState == PlaybackState.Playing && _shouldContinuePlayingCurrentAudio)
+                IsPlaying = true;
+                while (wo.PlaybackState != PlaybackState.Stopped && _shouldContinuePlayingCurrentAudio)
                 {
                     Thread.Sleep(1000);
 
@@ -100,6 +123,7 @@ namespace OneLastSong.Services
                         notifier.OnAudioProgressChanged((int)(mf.CurrentTime.TotalSeconds));
                     }
                 }
+                IsPlaying = false;
                 wo.Stop();
             }
         }
@@ -116,6 +140,25 @@ namespace OneLastSong.Services
                 mf.CurrentTime = TimeSpan.FromSeconds(seconds);
                 NotifyProgressChanged(seconds);
             }
+        }
+
+        public void ChangePlayState()
+        {
+            if(wo == null)
+            {
+                SnackbarUtils.ShowSnackbar("No audio is playing", SnackbarType.Warning);
+                return;
+            }
+
+            if (_isPlaying)
+            {
+                wo.Pause();
+            }
+            else
+            {
+                wo.Play();
+            }
+            IsPlaying = !IsPlaying;
         }
     }
 }
