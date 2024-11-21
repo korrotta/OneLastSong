@@ -89,8 +89,11 @@ namespace OneLastSong.ViewModels
 
         public void OnAudioChanged(Audio audio)
         {
-            CurrentAudio = audio;
-            OnPropertyChanged(nameof(CurrentAudio));
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                CurrentAudio = audio;
+                OnPropertyChanged(nameof(CurrentAudio));
+            });
         }
 
         public void OnAudioPlayStateChanged(bool isPlaying)

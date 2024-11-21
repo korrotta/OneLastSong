@@ -9,13 +9,13 @@ using System.Threading;
 using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
 using OneLastSong.Utils;
+using OneLastSong.Cores.AudioSystem;
 
 namespace OneLastSong.Services
 {
     public class ListeningService : IDisposable
     {
-        private List<Audio> _playingQueue = new List<Audio>();
-        private Audio _currentAudio = null;
+        public PlayModeData PlayModeData { get; private set; } = new PlayModeData();
         // worker thread
         private Task _workerTask;
         private bool _isPlaying = false;
@@ -26,11 +26,10 @@ namespace OneLastSong.Services
 
         private List<IAudioStateChanged> _audioStateChangeNotifiers = new List<IAudioStateChanged>();
 
-        public void PlayAudio(Audio audio)
+        public async void PlayAudio(Audio audio)
         {
-            _playingQueue.Add(audio);
+            await PlayModeData.PlayMashUpAsync(audio);
             _shouldContinuePlayingCurrentAudio = false;
-            _currentAudio = audio;
             NotifyAudioChanged(audio);
             NotifyProgressChanged(0);
         }
@@ -84,15 +83,18 @@ namespace OneLastSong.Services
 
         public ListeningService()
         {
-            _workerTask = new Task(() =>
+            _workerTask = new Task(async () =>
             {
                 while (_shouldRun)
                 {
-                    if (_currentAudio != null)
+                    var currentAudio = await PlayModeData.NextAudioAsync();
+                    if (currentAudio != null)
                     {
+                        NotifyAudioChanged(currentAudio);
                         // play audio
-                        PlayAudioUrl(_currentAudio.Url);
+                        PlayAudioUrl(currentAudio.Url);
                     }
+                    Thread.Sleep(1000);
                 }
             });
             _workerTask.Start();
@@ -100,7 +102,7 @@ namespace OneLastSong.Services
 
         public void Dispose()
         {
-            _shouldRun = true;
+            _shouldRun = false;
             _workerTask.Dispose();
         }
 

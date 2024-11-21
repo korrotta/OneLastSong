@@ -83,7 +83,6 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Components\" />
     <Folder Include="scripts\" />
     <Folder Include="Resources\Languages\" />
   </ItemGroup>

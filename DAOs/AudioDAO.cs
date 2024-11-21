@@ -16,6 +16,7 @@ namespace OneLastSong.DAOs
     {
         private List<Audio> _audios = new List<Audio>();
         private IDb _db;
+        private Random _random = new Random();
 
         public void Init()
         {
@@ -40,9 +41,34 @@ namespace OneLastSong.DAOs
             return _audios;
         }
 
+        public Audio GetRandom()
+        {
+            if (_audios.Count == 0)
+            {
+                throw new Exception("No audios available");
+            }
+
+            return _audios[_random.Next(0, _audios.Count)];
+        }
+
         public static AudioDAO Get()
         {
             return (AudioDAO)((App)Application.Current).Services.GetService(typeof(AudioDAO));
+        }
+
+        internal IEnumerable<Audio> GetPlaylistAudios(int playlistId)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal IEnumerable<Audio> GetAlbumAudios(int albumId)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal IEnumerable<Audio> GetArtistAudios(int artistId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
