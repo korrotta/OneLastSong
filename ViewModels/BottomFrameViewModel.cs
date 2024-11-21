@@ -24,7 +24,6 @@ namespace OneLastSong.ViewModels
         private ListeningService _listeningService;
         private Audio _currentAudio = Audio.Default;
         private int _currentProgress = 0;
-        private DispatcherQueue _dispatcherQueue;
         private Slider _slider;
         private bool _isPlaying = false;
         public ICommand ChangePlayStateCommand { get; set; }
@@ -72,7 +71,6 @@ namespace OneLastSong.ViewModels
         {
             _listeningService = ListeningService.Get();
             _listeningService.RegisterAudioStateChangeListeners(this);
-            this._dispatcherQueue = dispatcherQueue;
             this._slider = slider;
             ChangePlayStateCommand = new RelayCommand(ChangePlayState);
         }
@@ -89,38 +87,19 @@ namespace OneLastSong.ViewModels
 
         public void OnAudioChanged(Audio audio)
         {
-            _dispatcherQueue.TryEnqueue(() =>
-            {
-                CurrentAudio = audio;
-                OnPropertyChanged(nameof(CurrentAudio));
-            });
+            CurrentAudio = audio;
+            OnPropertyChanged(nameof(CurrentAudio));
         }
 
         public void OnAudioPlayStateChanged(bool isPlaying)
         {
-            _dispatcherQueue.TryEnqueue(() =>
-            {
-                IsPlaying = isPlaying;
-            });            
+            IsPlaying = isPlaying;
         }
 
         public void OnAudioProgressChanged(int progress)
         {
-            if (_dispatcherQueue.HasThreadAccess)
-            {
-                // If already on the UI thread, update directly
-                _slider.Value = progress;
-                CurrentProgress = progress;
-            }
-            else
-            {
-                // Otherwise, marshal the call to the UI thread
-                _dispatcherQueue.TryEnqueue(() =>
-                {
-                    _slider.Value = progress;
-                    CurrentProgress = progress;
-                });
-            }
+            _slider.Value = progress;
+            CurrentProgress = progress;
         }
 
         public void Dispose()

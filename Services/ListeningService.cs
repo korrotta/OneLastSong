@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
 using OneLastSong.Utils;
 using OneLastSong.Cores.AudioSystem;
+using Microsoft.UI.Dispatching;
 
 namespace OneLastSong.Services
 {
@@ -23,6 +24,7 @@ namespace OneLastSong.Services
         private bool _shouldContinuePlayingCurrentAudio = true;
         private MediaFoundationReader mf = null;
         private WasapiOut wo = null;
+        private DispatcherQueue _eventHandler;
 
         private List<IAudioStateChanged> _audioStateChangeNotifiers = new List<IAudioStateChanged>();
 
@@ -51,7 +53,10 @@ namespace OneLastSong.Services
         {
             foreach (var notifier in _audioStateChangeNotifiers)
             {
-                notifier.OnAudioProgressChanged(progress);
+                _eventHandler.TryEnqueue(() =>
+                {
+                    notifier.OnAudioProgressChanged(progress);
+                });
             }
         }
 
@@ -59,7 +64,10 @@ namespace OneLastSong.Services
         {
             foreach (var notifier in _audioStateChangeNotifiers)
             {
-                notifier.OnAudioChanged(audio);
+                _eventHandler.TryEnqueue(() =>
+                {
+                    notifier.OnAudioChanged(audio);
+                });
             }
         }
 
@@ -67,7 +75,10 @@ namespace OneLastSong.Services
         {
             foreach (var notifier in _audioStateChangeNotifiers)
             {
-                notifier.OnAudioPlayStateChanged(isPlaying);
+                _eventHandler.TryEnqueue(() =>
+                {
+                    notifier.OnAudioPlayStateChanged(isPlaying);
+                });
             }
         }
 
@@ -81,8 +92,10 @@ namespace OneLastSong.Services
             _audioStateChangeNotifiers.Remove(audioStateChangeNotifier);
         }
 
-        public ListeningService()
+        public ListeningService(DispatcherQueue dispatcherQueue)
         {
+            _eventHandler = dispatcherQueue;
+
             _workerTask = new Task(async () =>
             {
                 while (_shouldRun)
@@ -118,12 +131,8 @@ namespace OneLastSong.Services
                 IsPlaying = true;
                 while (wo.PlaybackState != PlaybackState.Stopped && _shouldContinuePlayingCurrentAudio)
                 {
+                    NotifyProgressChanged((int)mf.CurrentTime.TotalSeconds);
                     Thread.Sleep(1000);
-
-                    foreach (var notifier in _audioStateChangeNotifiers)
-                    {
-                        notifier.OnAudioProgressChanged((int)(mf.CurrentTime.TotalSeconds));
-                    }
                 }
                 IsPlaying = false;
                 wo.Stop();

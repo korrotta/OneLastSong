@@ -22,6 +22,8 @@ using OneLastSong.DAOs;
 using OneLastSong.Views;
 using OneLastSong.Services;
 using OneLastSong.Contracts;
+using System.Threading;
+using Microsoft.UI.Dispatching;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -60,7 +62,7 @@ namespace OneLastSong
             // Services
             services.AddSingleton<NavigationService>();
             services.AddSingleton<AuthService>();
-            services.AddSingleton<ListeningService>();
+            services.AddSingleton<ListeningService>(provider => new ListeningService(DispatcherQueue.GetForCurrentThread()));
 
             return services.BuildServiceProvider();
         }
