@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using Microsoft.UI.Xaml;
+using Npgsql;
 using OneLastSong.Contracts;
 using OneLastSong.Models;
 using OneLastSong.Utils;
@@ -18,19 +19,12 @@ namespace OneLastSong.Db
 
         public async Task Connect()
         {
-            try
-            {
-                dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnectionString);
-                dataSourceBuilder.EnableRecordsAsTuples();
+            dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnectionString);
+            dataSourceBuilder.EnableRecordsAsTuples();
 
-                dataSource = dataSourceBuilder.Build();
+            dataSource = dataSourceBuilder.Build();
 
-                _conn = await dataSource.OpenConnectionAsync();
-            }
-            catch (Exception e)
-            {
-                throw new InvalidOperationException("Connection failed", e);
-            }
+            _conn = await dataSource.OpenConnectionAsync();
 
             if (_conn.State != System.Data.ConnectionState.Open)
             {

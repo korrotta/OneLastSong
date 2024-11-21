@@ -81,9 +81,14 @@ namespace OneLastSong.Views
             catch (Exception ex)
             {
                 LogUtils.Debug($"Error initializing database: {ex.Message}");
+                SnackbarUtils.ShowSnackbar("Cannot connect to the database :(", SnackbarType.Error, 3);
+                // Close the app after 3 seconds
+                await Task.Delay(3000);
+                // Close the app
+                Application.Current.Exit();
+                // throw new InvalidOperationException("Connection failed", e);
             }
         }
-
 
     }
 }
