@@ -1,4 +1,5 @@
-﻿using OneLastSong.DAOs;
+﻿using Microsoft.UI.Xaml.Hosting;
+using OneLastSong.DAOs;
 using OneLastSong.Models;
 using System;
 using System.Collections.Generic;
@@ -116,6 +117,32 @@ namespace OneLastSong.Cores.AudioSystem
 
                 CurrentAudio = nextAudio;
                 return nextAudio;
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
+
+        public async Task<bool> IsTheCurrentAudioFromMashup(int id)
+        {
+            await Semaphore.WaitAsync();
+            try
+            {
+                return CurrentPlayMode == PlayMode.MashUp && CurrentAudio.AudioId == id;
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
+
+        public async Task<PlayMode> GetCurrentPlayModeSafe()
+        {
+            await Semaphore.WaitAsync();
+            try
+            {
+                return CurrentPlayMode;
             }
             finally
             {

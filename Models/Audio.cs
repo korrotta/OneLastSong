@@ -10,41 +10,186 @@ namespace OneLastSong.Models
 {
     public class Audio : INotifyPropertyChanged
     {
+        private string _url;
+        private int _likes;
+        private string _title;
+        private string _artist;
+        private int? _albumId;
+        private int _audioId;
+        private int? _authorId;
+        private int _duration;
+        private DateTime _createdAt;
+        private int? _categoryId;
+        private string _description;
+        private string _coverImageUrl;
+
         [JsonPropertyName("Url")]
-        public string Url { get; set; }
+        public string Url
+        {
+            get => _url;
+            set
+            {
+                if (_url != value)
+                {
+                    _url = value;
+                    OnPropertyChanged(nameof(Url));
+                }
+            }
+        }
 
         [JsonPropertyName("Likes")]
-        public int Likes { get; set; }
+        public int Likes
+        {
+            get => _likes;
+            set
+            {
+                if (_likes != value)
+                {
+                    _likes = value;
+                    OnPropertyChanged(nameof(Likes));
+                }
+            }
+        }
 
         [JsonPropertyName("Title")]
-        public string Title { get; set; }
+        public string Title
+        {
+            get => _title;
+            set
+            {
+                if (_title != value)
+                {
+                    _title = value;
+                    OnPropertyChanged(nameof(Title));
+                }
+            }
+        }
 
         [JsonPropertyName("Artist")]
-        public string Artist { get; set; }
+        public string Artist
+        {
+            get => _artist;
+            set
+            {
+                if (_artist != value)
+                {
+                    _artist = value;
+                    OnPropertyChanged(nameof(Artist));
+                }
+            }
+        }
 
         [JsonPropertyName("AlbumId")]
-        public int? AlbumId { get; set; }
+        public int? AlbumId
+        {
+            get => _albumId;
+            set
+            {
+                if (_albumId != value)
+                {
+                    _albumId = value;
+                    OnPropertyChanged(nameof(AlbumId));
+                }
+            }
+        }
 
         [JsonPropertyName("AudioId")]
-        public int AudioId { get; set; }
+        public int AudioId
+        {
+            get => _audioId;
+            set
+            {
+                if (_audioId != value)
+                {
+                    _audioId = value;
+                    OnPropertyChanged(nameof(AudioId));
+                }
+            }
+        }
 
         [JsonPropertyName("AuthorId")]
-        public int? AuthorId { get; set; }
+        public int? AuthorId
+        {
+            get => _authorId;
+            set
+            {
+                if (_authorId != value)
+                {
+                    _authorId = value;
+                    OnPropertyChanged(nameof(AuthorId));
+                }
+            }
+        }
 
         [JsonPropertyName("Duration")]
-        public int Duration { get; set; }
+        public int Duration
+        {
+            get => _duration;
+            set
+            {
+                if (_duration != value)
+                {
+                    _duration = value;
+                    OnPropertyChanged(nameof(Duration));
+                }
+            }
+        }
 
         [JsonPropertyName("CreatedAt")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt
+        {
+            get => _createdAt;
+            set
+            {
+                if (_createdAt != value)
+                {
+                    _createdAt = value;
+                    OnPropertyChanged(nameof(CreatedAt));
+                }
+            }
+        }
 
         [JsonPropertyName("CategoryId")]
-        public int? CategoryId { get; set; }
+        public int? CategoryId
+        {
+            get => _categoryId;
+            set
+            {
+                if (_categoryId != value)
+                {
+                    _categoryId = value;
+                    OnPropertyChanged(nameof(CategoryId));
+                }
+            }
+        }
 
         [JsonPropertyName("Description")]
-        public string Description { get; set; }
+        public string Description
+        {
+            get => _description;
+            set
+            {
+                if (_description != value)
+                {
+                    _description = value;
+                    OnPropertyChanged(nameof(Description));
+                }
+            }
+        }
 
         [JsonPropertyName("CoverImageUrl")]
-        public string CoverImageUrl { get; set; }
+        public string CoverImageUrl
+        {
+            get => _coverImageUrl;
+            set
+            {
+                if (_coverImageUrl != value)
+                {
+                    _coverImageUrl = value;
+                    OnPropertyChanged(nameof(CoverImageUrl));
+                }
+            }
+        }
 
         public static readonly Audio Default = new Audio
         {
@@ -63,5 +208,10 @@ namespace OneLastSong.Models
         };
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

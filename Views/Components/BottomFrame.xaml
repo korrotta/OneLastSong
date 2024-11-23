@@ -80,14 +80,15 @@
                 </Button>
 
                 <!--  Previous button  -->
-                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}"
+                        Command="{x:Bind ViewModel.RestartPlayCommand}">
                     <FontIcon
                         FontSize="{StaticResource MediumTextSize}"
                         Foreground="{ThemeResource TEXT_PRIMARY}"
-                        Glyph="&#xE892;" />
+                        Glyph="&#xE892;"/>
                 </Button>
 
-                <!--  Playback button  -->
+                <!--  Play/Pause button  -->
                 <Border
                     Width="32"
                     Height="32"
@@ -110,7 +111,8 @@
 
 
                 <!--  Next button  -->
-                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}"
+                        Command="{x:Bind ViewModel.PlayNextCommand}">
                     <FontIcon
                         FontSize="{StaticResource MediumTextSize}"
                         Foreground="{ThemeResource TEXT_PRIMARY}"

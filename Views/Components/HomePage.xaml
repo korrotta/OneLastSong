@@ -9,6 +9,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:l="using:WinUI3Localizer"
     xmlns:models="using:OneLastSong.Models"
+    xmlns:items="using:OneLastSong.Cores.DataItems"
+    xmlns:converters="using:OneLastSong.Converters"
     mc:Ignorable="d">
 
     <Page.Background>
@@ -19,6 +21,8 @@
     </Page.Background>
 
     <Page.Resources>
+        <converters:PlayStateToIconConverter x:Key="PlayStateToIconConverter"/>
+        
         <DataTemplate x:Name="AlbumTemplate" x:DataType="models:Album">
             <Grid Width="200" Height="112">
                 <Image Source="{x:Bind CoverImageUrl}" Stretch="UniformToFill"/>
@@ -35,7 +39,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="SongTemplate" x:DataType="models:Audio">
+        <DataTemplate x:Key="SongTemplate" x:DataType="items:AudioItem">
             <Grid>
                 <Grid Margin="0,12,0,12" AutomationProperties.Name="{x:Bind Title}">
 
@@ -46,25 +50,26 @@
                     <Image Source="{x:Bind CoverImageUrl}" Height="100" Width="200" Stretch="Fill"/>
 
                     <StackPanel Margin="12,0,0,0" Grid.Column="1" >
-                        <TextBlock Text="{x:Bind Title}" FontSize="14" FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}"
+                        <TextBlock Text="{x:Bind Title, Mode=OneWay}" FontSize="14" FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}"
                             HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20"
                             Foreground="{ThemeResource TEXT_PRIMARY}"
                             />
-                        <TextBlock Text="{x:Bind Description}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}"
+                        <TextBlock Text="{x:Bind Description, Mode=OneWay}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}"
                             HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
                             Foreground="{ThemeResource TEXT_LIGHT}"/>
-                        <TextBlock Text="{x:Bind Artist}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}"
+                        <TextBlock Text="{x:Bind Artist, Mode=OneWay}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}"
                             HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
                             Foreground="{ThemeResource TEXT_LIGHT}"/>
+
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{x:Bind Likes}" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,0,0,0"
+                            <TextBlock Text="{x:Bind Likes, Mode=OneWay}" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,0,0,0"
                                                                Foreground="{ThemeResource TEXT_LIGHT}"/>
                             <TextBlock l:Uids.Uid="Views_TextBlock" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}"
                                                                Foreground="{ThemeResource TEXT_LIGHT}"/>
                             <TextBlock Text=" ⋅ " Style="{ThemeResource CaptionTextBlockStyle}"
                                 HorizontalAlignment="Left"
                                                                Foreground="{ThemeResource TEXT_LIGHT}"/>
-                            <TextBlock Text="{x:Bind Likes}" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}" Margin="5,0,0,0"
+                            <TextBlock Text="{x:Bind Likes, Mode=OneWay}" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}" Margin="5,0,0,0"
                                                                Foreground="{ThemeResource TEXT_LIGHT}"/>
                             <TextBlock l:Uids.Uid="Likes_TextBlock" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}"
                                                                Foreground="{ThemeResource TEXT_LIGHT}"/>
@@ -88,7 +93,7 @@
                             CommandParameter="{x:Bind}"
                             >
                         <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource BG_PRIMARY}">
-                            <FontIcon Glyph="&#xF5B0;" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                            <FontIcon Glyph="{x:Bind IsPlaying, Mode=OneWay, Converter={StaticResource PlayStateToIconConverter}}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                         </Border>                        
                     </Button>
                 </StackPanel>
@@ -169,7 +174,8 @@
                 x:Name="DiscoveryList"
                 SelectionMode="Single"
                 ItemsSource="{x:Bind ViewModel.ListAudios, Mode=OneWay}"
-                ItemTemplate="{StaticResource SongTemplate}"/>
+                ItemTemplate="{StaticResource SongTemplate}"
+                SelectedItem="{x:Bind ViewModel.SelectedAudio, Mode=TwoWay}"/>
         </StackPanel>
     </ScrollViewer>
     

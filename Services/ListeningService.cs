@@ -60,13 +60,13 @@ namespace OneLastSong.Services
             }
         }
 
-        private void NotifyAudioChanged(Audio audio)
+        private void NotifyAudioChanged(Audio newAudio)
         {
             foreach (var notifier in _audioStateChangeNotifiers)
             {
                 _eventHandler.TryEnqueue(() =>
                 {
-                    notifier.OnAudioChanged(audio);
+                    notifier.OnAudioChanged(newAudio);
                 });
             }
         }
@@ -100,6 +100,7 @@ namespace OneLastSong.Services
             {
                 while (_shouldRun)
                 {
+                    var oldAudio = PlayModeData.CurrentAudio;
                     var currentAudio = await PlayModeData.NextAudioAsync();
                     if (currentAudio != null)
                     {
@@ -170,6 +171,20 @@ namespace OneLastSong.Services
                 wo.Play();
             }
             IsPlaying = !IsPlaying;
+        }
+
+        public void PlayNext()
+        {
+            _shouldContinuePlayingCurrentAudio = false;
+        }
+        
+        public void RestartPlay()
+        {
+            if (mf != null)
+            {
+                mf.CurrentTime = TimeSpan.FromSeconds(0);
+                NotifyProgressChanged(0);
+            }
         }
     }
 }

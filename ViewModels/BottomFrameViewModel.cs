@@ -27,6 +27,28 @@ namespace OneLastSong.ViewModels
         private Slider _slider;
         private bool _isPlaying = false;
         public ICommand ChangePlayStateCommand { get; set; }
+        public ICommand PlayNextCommand { get; set; }
+        public ICommand RestartPlayCommand { get; set; }
+
+        public BottomFrameViewModel(DispatcherQueue dispatcherQueue, Slider slider)
+        {
+            _listeningService = ListeningService.Get();
+            _listeningService.RegisterAudioStateChangeListeners(this);
+            this._slider = slider;
+            ChangePlayStateCommand = new RelayCommand(ChangePlayState);
+            PlayNextCommand = new RelayCommand(PlayNext);
+            RestartPlayCommand = new RelayCommand(RestartPlay);
+        }
+
+        private void RestartPlay()
+        {
+            _listeningService.RestartPlay();
+        }
+
+        private void PlayNext()
+        {
+            _listeningService.PlayNext();
+        }
 
         public Audio CurrentAudio
         {
@@ -67,14 +89,6 @@ namespace OneLastSong.ViewModels
             }
         }
 
-        public BottomFrameViewModel(DispatcherQueue dispatcherQueue, Slider slider)
-        {
-            _listeningService = ListeningService.Get();
-            _listeningService.RegisterAudioStateChangeListeners(this);
-            this._slider = slider;
-            ChangePlayStateCommand = new RelayCommand(ChangePlayState);
-        }
-
         private void ChangePlayState()
         {
             _listeningService.ChangePlayState();
@@ -85,9 +99,9 @@ namespace OneLastSong.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void OnAudioChanged(Audio audio)
+        public void OnAudioChanged(Audio newAudio)
         {
-            CurrentAudio = audio;
+            CurrentAudio = newAudio;
             OnPropertyChanged(nameof(CurrentAudio));
         }
 

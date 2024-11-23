@@ -1,4 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using OneLastSong.Contracts;
+using OneLastSong.Cores.AudioSystem;
+using OneLastSong.Cores.DataItems;
 using OneLastSong.DAOs;
 using OneLastSong.Models;
 using OneLastSong.Services;
@@ -14,15 +17,18 @@ using System.Windows.Input;
 
 namespace OneLastSong.ViewModels
 {
-    public class HomePageViewModel : INotifyPropertyChanged
+    public class HomePageViewModel : INotifyPropertyChanged, IAudioStateChanged, IDisposable
     {
         public ICommand PlayCommand { get; }
         public event PropertyChangedEventHandler PropertyChanged;
         private ListeningService listeningService = null;
-        
+        private AudioItem _selectedAudio;
+
         public HomePageViewModel()
         {
+            listeningService = ListeningService.Get();
             PlayCommand = new RelayCommand<Audio>(PlayAudio);
+            listeningService.RegisterAudioStateChangeListeners(this);
         }
 
         public void OnPropertyChanged(string propertyName)
@@ -30,17 +36,36 @@ namespace OneLastSong.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private ObservableCollection<Audio> _listAudios = new ObservableCollection<Audio>();
+        private ObservableCollection<AudioItem> _listAudios = new ObservableCollection<AudioItem>();
         private ObservableCollection<Album> _listAlbums = new ObservableCollection<Album>();
         
         public async Task Load()
         {
-            ListAudios = new ObservableCollection<Audio>(await AudioDAO.Get().GetMostLikeAudios());
+            var audios = await AudioDAO.Get().GetMostLikeAudios();
+            ListAudios = new ObservableCollection<AudioItem>(audios.Select(a => new AudioItem
+            {
+                AudioId = a.AudioId,
+                Title = a.Title,
+                Artist = a.Artist,
+                AlbumId = a.AlbumId,
+                AuthorId = a.AuthorId,
+                Duration = a.Duration,
+                CreatedAt = a.CreatedAt,
+                CategoryId = a.CategoryId,
+                Description = a.Description,
+                CoverImageUrl = a.CoverImageUrl,
+                Likes = a.Likes,
+                Url = a.Url
+            }));
             ListAlbums = new ObservableCollection<Album>(await AlbumDAO.Get().GetMostLikeAlbums());
             listeningService = ListeningService.Get();
+            if (ListAudios.Count > 0)
+            {
+                SelectedAudio = ListAudios[0];
+            }
         }
 
-        public ObservableCollection<Audio> ListAudios
+        public ObservableCollection<AudioItem> ListAudios
         {
             get => _listAudios;
             set
@@ -66,14 +91,84 @@ namespace OneLastSong.ViewModels
             }
         }
 
-        public void PlayAudio(Audio audio)
+        public AudioItem SelectedAudio
+        {
+            get => _selectedAudio;
+            set
+            {
+                if (_selectedAudio != value)
+                {
+                    _selectedAudio = value;
+                    OnPropertyChanged(nameof(SelectedAudio));
+                }
+            }
+        }
+
+        public async void PlayAudio(Audio audio)
         {
             if(listeningService == null)
             {
                 LogUtils.Error("Listening service is not initialized");
             }
 
+            bool isTheCurrentAudio = await listeningService.PlayModeData.IsTheCurrentAudioFromMashup(audio.AudioId);
+
+            // if the audio is the current audio, then change the play state
+            if (isTheCurrentAudio)
+            {
+                listeningService.ChangePlayState();
+                return;
+            }
+
             listeningService.PlayAudio(audio);
+        }
+
+        public void OnAudioChanged(Audio newAudio)
+        {
+            if(newAudio == null)
+            {
+                return;
+            }
+            // set the corresponding audio item to be selected
+            for (int i = 0; i < ListAudios.Count; i++)
+            {
+                if (ListAudios[i].AudioId == newAudio.AudioId)
+                {
+                    SelectedAudio = ListAudios[i];
+                }
+            }
+        }
+
+        public async void OnAudioPlayStateChanged(bool isPlaying)
+        {
+            for (int i = 0; i < ListAudios.Count; i++)
+            {
+                var isTheCurrentAudio = await listeningService.PlayModeData.IsTheCurrentAudioFromMashup(ListAudios[i].AudioId);
+                if (isTheCurrentAudio)
+                {
+                    ListAudios[i].IsPlaying = isPlaying;
+                }
+                else
+                {
+                    ListAudios[i].IsPlaying = false;
+                }
+            }
+        }
+
+        public void OnAudioProgressChanged(int progress)
+        {
+            
+        }
+
+        public void Dispose()
+        {
+            listeningService.UnregisterAudioStateChangeListeners(this);
+        }
+
+        public void UpdateView()
+        {
+            OnAudioPlayStateChanged(listeningService.IsPlaying);
+            OnAudioChanged(listeningService.PlayModeData.CurrentAudio);
         }
     }
 }

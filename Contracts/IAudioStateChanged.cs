@@ -9,7 +9,7 @@ namespace OneLastSong.Contracts
 {
     public interface IAudioStateChanged
     {
-        public void OnAudioChanged(Audio audio);
+        public void OnAudioChanged(Audio newAudio);
         public void OnAudioPlayStateChanged(bool isPlaying);
         public void OnAudioProgressChanged(int progress);
     }

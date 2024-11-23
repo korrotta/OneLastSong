@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Navigation;
 using OneLastSong.Models;
 using OneLastSong.DAOs;
 using OneLastSong.ViewModels;
+using OneLastSong.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -37,6 +38,12 @@ namespace OneLastSong.Views.Components
         private async void HomePage_Loaded(object sender, RoutedEventArgs e)
         {
             await ViewModel.Load();
+            ViewModel.UpdateView();
+        }
+
+        // On navigated to
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
         }
     }
 }
