@@ -621,6 +621,131 @@ BEGIN
 END;
 $$;
 
+-- Function to like an audio
+CREATE OR REPLACE FUNCTION like_audio(ip_session_token VARCHAR, ip_audio_id INTEGER, ip_playlist_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_audio_id INTEGER;
+    v_playlist_id INTEGER;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, insert the like
+    IF v_user_id IS NOT NULL THEN
+        INSERT INTO likes (user_id, audio_id, liked_at)
+        VALUES (v_user_id, ip_audio_id, CURRENT_TIMESTAMP);
+
+        -- Insert the audio into the playlist
+        INSERT INTO playlist_audios (playlist_id, audio_id)
+        VALUES (ip_playlist_id, ip_audio_id);
+
+        -- Return the success message
+        RETURN get_result_message(0, '', '{}'::JSONB);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
+-- create function to comment on an audio
+CREATE OR REPLACE FUNCTION comment_audio(ip_session_token VARCHAR, ip_audio_id INTEGER, ip_comment TEXT)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_audio_id INTEGER;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, insert the comment
+    IF v_user_id IS NOT NULL THEN
+        INSERT INTO comments (user_id, audio_id, comment_text, commented_at)
+        VALUES (v_user_id, ip_audio_id, ip_comment, CURRENT_TIMESTAMP);
+
+        -- Return the success message
+        RETURN get_result_message(0, '', '{}'::JSONB);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
+-- create function to update user profile
+CREATE OR REPLACE FUNCTION update_user_profile(ip_session_token VARCHAR, ip_avatar_url VARCHAR, ip_profile_quote TEXT, ip_description TEXT)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, update the user profile
+    IF v_user_id IS NOT NULL THEN
+        UPDATE users
+        SET avatar_url = ip_avatar_url,
+            profile_quote = ip_profile_quote,
+            description = ip_description
+        WHERE id = v_user_id;
+
+        -- Return the success message
+        RETURN get_result_message(0, '', '{}'::JSONB);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+--create function to get all user's playlists
+CREATE OR REPLACE FUNCTION get_all_user_playlists(ip_session_token VARCHAR)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_json_data JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, retrieve the user's playlists
+    IF v_user_id IS NOT NULL THEN
+        SELECT json_agg(json_build_object(
+            'PlaylistId', p.id,
+            'Name', p.name,
+            'CoverImageUrl', p.cover_image_url,
+            'ItemCount', (
+                SELECT COUNT(*)
+                FROM playlist_audios pa
+                WHERE pa.playlist_id = p.id
+            ),
+            'CreatedAt', p.created_at
+        )) INTO v_json_data
+        FROM playlists p
+        WHERE p.user_id = v_user_id;
+
+        -- Return the user's playlists
+        RETURN get_result_message(0, '', v_json_data);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
 
 -- ### Triggers region ###
 -- Trigger to call the function after a new user is inserted
@@ -650,6 +775,9 @@ GRANT EXECUTE ON FUNCTION get_first_n_albums(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_all_user_playlists(VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION add_user_playlist(VARCHAR, VARCHAR, VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_all_artists() TO restricted_user;
+GRANT EXECUTE ON FUNCTION like_audio(VARCHAR, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION comment_audio(VARCHAR, INT, TEXT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION update_user_profile(VARCHAR, VARCHAR, TEXT, TEXT) TO restricted_user;
 
 SELECT user_login('test', 'test');
 SELECT validate_session('7d683b5d-6c62-474f-b666-7df5017edabc');
