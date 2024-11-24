@@ -21,7 +21,7 @@ namespace OneLastSong.Cores.AudioSystem
 
         public Audio CurrentAudio { get; set; }
 
-        private ListeningSession _listeningSession;
+        public ListeningSession ListeningSession { get; set; } = null;
 
         public async Task PlayMashUpAsync(Audio audio)
         {
@@ -180,6 +180,25 @@ namespace OneLastSong.Cores.AudioSystem
             {
                 Semaphore.Release();
             }
+        }
+
+        internal void RetrievePlayingSession(Audio audio, int progress)
+        {
+            CurrentAudio = audio;
+            ListeningSession = new ListeningSession
+            {
+                AudioId = audio.AudioId,
+                Progress = progress
+            };
+            CurrentPlayMode = PlayMode.MashUp;
+        }
+
+        internal void Clear()
+        {
+            CurrentPlayMode = PlayMode.NotPlaying;
+            CurrentAudio = null;
+            ListeningSession = null;
+            PlayQueue.Clear();
         }
     }
 }

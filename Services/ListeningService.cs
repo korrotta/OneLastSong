@@ -11,10 +11,12 @@ using OneLastSong.Contracts;
 using OneLastSong.Utils;
 using OneLastSong.Cores.AudioSystem;
 using Microsoft.UI.Dispatching;
+using OneLastSong.DAOs;
+using System.Security.Policy;
 
 namespace OneLastSong.Services
 {
-    public class ListeningService : IDisposable, INotifySubsytemStateChanged
+    public class ListeningService : IDisposable, INotifySubsytemStateChanged, IAuthChangeNotify
     {
         public PlayModeData PlayModeData { get; private set; } = new PlayModeData();
         // worker thread
@@ -25,6 +27,10 @@ namespace OneLastSong.Services
         private MediaFoundationReader mf = null;
         private WasapiOut wo = null;
         private DispatcherQueue _eventHandler;
+        private ListeningSessionDAO _listeningSessionDAO;
+        private UserDAO _userDAO;
+        private AudioDAO _audioDAO;
+        private AuthService _authService;
 
         private List<IAudioStateChanged> _audioStateChangeNotifiers = new List<IAudioStateChanged>();
 
@@ -84,7 +90,7 @@ namespace OneLastSong.Services
 
         public void RegisterAudioStateChangeListeners(IAudioStateChanged audioStateChangeNotifier)
         {
-            if(_audioStateChangeNotifiers.Contains(audioStateChangeNotifier))
+            if (_audioStateChangeNotifiers.Contains(audioStateChangeNotifier))
             {
                 return;
             }
@@ -105,19 +111,26 @@ namespace OneLastSong.Services
         public ListeningService(DispatcherQueue dispatcherQueue)
         {
             _eventHandler = dispatcherQueue;
+            Audio currentAudio = null;
 
             _workerTask = new Task(async () =>
             {
                 while (_shouldRun)
                 {
-                    var oldAudio = PlayModeData.CurrentAudio;
-                    var currentAudio = await PlayModeData.NextAudioAsync();
+                    currentAudio = PlayModeData.CurrentAudio;      
+                    
                     if (currentAudio != null)
                     {
                         NotifyAudioChanged(currentAudio);
                         // play audio
                         PlayAudioUrl(currentAudio.Url);
                     }
+
+                    if(PlayModeData.ListeningSession == null)
+                    {
+                        currentAudio = await PlayModeData.NextAudioAsync();
+                    }
+
                     Thread.Sleep(1000);
                 }
             });
@@ -128,6 +141,7 @@ namespace OneLastSong.Services
         {
             _shouldRun = false;
             _workerTask.Dispose();
+            _authService.UnregisterAuthChangeNotify(this);
         }
 
         private void PlayAudioUrl(string url)
@@ -137,16 +151,54 @@ namespace OneLastSong.Services
             wo = new WasapiOut();
             {
                 wo.Init(mf);
-                wo.Play();
-                _shouldContinuePlayingCurrentAudio = true;
-                IsPlaying = true;
+
+                if(PlayModeData.ListeningSession != null)
+                {
+                    IsPlaying = false;
+                    NotifyAudioChanged(PlayModeData.CurrentAudio);
+                    NotifyProgressChanged(PlayModeData.ListeningSession.Progress);
+                    _shouldContinuePlayingCurrentAudio = true;
+                    wo.Play();
+                    mf.CurrentTime = TimeSpan.FromSeconds(PlayModeData.ListeningSession.Progress);
+                    wo.Pause();
+                    PlayModeData.ListeningSession = null;
+                }
+                else
+                {
+                    wo.Play();
+                    _shouldContinuePlayingCurrentAudio = true;
+                    IsPlaying = true;
+                }                
+
                 while (wo.PlaybackState != PlaybackState.Stopped && _shouldContinuePlayingCurrentAudio)
                 {
                     NotifyProgressChanged((int)mf.CurrentTime.TotalSeconds);
+                    SaveListeningProgress();
                     Thread.Sleep(1000);
                 }
                 IsPlaying = false;
                 wo.Stop();
+            }
+        }
+
+        private async void SaveListeningProgress()
+        {
+            if (_userDAO.SessionToken == null)
+            {
+                return;
+            }
+
+            try
+            {
+                await _listeningSessionDAO.SaveListeningSession(_userDAO.SessionToken, new ListeningSession
+                {
+                    AudioId = PlayModeData.CurrentAudio.AudioId,
+                    Progress = (int)mf.CurrentTime.TotalSeconds
+                });
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Error(ex.Message);
             }
         }
 
@@ -166,7 +218,7 @@ namespace OneLastSong.Services
 
         public void ChangePlayState()
         {
-            if(wo == null)
+            if (wo == null)
             {
                 SnackbarUtils.ShowSnackbar("No audio is playing", SnackbarType.Warning);
                 return;
@@ -187,7 +239,7 @@ namespace OneLastSong.Services
         {
             _shouldContinuePlayingCurrentAudio = false;
         }
-        
+
         public void RestartPlay()
         {
             if (mf != null)
@@ -199,9 +251,18 @@ namespace OneLastSong.Services
 
         public async Task<bool> OnSubsystemInitialized()
         {
+            _listeningSessionDAO = ListeningSessionDAO.Get();
+            _userDAO = UserDAO.Get();
+            _audioDAO = AudioDAO.Get();
+            _authService = AuthService.Get();
+
+            _listeningSessionDAO.SetListeningService(this);
+            _authService.RegisterAuthChangeNotify(this);
+
             NotifyAudioChanged(PlayModeData.CurrentAudio);
             NotifyPlayStateChanged(IsPlaying);
             NotifyProgressChanged(0);
+
             // #Todo: Retrieve listening history
             await Task.CompletedTask;
             return true;
@@ -216,6 +277,20 @@ namespace OneLastSong.Services
         {
             PlayModeData.PlayPlaylist(playlist);
             PlayNext();
+        }
+
+        public async void OnUserChange(User user)
+        {
+            if (user != null)
+            {
+                // Retrieve the listening session
+                string token = _userDAO.SessionToken;
+                var listeningSession = await _listeningSessionDAO.GetListeningSession(token);
+                var audio = await _audioDAO.GetAudioById(listeningSession.AudioId);
+
+                PlayModeData.RetrievePlayingSession(audio, listeningSession.Progress);
+                _shouldContinuePlayingCurrentAudio = false;
+            }
         }
     }
 }

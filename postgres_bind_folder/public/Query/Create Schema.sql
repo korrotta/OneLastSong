@@ -538,22 +538,22 @@ BEGIN
         ),
         'Audios', (
             SELECT json_agg(json_build_object(
-                'Url', a.url,
-                'Likes', (
-                    SELECT COUNT(*)
-                    FROM likes l
-                    WHERE l.audio_id = a.id
-                ),
+                'AudioId', a.id,
                 'Title', a.title,
                 'Artist', a.artist,
                 'AlbumId', a.album_id,
                 'CategoryId', a.category_id,
                 'Duration', a.duration,
-                'Duration', a.duration,
+                'Url', a.url,
+                'CoverImageUrl', a.cover_image_url,
+                'AuthorId', a.author_id,
                 'CreatedAt', a.created_at,
-                'CategoryId', a.category_id,
                 'Description', a.description,
-                'CoverImageUrl', a.cover_image_url
+                'Likes', (
+                    SELECT COUNT(*)
+                    FROM likes l
+                    WHERE l.audio_id = a.id
+                )
             ) ORDER BY pa.added_at)
             FROM audios a
             JOIN playlist_audios pa ON pa.audio_id = a.id
@@ -897,14 +897,55 @@ BEGIN
             RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
         END IF;
 
-        -- Insert or update the listening session
-        INSERT INTO listening_sessions (user_id, audio_id, progress)
-        VALUES (v_user_id, ip_audio_id, ip_progress)
-        ON CONFLICT (user_id, audio_id)
-        DO UPDATE SET progress = ip_progress;
+        -- if the listening session of the user not exists, insert a new record, else update the current record
+        IF NOT EXISTS (
+            SELECT 1
+            FROM listening_sessions ls
+            WHERE ls.user_id = v_user_id
+        ) THEN
+            INSERT INTO listening_sessions (user_id, audio_id, progress)
+            VALUES (v_user_id, ip_audio_id, ip_progress);
+        ELSE
+            UPDATE listening_sessions
+            SET progress = ip_progress, audio_id = ip_audio_id
+            WHERE user_id = v_user_id;
+        END IF;
 
         -- Return success message
         RETURN get_result_message(0, '', '{}'::JSONB);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
+-- Get listening session, return the corresponding listening session of the user
+DROP FUNCTION IF EXISTS get_listening_session;
+
+CREATE OR REPLACE FUNCTION get_listening_session(ip_session_token VARCHAR)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_listening_session JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, return the listening session
+    IF v_user_id IS NOT NULL THEN
+        SELECT json_build_object(
+            'UserId', ls.user_id,
+            'AudioId', ls.audio_id,
+            'Progress', ls.progress
+        ) INTO v_listening_session
+        FROM listening_sessions ls
+        WHERE ls.user_id = v_user_id;
+
+        RETURN get_result_message(0, '', v_listening_session);
     ELSE
         -- If the session is not valid, return an error message
         RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
@@ -945,6 +986,8 @@ GRANT EXECUTE ON FUNCTION add_audio_to_playlist(VARCHAR, INT, INT) TO restricted
 GRANT EXECUTE ON FUNCTION remove_audio_from_playlist(VARCHAR, INT, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION delete_playlist(VARCHAR, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION save_listening_session(VARCHAR, INT, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION save_listening_session(VARCHAR, INT, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_listening_session(VARCHAR, INT) TO restricted_user;
 
 
 SELECT user_login('test', 'test');

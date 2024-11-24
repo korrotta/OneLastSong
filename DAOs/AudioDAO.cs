@@ -70,5 +70,15 @@ namespace OneLastSong.DAOs
         {
             throw new NotImplementedException();
         }
+
+        internal async Task<Audio> GetAudioById(int audioId)
+        {
+            if(_audios.Count == 0)
+            {
+                await GetMostLikeAudios();
+            }
+
+            return _audios.Find(audio => audio.AudioId == audioId);
+        }
     }
 }
