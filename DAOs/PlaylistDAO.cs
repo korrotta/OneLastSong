@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
 using OneLastSong.Models;
+using OneLastSong.Services;
 using OneLastSong.Utils;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,15 @@ namespace OneLastSong.DAOs
     {
         private List<Playlist> _playlistList = new List<Playlist>();
         private IDb _db;
+        private PlaylistService _playlistService;
 
         public PlaylistDAO()
         {
+        }
+
+        public void SetPlaylistService(PlaylistService playlistService)
+        {
+            _playlistService = playlistService;
         }
 
         public void Init()
@@ -34,6 +41,7 @@ namespace OneLastSong.DAOs
                 if (result.Status == ResultMessage.STATUS_OK)
                 {
                     _playlistList = JsonSerializer.Deserialize<List<Playlist>>(result.JsonData);
+                    _playlistService.NotifyPlaylistChanged(_playlistList);
                 }
                 else
                 {
@@ -56,6 +64,7 @@ namespace OneLastSong.DAOs
             {
                 Playlist playlist = JsonSerializer.Deserialize<Playlist>(result.JsonData);
                 _playlistList.Add(playlist);
+                _playlistService.NotifyPlaylistChanged(_playlistList);
                 return playlist;
             }
             else
@@ -76,6 +85,7 @@ namespace OneLastSong.DAOs
             {
                 // fetch new playlist data
                 _playlistList = await GetUserPlaylists(sessionToken, true);
+                _playlistService.NotifyPlaylistChanged(_playlistList);
             }
             else 
             {
@@ -99,6 +109,17 @@ namespace OneLastSong.DAOs
             {
                 throw new Exception(result.ErrorMessage);
             }
+        }
+
+        public void ClearPlaylistCache()
+        {
+            _playlistList.Clear();
+            _playlistService.NotifyPlaylistChanged(_playlistList);
+        }
+
+        public List<Playlist> GetCachedPlaylists()
+        {
+            return _playlistList;
         }
     }
 }

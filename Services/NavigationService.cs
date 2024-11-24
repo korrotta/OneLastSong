@@ -192,6 +192,7 @@ namespace OneLastSong.Services
 
         public async Task<bool> OnSubsystemInitialized()
         {
+            NotifyNavChangeNotifiers();
             await Task.CompletedTask;
             return true;
         }

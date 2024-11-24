@@ -48,6 +48,7 @@ namespace OneLastSong.DAOs
             var user = await _db.GetUser(token);
             User = user;
             SessionToken = token;
+            SaveCurrentSessionToken();
             _authService.NotifyUserChange(user);
         }
 

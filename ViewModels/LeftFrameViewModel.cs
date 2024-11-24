@@ -21,15 +21,17 @@ using System.Windows.Input;
 
 namespace OneLastSong.ViewModels
 {
-    public class LeftFrameViewModel : IAuthChangeNotify, INotifyPropertyChanged
+    public class LeftFrameViewModel : INotifyPlaylistChanged, INotifyPropertyChanged
     {
         public XamlRoot XamlRoot { get; set; }
         public ICommand CreateNewPlaylistCommand { get; set; }
+        private PlaylistService _playlistService;
 
         public LeftFrameViewModel()
         {
-            AuthService.Get().RegisterAuthChangeNotify(this);
             CreateNewPlaylistCommand = new RelayCommand(CreateNewPlaylist);
+            _playlistService = PlaylistService.Get();
+            _playlistService.RegisterPlaylistNotifier(this);
         }
 
         public void OpenPlaylistOptionsMenu(object sender, RightTappedRoutedEventArgs e, Playlist playlist)
@@ -38,7 +40,7 @@ namespace OneLastSong.ViewModels
             flyout.ShowAt(sender as FrameworkElement, e.GetPosition(sender as UIElement));
         }
 
-        private ObservableCollection<Playlist> _playlistList;
+        private ObservableCollection<Playlist> _playlistList = new ObservableCollection<Playlist>();
         public ObservableCollection<Playlist> PlaylistList
         {
             get => _playlistList;
@@ -58,22 +60,6 @@ namespace OneLastSong.ViewModels
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-
-        public async void OnUserChange(User user)
-        {
-            // User is null when logged out, reset the playlist list
-            if (user == null)
-            {
-                PlaylistList.Clear();
-                return;
-            }
-
-            var sessionToken = UserDAO.Get().SessionToken;
-            var playlists = await PlaylistDAO.Get().GetUserPlaylists(sessionToken, true);
-            // add the user's playlists to the list
-            PlaylistList = new ObservableCollection<Playlist>(playlists);
-        }
 
         private List<Playlist> GenerateRandomPlaylists(int count)
         {
@@ -95,7 +81,7 @@ namespace OneLastSong.ViewModels
         // Unregister the notify when the view model is disposed
         public void Dispose()
         {
-            AuthService.Get().UnregisterAuthChangeNotify(this);
+            _playlistService.UnregisterPlaylistNotifier(this);
         }
 
         ~LeftFrameViewModel()
@@ -134,8 +120,8 @@ namespace OneLastSong.ViewModels
 
                 try
                 {
-                    var playlist = await PlaylistDAO.Get().AddUserPlaylist(sessionToken, playlistName);
-                    PlaylistList.Add(playlist);
+                    await PlaylistDAO.Get().AddUserPlaylist(sessionToken, playlistName);
+                    SnackbarUtils.ShowSnackbar("Playlist created", SnackbarType.Success);
                 }
                 catch (Exception e)
                 {
@@ -146,6 +132,11 @@ namespace OneLastSong.ViewModels
                     );
                 }
             }
+        }
+
+        public void OnPlaylistUpdated(List<Playlist> playlists)
+        {
+            PlaylistList = new ObservableCollection<Playlist>(playlists);
         }
     }
 }

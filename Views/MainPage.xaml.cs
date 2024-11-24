@@ -40,6 +40,9 @@ namespace OneLastSong.Views
             (TopFrame.Content as TopFrame)?.TopFrameViewModel.SubscribeToSearchEvent(OnSearchEventTrigger);
 
             await OnServiceInitialized();
+
+            // Update user
+            AuthService.Get().OnComponentsLoaded();
         }
 
         private void OnSearchEventTrigger(object sender, string newSearchQuery)

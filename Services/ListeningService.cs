@@ -189,6 +189,9 @@ namespace OneLastSong.Services
 
         public async Task<bool> OnSubsystemInitialized()
         {
+            NotifyAudioChanged(PlayModeData.CurrentAudio);
+            NotifyPlayStateChanged(IsPlaying);
+            NotifyProgressChanged(0);
             // #Todo: Retrieve listening history
             await Task.CompletedTask;
             return true;

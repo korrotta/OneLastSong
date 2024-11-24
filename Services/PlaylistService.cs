@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
+using OneLastSong.DAOs;
 using OneLastSong.Models;
 using System;
 using System.Collections.Generic;
@@ -10,14 +11,17 @@ using System.Threading.Tasks;
 
 namespace OneLastSong.Services
 {
-    public class PlaylistService : IDisposable, INotifySubsytemStateChanged
+    public class PlaylistService : IDisposable, INotifySubsytemStateChanged, IAuthChangeNotify
     {
         private List<INotifyPlaylistChanged> playlistNotifiers = new List<INotifyPlaylistChanged>();
         private DispatcherQueue _eventHandler;
+        private PlaylistDAO playlistDAO;
 
         public PlaylistService(DispatcherQueue dispatcherQueue)
         {
             _eventHandler = dispatcherQueue;
+            playlistDAO = PlaylistDAO.Get();
+            playlistDAO.SetPlaylistService(this);
         }
 
         public static PlaylistService Get()
@@ -27,7 +31,7 @@ namespace OneLastSong.Services
 
         public void Dispose()
         {
-
+            AuthService.Get().UnregisterAuthChangeNotify(this);
         }
 
         public void NotifyPlaylistChanged(List<Playlist> playlists)
@@ -43,13 +47,29 @@ namespace OneLastSong.Services
 
         public async Task<bool> OnSubsystemInitialized()
         {
+            AuthService.Get().RegisterAuthChangeNotify(this);
+            NotifyPlaylistChanged(playlistDAO.GetCachedPlaylists());
             await Task.CompletedTask;
             return true;
+        }
+
+        public async void OnUserChange(User user)
+        {
+            if(user == null)
+            {
+                playlistDAO.ClearPlaylistCache();
+            }
+            else
+            {
+                var sessionToken = UserDAO.Get().SessionToken;
+                await playlistDAO.GetUserPlaylists(sessionToken, true);
+            }
         }
 
         public void RegisterPlaylistNotifier(INotifyPlaylistChanged notifier)
         {
             playlistNotifiers.Add(notifier);
+            notifier.OnPlaylistUpdated(playlistDAO.GetCachedPlaylists());
         }
 
         public void UnregisterPlaylistNotifier(INotifyPlaylistChanged notifier)

@@ -702,6 +702,15 @@ BEGIN
         INSERT INTO playlist_audios (playlist_id, audio_id)
         VALUES (ip_playlist_id, ip_audio_id);
 
+        -- If the audio is the first one in the playlist, update the playlist cover image to the audio's cover image
+        UPDATE playlists
+        SET cover_image_url = (
+            SELECT a.cover_image_url
+            FROM audios a
+            WHERE a.id = ip_audio_id
+        )
+        WHERE id = ip_playlist_id AND cover_image_url IS NULL;
+
         -- Return success message
         RETURN get_result_message(0, '', '{}'::JSONB);
     ELSE

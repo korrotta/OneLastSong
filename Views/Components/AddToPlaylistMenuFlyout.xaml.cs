@@ -18,16 +18,18 @@ using OneLastSong.DAOs;
 using OneLastSong.Services;
 using OneLastSong.Utils;
 using OneLastSong.Cores.DataItems;
+using OneLastSong.Contracts;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace OneLastSong.Views.Components
 {
-    public sealed partial class AddToPlaylistMenuFlyout : MenuFlyout
+    public sealed partial class AddToPlaylistMenuFlyout : MenuFlyout, INotifyPlaylistChanged, IDisposable
     {
         private ObservableCollection<Playlist> playlists = new ObservableCollection<Playlist>();
         private PlaylistDAO playlistDAO;
+        private PlaylistService playlistService;
         private UserDAO userDAO;
 
         public int AudioId { get; set; }
@@ -36,13 +38,16 @@ namespace OneLastSong.Views.Components
         {
             this.InitializeComponent();
             playlistDAO = PlaylistDAO.Get();
+            playlistService = PlaylistService.Get();
             userDAO = UserDAO.Get();
+            playlistService.RegisterPlaylistNotifier(this);
         }
 
-        private async void Load()
+        private void Load(List<Playlist> userPlaylists)
         {
+            // clear submenu
+            PlaylistsSubItem.Items.Clear();
             // add user playlists to submenu
-            var userPlaylists = await playlistDAO.GetUserPlaylists(userDAO.SessionToken);
             foreach (var playlist in userPlaylists)
             {
                 // check if audio already in playlist
@@ -74,6 +79,16 @@ namespace OneLastSong.Views.Components
             {
                 SnackbarUtils.ShowSnackbar(ex.Message, SnackbarType.Error);
             }
+        }
+
+        public void OnPlaylistUpdated(List<Playlist> playlists)
+        {
+            Load(playlists);
+        }
+
+        public void Dispose()
+        {
+            playlistService.UnregisterPlaylistNotifier(this);
         }
     }
 }

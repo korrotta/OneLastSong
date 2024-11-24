@@ -9,6 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
+using Windows.Data.Xml.Dom;
 
 namespace OneLastSong.Services
 {
@@ -21,6 +22,8 @@ namespace OneLastSong.Services
         public AuthService(DispatcherQueue dispatcherQueue)
         {
             _eventHandler = dispatcherQueue;
+            _userDAO = UserDAO.Get();
+            _userDAO.SetAuthService(this);
         }
 
         public void RegisterAuthChangeNotify(IAuthChangeNotify notify)
@@ -51,15 +54,18 @@ namespace OneLastSong.Services
 
         public async Task<bool> OnSubsystemInitialized()
         {
-            _userDAO = UserDAO.Get();
-            _userDAO.SetAuthService(this);
-            await _userDAO.TryToLoadStoredToken();
+            await Task.CompletedTask;
             return true;
         }
 
         public void Dispose()
         {
             
+        }
+
+        internal async void OnComponentsLoaded()
+        {
+            await _userDAO.TryToLoadStoredToken();
         }
     }
 }
