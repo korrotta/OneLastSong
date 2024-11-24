@@ -51,8 +51,6 @@ namespace OneLastSong
         {
             var services = new ServiceCollection();
 
-            // StartUp Services
-            services.AddSingleton<StartUpService>();
             // Db
             services.AddSingleton<IDb, PgDb>();
             // DAOs
@@ -62,10 +60,11 @@ namespace OneLastSong
             services.AddSingleton<AlbumDAO>();
             services.AddSingleton<PlaylistDAO>();
             // Services
-            services.AddSingleton<NavigationService>();
-            services.AddSingleton<AuthService>();
-            services.AddSingleton<ListeningService>(provider => new ListeningService(DispatcherQueue.GetForCurrentThread()));
-            services.AddSingleton<PlaylistService>(provider => new PlaylistService(DispatcherQueue.GetForCurrentThread()));
+            var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            services.AddSingleton<NavigationService>(provider => new NavigationService(dispatcherQueue));
+            services.AddSingleton<AuthService>(provider => new AuthService(dispatcherQueue));
+            services.AddSingleton<ListeningService>(provider => new ListeningService(dispatcherQueue));
+            services.AddSingleton<PlaylistService>(provider => new PlaylistService(dispatcherQueue));
 
             return services.BuildServiceProvider();
         }

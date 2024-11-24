@@ -8,17 +8,22 @@ using Microsoft.UI.Xaml;
 using OneLastSong.Views.Components;
 using Microsoft.UI.Xaml.Media.Animation;
 using OneLastSong.Contracts;
+using Microsoft.UI.Dispatching;
 
 namespace OneLastSong.Services
 {
-    public class NavigationService
+    public class NavigationService : IDisposable, INotifySubsytemStateChanged
     {
         private Frame _frame;
         private Stack<(Type PageType, object Parameter)> _backStack = new();
         private Stack<(Type PageType, object Parameter)> _forwardStack = new();
         private List<INavChangeNotifier> navChangeNotifiers = new();
+        private DispatcherQueue _eventHandler;
 
-        public NavigationService() { }
+        public NavigationService(DispatcherQueue dispatcherQueue) 
+        {
+            _eventHandler = dispatcherQueue;
+        }
 
         public void Initialize(Frame frame)
         {
@@ -173,13 +178,27 @@ namespace OneLastSong.Services
         {
             foreach (var navChangeNotifier in navChangeNotifiers)
             {
-                navChangeNotifier.OnNavHistoryChanged(this);
+                _eventHandler.TryEnqueue(() =>
+                {
+                    navChangeNotifier.OnNavHistoryChanged(this);
+                });
             }
         }
 
         public static NavigationService Get()
         {
             return (NavigationService)((App)Application.Current).Services.GetService(typeof(NavigationService));
+        }
+
+        public async Task<bool> OnSubsystemInitialized()
+        {
+            await Task.CompletedTask;
+            return true;
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }

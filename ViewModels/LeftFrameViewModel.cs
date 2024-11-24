@@ -69,7 +69,7 @@ namespace OneLastSong.ViewModels
                 return;
             }
 
-            var sessionToken = AuthService.Get().SessionToken();
+            var sessionToken = UserDAO.Get().SessionToken;
             var playlists = await PlaylistDAO.Get().GetUserPlaylists(sessionToken, true);
             // add the user's playlists to the list
             PlaylistList = new ObservableCollection<Playlist>(playlists);
@@ -106,7 +106,7 @@ namespace OneLastSong.ViewModels
         public async void CreateNewPlaylist()
         {
             // if player is not signed in show error message
-            if (AuthService.Get().GetUser() == null)
+            if (UserDAO.Get().User == null)
             {
                 await DialogUtils.ShowDialogAsync(
                     LocalizationUtils.GetString(LocalizationUtils.ERROR_STRING),
@@ -129,7 +129,7 @@ namespace OneLastSong.ViewModels
 
             if (result == ContentDialogResult.Primary)
             {
-                var sessionToken = AuthService.Get().SessionToken();
+                var sessionToken = UserDAO.Get().SessionToken;
                 var playlistName = dialog.PlaylistName;
 
                 try

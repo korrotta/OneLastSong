@@ -28,7 +28,7 @@ namespace OneLastSong.Views.Components
     {
         private ObservableCollection<Playlist> playlists = new ObservableCollection<Playlist>();
         private PlaylistDAO playlistDAO;
-        private AuthService authService;
+        private UserDAO userDAO;
 
         public int AudioId { get; set; }
 
@@ -36,13 +36,13 @@ namespace OneLastSong.Views.Components
         {
             this.InitializeComponent();
             playlistDAO = PlaylistDAO.Get();
-            authService = AuthService.Get();
+            userDAO = UserDAO.Get();
         }
 
         private async void Load()
         {
             // add user playlists to submenu
-            var userPlaylists = await playlistDAO.GetUserPlaylists(authService.SessionToken());
+            var userPlaylists = await playlistDAO.GetUserPlaylists(userDAO.SessionToken);
             foreach (var playlist in userPlaylists)
             {
                 // check if audio already in playlist
@@ -67,7 +67,7 @@ namespace OneLastSong.Views.Components
         {
             try
             {
-                await playlistDAO.AddAudioToPlaylist(authService.SessionToken(), (int)((MenuFlyoutItem)sender).Tag, AudioId);
+                await playlistDAO.AddAudioToPlaylist(userDAO.SessionToken, (int)((MenuFlyoutItem)sender).Tag, AudioId);
                 SnackbarUtils.ShowSnackbar("Audio added to playlist", SnackbarType.Success);
             }
             catch (Exception ex)

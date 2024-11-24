@@ -14,7 +14,7 @@ using Microsoft.UI.Dispatching;
 
 namespace OneLastSong.Services
 {
-    public class ListeningService : IDisposable
+    public class ListeningService : IDisposable, INotifySubsytemStateChanged
     {
         public PlayModeData PlayModeData { get; private set; } = new PlayModeData();
         // worker thread
@@ -185,6 +185,13 @@ namespace OneLastSong.Services
                 mf.CurrentTime = TimeSpan.FromSeconds(0);
                 NotifyProgressChanged(0);
             }
+        }
+
+        public async Task<bool> OnSubsystemInitialized()
+        {
+            // #Todo: Retrieve listening history
+            await Task.CompletedTask;
+            return true;
         }
     }
 }

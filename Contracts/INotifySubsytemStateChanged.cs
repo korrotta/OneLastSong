@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace OneLastSong.Contracts
 {
-    public interface INotifySubSystemChanged
+    public interface INotifySubsytemStateChanged
     {
-        public void OnSystemInitialized();
+        public Task<bool> OnSubsystemInitialized();
     }
 }

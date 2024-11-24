@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using OneLastSong.Contracts;
+using OneLastSong.DAOs;
 using OneLastSong.Models;
 using OneLastSong.Services;
 using OneLastSong.Utils;
@@ -258,7 +259,7 @@ namespace OneLastSong.ViewModels
 
         public void LogOut()
         {
-            AuthService.Get().SignOut();
+            UserDAO.Get().SignOut();
         }
 
         public string SearchQuery

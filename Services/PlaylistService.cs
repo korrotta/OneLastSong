@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OneLastSong.Services
 {
-    public class PlaylistService
+    public class PlaylistService : IDisposable, INotifySubsytemStateChanged
     {
         private List<INotifyPlaylistChanged> playlistNotifiers = new List<INotifyPlaylistChanged>();
         private DispatcherQueue _eventHandler;
@@ -25,6 +25,11 @@ namespace OneLastSong.Services
             return (PlaylistService)((App)Application.Current).Services.GetService(typeof(PlaylistService));
         }
 
+        public void Dispose()
+        {
+
+        }
+
         public void NotifyPlaylistChanged(List<Playlist> playlists)
         {
             foreach (var notifier in playlistNotifiers)
@@ -34,6 +39,12 @@ namespace OneLastSong.Services
                     notifier.OnPlaylistUpdated(playlists);
                 });
             }
+        }
+
+        public async Task<bool> OnSubsystemInitialized()
+        {
+            await Task.CompletedTask;
+            return true;
         }
 
         public void RegisterPlaylistNotifier(INotifyPlaylistChanged notifier)

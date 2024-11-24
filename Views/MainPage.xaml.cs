@@ -56,7 +56,10 @@ namespace OneLastSong.Views
         {
             //this line is for testing purposes only
             //await DoDbTest();
-            await AuthService.Get().TryToLoadStoredToken();
+            await AuthService.Get().OnSubsystemInitialized();
+            await ListeningService.Get().OnSubsystemInitialized();
+            await PlaylistService.Get().OnSubsystemInitialized();
+            await NavigationService.Get().OnSubsystemInitialized();
         }
 
         private async Task DoDbTest()

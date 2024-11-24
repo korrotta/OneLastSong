@@ -17,9 +17,18 @@ namespace OneLastSong.DAOs
     {
         IDb _db = null;
         List<User> _artists = new List<User>();
+        private static readonly String STORED_TOKEN_PATH = "Session token";
+        public User User { private set; get; } = null;
+        public String SessionToken { get; private set; } = null;
+        private AuthService _authService;
 
         public UserDAO()
         {
+        }
+
+        public void SetAuthService(AuthService authService)
+        {
+            _authService = authService;
         }
 
         public void Init()
@@ -37,7 +46,9 @@ namespace OneLastSong.DAOs
             }
 
             var user = await _db.GetUser(token);
-            AuthService.Get().SetSession(user, token);
+            User = user;
+            SessionToken = token;
+            _authService.NotifyUserChange(user);
         }
 
         public async Task<User> GetUser(string sessionToken)
@@ -76,6 +87,46 @@ namespace OneLastSong.DAOs
         public static UserDAO Get()
         {
             return (UserDAO)((App)Application.Current).Services.GetService(typeof(UserDAO));
+        }
+
+        private void ClearStoredToken()
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.Values.Remove(STORED_TOKEN_PATH);
+        }
+
+        public void SaveCurrentSessionToken()
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.Values[STORED_TOKEN_PATH] = SessionToken;
+        }
+
+        public async Task<bool> TryToLoadStoredToken()
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            if (localSettings.Values.TryGetValue(STORED_TOKEN_PATH, out var storedToken))
+            {
+                var loadedToken = storedToken as String;
+                var user = await UserDAO.Get().GetUser(loadedToken);
+                // If the token is invalid, the user will be null
+                // We only set user and token if the user is not null
+                if (user != null)
+                {
+                    User = user;
+                    SessionToken = loadedToken;
+                    _authService.NotifyUserChange(user);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void SignOut()
+        {
+            User = null;
+            SessionToken = null;
+            ClearStoredToken();
+            _authService.NotifyUserChange(null);
         }
     }
 }
