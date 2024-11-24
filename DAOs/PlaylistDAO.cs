@@ -68,5 +68,37 @@ namespace OneLastSong.DAOs
         {
             return (PlaylistDAO)((App)Application.Current).Services.GetService(typeof(PlaylistDAO));
         }
+
+        public async Task AddAudioToPlaylist(string sessionToken, int playlistId, int audioId)
+        {
+            ResultMessage result = await _db.AddAudioToPlaylist(sessionToken, playlistId, audioId);
+            if((result.Status == ResultMessage.STATUS_OK))
+            {
+                // fetch new playlist data
+                _playlistList = await GetUserPlaylists(sessionToken, true);
+            }
+            else 
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+        }
+
+        public async Task RemoveAudioFromPlaylist(string sessionToken, int playlistId, int audioId)
+        {
+            ResultMessage result = await _db.RemoveAudioFromPlaylist(sessionToken, playlistId, audioId);
+            if (result.Status != ResultMessage.STATUS_OK)
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+        }
+
+        public async Task DeletePlaylist(string sessionToken, int playlistId)
+        {
+            ResultMessage result = await _db.DeletePlaylist(sessionToken, playlistId);
+            if (result.Status != ResultMessage.STATUS_OK)
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+        }
     }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MenuFlyout
+    x:Class="OneLastSong.Views.Components.AddToPlaylistMenuFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneLastSong.Views.Components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <MenuFlyout.MenuFlyoutPresenterStyle>
+        <Style TargetType="MenuFlyoutPresenter">
+            <Setter Property="Background" Value="{ThemeResource BG_LIGHT_TERTIARY}" />
+        </Style>
+    </MenuFlyout.MenuFlyoutPresenterStyle>
+
+    <MenuFlyoutItem Text="Add to a new playlist" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+    <MenuFlyoutSeparator Foreground="{ThemeResource TEXT_PRIMARY}"/>
+    <!-- Existed playlists list will be added programmatically -->
+    <MenuFlyoutSubItem x:Name="PlaylistsSubItem" Text="Add to existing playlist" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+    <MenuFlyoutSeparator Foreground="{ThemeResource TEXT_PRIMARY}"/>
+    <MenuFlyoutItem Text="Cancel" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+</MenuFlyout>

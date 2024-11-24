@@ -20,5 +20,11 @@ namespace OneLastSong.Contracts
         public Task<ResultMessage> GetAllUserPlaylists(string sessionToken);
         public Task<ResultMessage> AddUserPlaylist(string sessionToken, string playlistName, string coverImageUrl);
         public Task<ResultMessage> GetAllArtists();
+        /* Playlist */
+        public Task<ResultMessage> AddAudioToPlaylist(string sessionToken, int playlistId, int audioId);
+        public Task<ResultMessage> RemoveAudioFromPlaylist(string sessionToken, int playlistId, int audioId);
+        public Task<ResultMessage> DeletePlaylist(string sessionToken, int playlistId);
+        /* Play */
+        public Task<ResultMessage> SaveListeningSession(string sessionToken, int audioId, int progress);
     }
 }

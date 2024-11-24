@@ -443,6 +443,177 @@ namespace OneLastSong.Db
             }
         }
 
+        public Task<ResultMessage> AddAudioToPlaylist(string sessionToken, int playlistId, int audioId)
+        {
+            CheckConnection();
+
+            try
+            {
+                return Task.Run(() =>
+                {
+                    using (var cmd = dataSource.CreateCommand(QUERY_ADD_AUDIO_TO_PLAYLIST))
+                    {
+                        cmd.Parameters.AddWithValue("session_token", sessionToken);
+                        cmd.Parameters.AddWithValue("playlist_id", playlistId);
+                        cmd.Parameters.AddWithValue("audio_id", audioId);
+
+                        LogUtils.Debug("Executing command: " + QUERY_ADD_AUDIO_TO_PLAYLIST);
+
+                        // Execute and log returned data
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            LogUtils.Debug("Command executed, reading results...");
+
+                            if (reader.Read())
+                            {
+                                string json = reader.GetString(0);
+                                LogUtils.Debug("Raw JSON data: " + json);
+
+                                return ResultMessage.FromJson(json);
+                            }
+                            else
+                            {
+                                throw new Exception("No rows returned. While executing " + QUERY_ADD_AUDIO_TO_PLAYLIST);
+                            }
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Debug($"Error executing query: {ex.Message}");
+                throw;
+            }
+        }
+
+        public Task<ResultMessage> RemoveAudioFromPlaylist(string sessionToken, int playlistId, int audioId)
+        {
+            CheckConnection();
+
+            try
+            {
+                return Task.Run(() =>
+                {
+                    using (var cmd = dataSource.CreateCommand(QUERY_REMOVE_AUDIO_FROM_PLAYLIST))
+                    {
+                        cmd.Parameters.AddWithValue("session_token", sessionToken);
+                        cmd.Parameters.AddWithValue("playlist_id", playlistId);
+                        cmd.Parameters.AddWithValue("audio_id", audioId);
+
+                        LogUtils.Debug("Executing command: " + QUERY_REMOVE_AUDIO_FROM_PLAYLIST);
+
+                        // Execute and log returned data
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            LogUtils.Debug("Command executed, reading results...");
+
+                            if (reader.Read())
+                            {
+                                string json = reader.GetString(0);
+                                LogUtils.Debug("Raw JSON data: " + json);
+
+                                return ResultMessage.FromJson(json);
+                            }
+                            else
+                            {
+                                throw new Exception("No rows returned. While executing " + QUERY_REMOVE_AUDIO_FROM_PLAYLIST);
+                            }
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Debug($"Error executing query: {ex.Message}");
+                throw;
+            }
+        }
+
+        public Task<ResultMessage> DeletePlaylist(string sessionToken, int playlistId)
+        {
+            CheckConnection();
+
+            try
+            {
+                return Task.Run(() =>
+                {
+                    using (var cmd = dataSource.CreateCommand(QUERY_DELETE_PLAYLIST))
+                    {
+                        cmd.Parameters.AddWithValue("session_token", sessionToken);
+                        cmd.Parameters.AddWithValue("playlist_id", playlistId);
+
+                        LogUtils.Debug("Executing command: " + QUERY_DELETE_PLAYLIST);
+
+                        // Execute and log returned data
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            LogUtils.Debug("Command executed, reading results...");
+
+                            if (reader.Read())
+                            {
+                                string json = reader.GetString(0);
+                                LogUtils.Debug("Raw JSON data: " + json);
+
+                                return ResultMessage.FromJson(json);
+                            }
+                            else
+                            {
+                                throw new Exception("No rows returned. While executing " + QUERY_DELETE_PLAYLIST);
+                            }
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Debug($"Error executing query: {ex.Message}");
+                throw;
+            }
+        }
+
+        public Task<ResultMessage> SaveListeningSession(string sessionToken, int audioId, int progress)
+        {
+            CheckConnection();
+
+            try
+            {
+                return Task.Run(() =>
+                {
+                    using (var cmd = dataSource.CreateCommand(QUERY_SAVE_LISTENING_SESSION))
+                    {
+                        cmd.Parameters.AddWithValue("session_token", sessionToken);
+                        cmd.Parameters.AddWithValue("audio_id", audioId);
+                        cmd.Parameters.AddWithValue("progress", progress);
+
+                        LogUtils.Debug("Executing command: " + QUERY_SAVE_LISTENING_SESSION);
+
+                        // Execute and log returned data
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            LogUtils.Debug("Command executed, reading results...");
+
+                            if (reader.Read())
+                            {
+                                string json = reader.GetString(0);
+                                LogUtils.Debug("Raw JSON data: " + json);
+
+                                return ResultMessage.FromJson(json);
+                            }
+                            else
+                            {
+                                throw new Exception("No rows returned. While executing " + QUERY_SAVE_LISTENING_SESSION);
+                            }
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Debug($"Error executing query: {ex.Message}");
+                throw;
+            }
+        }
+
         // Our Query strings
         public static readonly string QUERY_USER_LOGIN = "SELECT user_login(@username, @password)";
         public static readonly string QUERY_GET_USER = "SELECT get_user_data(@session_token)";
@@ -452,5 +623,9 @@ namespace OneLastSong.Db
         public static readonly string QUERY_GET_ALL_USER_PLAYLISTS = "SELECT get_all_user_playlists(@session_token)";
         public static readonly string QUERY_ADD_USER_PLAYLIST = "SELECT add_user_playlist(@session_token, @playlist_name, @cover_image_url)";
         public static readonly string QUERY_GET_ALL_ARTISTS = "SELECT get_all_artists()";
+        public static readonly string QUERY_ADD_AUDIO_TO_PLAYLIST = "SELECT add_audio_to_playlist(@session_token, @playlist_id, @audio_id)";
+        public static readonly string QUERY_REMOVE_AUDIO_FROM_PLAYLIST = "SELECT remove_audio_from_playlist(@session_token, @playlist_id, @audio_id)";
+        public static readonly string QUERY_DELETE_PLAYLIST = "SELECT delete_playlist(@session_token, @playlist_id)";
+        public static readonly string QUERY_SAVE_LISTENING_SESSION = "SELECT save_listening_session(@session_token, @audio_id, @progress)";
     }
 }

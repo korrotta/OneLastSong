@@ -21,6 +21,8 @@ namespace OneLastSong.Cores.AudioSystem
 
         public Audio CurrentAudio { get; set; }
 
+        private ListeningSession _listeningSession;
+
         public async Task PlayMashUpAsync(Audio audio)
         {
             await Semaphore.WaitAsync();

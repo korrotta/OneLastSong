@@ -11,6 +11,7 @@
     xmlns:models="using:OneLastSong.Models"
     xmlns:items="using:OneLastSong.Cores.DataItems"
     xmlns:converters="using:OneLastSong.Converters"
+    xmlns:components="using:OneLastSong.Views.Components"
     mc:Ignorable="d">
 
     <Page.Background>
@@ -78,12 +79,18 @@
                 </Grid>
                 <!--Buttons-->
                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Spacing="16">
+                    <!-- Like -->
                     <Button Style="{StaticResource IconButton}">
                         <FontIcon Glyph="&#xEB51;" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                     </Button>
+                    <!-- Add to playlist -->
                     <Button Style="{StaticResource IconButton}">
                         <FontIcon Glyph="&#xED0E;" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                        <Button.Flyout>
+                            <components:AddToPlaylistMenuFlyout Placement="Bottom" AudioId="{x:Bind AudioId}"/>
+                        </Button.Flyout>
                     </Button>
+                    <!-- More -->
                     <Button Style="{StaticResource IconButton}">
                         <FontIcon Glyph="&#xE712;" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                     </Button>
@@ -94,7 +101,7 @@
                             >
                         <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource BG_PRIMARY}">
                             <FontIcon Glyph="{x:Bind IsPlaying, Mode=OneWay, Converter={StaticResource PlayStateToIconConverter}}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-                        </Border>                        
+                        </Border>
                     </Button>
                 </StackPanel>
             </Grid>

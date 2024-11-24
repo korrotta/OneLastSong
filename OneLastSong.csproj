@@ -29,6 +29,7 @@
     <None Remove="Themes\DarkMode.xaml" />
     <None Remove="Themes\DefaultTheme.xaml" />
     <None Remove="Themes\LightMode.xaml" />
+    <None Remove="Views\Components\AddToPlaylistMenuFlyout.xaml" />
     <None Remove="Views\Components\BodyFrame.xaml" />
     <None Remove="Views\Components\BottomFrame.xaml" />
     <None Remove="Views\Components\Chip.xaml" />
@@ -186,6 +187,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\AddToPlaylistMenuFlyout.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Components\Chip.xaml">

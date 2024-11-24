@@ -111,8 +111,7 @@ CREATE TABLE listening_sessions
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
-    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    ended_at TIMESTAMP
+    progress INTEGER DEFAULT 0
 );
 
 -- User settings table
@@ -536,6 +535,16 @@ BEGIN
             FROM playlist_audios pa
             WHERE pa.playlist_id = p.id
         ),
+        'Audios', (
+            SELECT json_agg(json_build_object(
+                'AudioId', a.id,
+                'Title', a.title,
+                'Duration', a.duration
+            ))
+            FROM audios a
+            JOIN playlist_audios pa ON pa.audio_id = a.id
+            WHERE pa.playlist_id = p.id
+        ),
         'CreatedAt', p.created_at
     )) INTO v_json_data
     FROM playlists p
@@ -564,6 +573,11 @@ BEGIN
 
     -- If the session is valid, insert the new playlist
     IF v_user_id IS NOT NULL THEN
+        -- Check if playlist is valid: <> '', not NULL, and <> 'Liked Playlist'
+        IF ip_name = '' OR ip_name IS NULL OR ip_name = 'Liked Playlist' THEN
+            RETURN get_result_message(1, 'Invalid playlist name', '{}'::JSONB);
+        END IF;
+
         INSERT INTO playlists (user_id, name, cover_image_url, created_at)
         VALUES (v_user_id, ip_name, ip_cover_image_url, CURRENT_TIMESTAMP)
         RETURNING id INTO v_playlist_id;
@@ -621,6 +635,254 @@ BEGIN
 END;
 $$;
 
+-- Add an audio to a playlist --
+DROP FUNCTION IF EXISTS add_audio_to_playlist;
+
+CREATE OR REPLACE FUNCTION add_audio_to_playlist(ip_session_token VARCHAR, ip_playlist_id INTEGER, ip_audio_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_playlist_owner_id INTEGER;
+    v_audio_exists BOOLEAN;
+    v_playlist_exists BOOLEAN;
+    v_audio_in_playlist BOOLEAN;
+    v_result JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, proceed with adding the audio to the playlist
+    IF v_user_id IS NOT NULL THEN
+        -- Check if the audio exists
+        SELECT EXISTS (
+            SELECT 1
+            FROM audios a
+            WHERE a.id = ip_audio_id
+        ) INTO v_audio_exists;
+
+        IF NOT v_audio_exists THEN
+            RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Check if the playlist exists
+        SELECT EXISTS (
+            SELECT 1
+            FROM playlists p
+            WHERE p.id = ip_playlist_id
+        ) INTO v_playlist_exists;
+
+        IF NOT v_playlist_exists THEN
+            RETURN get_result_message(1, 'Playlist does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Check if the playlist belongs to the user
+        SELECT user_id INTO v_playlist_owner_id
+        FROM playlists
+        WHERE id = ip_playlist_id;
+
+        IF v_playlist_owner_id <> v_user_id THEN
+            RETURN get_result_message(1, 'Playlist does not belong to the user', '{}'::JSONB);
+        END IF;
+
+        -- Check if the audio is already in the playlist
+        SELECT EXISTS (
+            SELECT 1
+            FROM playlist_audios pa
+            WHERE pa.playlist_id = ip_playlist_id AND pa.audio_id = ip_audio_id
+        ) INTO v_audio_in_playlist;
+
+        IF v_audio_in_playlist THEN
+            RETURN get_result_message(1, 'Audio is already in the playlist', '{}'::JSONB);
+        END IF;
+
+        -- Add the audio to the playlist
+        INSERT INTO playlist_audios (playlist_id, audio_id)
+        VALUES (ip_playlist_id, ip_audio_id);
+
+        -- Return success message
+        RETURN get_result_message(0, '', '{}'::JSONB);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
+-- Remove an audio from a playlist --
+DROP FUNCTION IF EXISTS remove_audio_from_playlist;
+
+CREATE OR REPLACE FUNCTION remove_audio_from_playlist(ip_session_token VARCHAR, ip_playlist_id INTEGER, ip_audio_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_playlist_owner_id INTEGER;
+    v_audio_exists BOOLEAN;
+    v_playlist_exists BOOLEAN;
+    v_audio_in_playlist BOOLEAN;
+    v_result JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, proceed with removing the audio from the playlist
+    IF v_user_id IS NOT NULL THEN
+        -- Check if the audio exists
+        SELECT EXISTS (
+            SELECT 1
+            FROM audios a
+            WHERE a.id = ip_audio_id
+        ) INTO v_audio_exists;
+
+        IF NOT v_audio_exists THEN
+            RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Check if the playlist exists
+        SELECT EXISTS (
+            SELECT 1
+            FROM playlists p
+            WHERE p.id = ip_playlist_id
+        ) INTO v_playlist_exists;
+
+        IF NOT v_playlist_exists THEN
+            RETURN get_result_message(1, 'Playlist does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Check if the playlist belongs to the user
+        SELECT user_id INTO v_playlist_owner_id
+        FROM playlists
+        WHERE id = ip_playlist_id;
+
+        IF v_playlist_owner_id <> v_user_id THEN
+            RETURN get_result_message(1, 'Playlist does not belong to the user', '{}'::JSONB);
+        END IF;
+
+        -- Check if the audio is in the playlist
+        SELECT EXISTS (
+            SELECT 1
+            FROM playlist_audios pa
+            WHERE pa.playlist_id = ip_playlist_id AND pa.audio_id = ip_audio_id
+        ) INTO v_audio_in_playlist;
+
+        IF NOT v_audio_in_playlist THEN
+            RETURN get_result_message(1, 'Audio is not in the playlist', '{}'::JSONB);
+        END IF;
+
+        -- Remove the audio from the playlist
+        DELETE FROM playlist_audios
+        WHERE playlist_id = ip_playlist_id AND audio_id = ip_audio_id;
+
+        -- Return success message
+        RETURN get_result_message(0, '', '{}'::JSONB);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
+-- Delete a playlist --
+DROP FUNCTION IF EXISTS delete_playlist;
+
+CREATE OR REPLACE FUNCTION delete_playlist(ip_session_token VARCHAR, ip_playlist_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_playlist_owner_id INTEGER;
+    v_playlist_exists BOOLEAN;
+    v_result JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, proceed with deleting the playlist
+    IF v_user_id IS NOT NULL THEN
+        -- Check if the playlist exists
+        SELECT EXISTS (
+            SELECT 1
+            FROM playlists p
+            WHERE p.id = ip_playlist_id
+        ) INTO v_playlist_exists;
+
+        IF NOT v_playlist_exists THEN
+            RETURN get_result_message(1, 'Playlist does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Check if the playlist belongs to the user
+        SELECT user_id INTO v_playlist_owner_id
+        FROM playlists
+        WHERE id = ip_playlist_id;
+
+        IF v_playlist_owner_id <> v_user_id THEN
+            RETURN get_result_message(1, 'Playlist does not belong to the user', '{}'::JSONB);
+        END IF;
+
+        -- Delete the playlist
+        DELETE FROM playlists
+        WHERE id = ip_playlist_id;
+
+        -- Return success message
+        RETURN get_result_message(0, '', '{}'::JSONB);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
+-- Save listening session --
+DROP FUNCTION IF EXISTS save_listening_session;
+
+CREATE OR REPLACE FUNCTION save_listening_session(ip_session_token VARCHAR, ip_audio_id INTEGER, ip_progress INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_audio_exists BOOLEAN;
+    v_result JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, proceed with saving the listening session
+    IF v_user_id IS NOT NULL THEN
+        -- Check if the audio exists
+        SELECT EXISTS (
+            SELECT 1
+            FROM audios a
+            WHERE a.id = ip_audio_id
+        ) INTO v_audio_exists;
+
+        IF NOT v_audio_exists THEN
+            RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Insert or update the listening session
+        INSERT INTO listening_sessions (user_id, audio_id, progress)
+        VALUES (v_user_id, ip_audio_id, ip_progress)
+        ON CONFLICT (user_id, audio_id)
+        DO UPDATE SET progress = ip_progress;
+
+        -- Return success message
+        RETURN get_result_message(0, '', '{}'::JSONB);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
 
 -- ### Triggers region ###
 -- Trigger to call the function after a new user is inserted
@@ -650,6 +912,11 @@ GRANT EXECUTE ON FUNCTION get_first_n_albums(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_all_user_playlists(VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION add_user_playlist(VARCHAR, VARCHAR, VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_all_artists() TO restricted_user;
+GRANT EXECUTE ON FUNCTION add_audio_to_playlist(VARCHAR, INT, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION remove_audio_from_playlist(VARCHAR, INT, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION delete_playlist(VARCHAR, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION save_listening_session(VARCHAR, INT, INT) TO restricted_user;
+
 
 SELECT user_login('test', 'test');
 SELECT validate_session('7d683b5d-6c62-474f-b666-7df5017edabc');

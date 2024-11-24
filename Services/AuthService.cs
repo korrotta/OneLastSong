@@ -16,7 +16,6 @@ namespace OneLastSong.Services
         private List<IAuthChangeNotify> _authChangeNotifies = new List<IAuthChangeNotify>();
         private String token = null;
         private static readonly String STORED_TOKEN_PATH = "Session token";
-
         public User User { private set; get; } = null;
 
         public AuthService()

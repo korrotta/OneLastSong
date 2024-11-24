@@ -6,6 +6,7 @@ using OneLastSong.DAOs;
 using OneLastSong.Models;
 using OneLastSong.Services;
 using OneLastSong.Utils;
+using OneLastSong.Views.Components;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
