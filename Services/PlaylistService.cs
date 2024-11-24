@@ -68,8 +68,12 @@ namespace OneLastSong.Services
 
         public void RegisterPlaylistNotifier(INotifyPlaylistChanged notifier)
         {
+            if(playlistNotifiers.Contains(notifier))
+            {
+                return;
+            }
+
             playlistNotifiers.Add(notifier);
-            notifier.OnPlaylistUpdated(playlistDAO.GetCachedPlaylists());
         }
 
         public void UnregisterPlaylistNotifier(INotifyPlaylistChanged notifier)

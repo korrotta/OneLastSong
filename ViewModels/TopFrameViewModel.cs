@@ -238,23 +238,16 @@ namespace OneLastSong.ViewModels
             Dispose();
         }
 
-        public async void OnUserChange(User user)
+        public void OnUserChange(User user)
         {
             if(user == null)
             {
                 IsUserLoggedIn = false;
-                SnackbarUtils.ShowSnackbar("User logged out", SnackbarType.Info);
-                NavigationService.Navigate(typeof(SignInPage));
-                NavigationService.ClearHistory();
                 return;
             }
 
             User = user;
             IsUserLoggedIn = true;
-            NavigationService.Navigate(typeof(HomePage));
-            NavigationService.ClearHistory();
-
-            await DialogUtils.ShowDialogAsync("Welcome", $"Welcome {user.Username}!", XamlRoot);
         }
 
         public void LogOut()

@@ -28,11 +28,21 @@ namespace OneLastSong.Services
 
         public void RegisterAuthChangeNotify(IAuthChangeNotify notify)
         {
+            if(_authChangeNotifies.Contains(notify))
+            {
+                return;
+            }
+
             _authChangeNotifies.Add(notify);
         }
 
         public void UnregisterAuthChangeNotify(IAuthChangeNotify notify)
         {
+            if(!_authChangeNotifies.Contains(notify))
+            {
+                return;
+            }
+
             _authChangeNotifies.Remove(notify);
         }
 

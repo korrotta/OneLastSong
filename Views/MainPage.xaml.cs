@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using OneLastSong.Contracts;
 using OneLastSong.DAOs;
+using OneLastSong.Models;
 using OneLastSong.ModelViews;
 using OneLastSong.Services;
 using OneLastSong.Utils;
@@ -12,11 +13,10 @@ using System.Threading.Tasks;
 
 namespace OneLastSong.Views
 {
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page, IAuthChangeNotify, IDisposable
     {
-        private IDb _db;
-
         public MainPageViewModel MainPageViewModel { get; set; }
+        private NavigationService NavigationService { get; set; }
 
         public MainPage()
         {
@@ -28,10 +28,8 @@ namespace OneLastSong.Views
             window.ExtendsContentIntoTitleBar = true;
         }
 
-        private async void MainPage_Loaded(object sender, RoutedEventArgs e)
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            _db = ((App)Application.Current).Services.GetService<IDb>();
-            await InitializeDatabase();
             MainPageViewModel = new MainPageViewModel();
             TopFrame.Navigate(typeof(TopFrame));
             BodyFrame.Navigate(typeof(BodyFrame));
@@ -39,10 +37,26 @@ namespace OneLastSong.Views
 
             (TopFrame.Content as TopFrame)?.TopFrameViewModel.SubscribeToSearchEvent(OnSearchEventTrigger);
 
-            await OnServiceInitialized();
-
+            NavigationService = NavigationService.Get();
+            AuthService.Get().RegisterAuthChangeNotify(this);
             // Update user
             AuthService.Get().OnComponentsLoaded();
+        }
+
+        public async void OnUserChange(User user)
+        {
+            if (user == null)
+            {
+                SnackbarUtils.ShowSnackbar("User logged out", SnackbarType.Info);
+                NavigationService.Navigate(typeof(SignInPage));
+                NavigationService.ClearHistory();
+                return;
+            }
+
+            NavigationService.Navigate(typeof(HomePage));
+            NavigationService.ClearHistory();
+
+            await DialogUtils.ShowDialogAsync("Welcome", $"Welcome {user.Username}!", XamlRoot);
         }
 
         private void OnSearchEventTrigger(object sender, string newSearchQuery)
@@ -55,46 +69,9 @@ namespace OneLastSong.Views
             }
         }
 
-        private async Task OnServiceInitialized()
+        public void Dispose()
         {
-            //this line is for testing purposes only
-            //await DoDbTest();
-            await AuthService.Get().OnSubsystemInitialized();
-            await ListeningService.Get().OnSubsystemInitialized();
-            await PlaylistService.Get().OnSubsystemInitialized();
-            await NavigationService.Get().OnSubsystemInitialized();
+            AuthService.Get().UnregisterAuthChangeNotify(this);
         }
-
-        private async Task DoDbTest()
-        {
-            var testDAO = ((App)Application.Current).Services.GetService<TestDAO>();
-            var res = await testDAO.Test();
-            await DialogUtils.ShowDialogAsync("Testing db", res, XamlRoot);
-        }
-
-        private async Task InitializeDatabase()
-        {
-            try
-            {
-                await _db.Connect();
-                LogUtils.Debug("Database initialized successfully");
-                ((App)Application.Current).Services.GetService<TestDAO>().Init();
-                ((App)Application.Current).Services.GetService<UserDAO>().Init();
-                ((App)Application.Current).Services.GetService<AudioDAO>().Init();
-                ((App)Application.Current).Services.GetService<AlbumDAO>().Init();
-                ((App)Application.Current).Services.GetService<PlaylistDAO>().Init();
-            }
-            catch (Exception ex)
-            {
-                LogUtils.Debug($"Error initializing database: {ex.Message}");
-                SnackbarUtils.ShowSnackbar("Cannot connect to the database :(", SnackbarType.Error, 3);
-                // Close the app after 3 seconds
-                await Task.Delay(3000);
-                // Close the app
-                Application.Current.Exit();
-                // throw new InvalidOperationException("Connection failed", e);
-            }
-        }
-
     }
 }

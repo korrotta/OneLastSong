@@ -84,11 +84,21 @@ namespace OneLastSong.Services
 
         public void RegisterAudioStateChangeListeners(IAudioStateChanged audioStateChangeNotifier)
         {
+            if(_audioStateChangeNotifiers.Contains(audioStateChangeNotifier))
+            {
+                return;
+            }
+
             _audioStateChangeNotifiers.Add(audioStateChangeNotifier);
         }
 
         public void UnregisterAudioStateChangeListeners(IAudioStateChanged audioStateChangeNotifier)
         {
+            if (!_audioStateChangeNotifiers.Contains(audioStateChangeNotifier))
+            {
+                return;
+            }
+
             _audioStateChangeNotifiers.Remove(audioStateChangeNotifier);
         }
 

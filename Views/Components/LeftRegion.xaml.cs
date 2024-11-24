@@ -26,7 +26,7 @@ namespace OneLastSong.Views.Components
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LeftRegion : Page
+    public sealed partial class LeftRegion : Page, IDisposable
     {
         public LeftFrameViewModel ViewModel { get; set; } = new LeftFrameViewModel();
 
@@ -40,6 +40,7 @@ namespace OneLastSong.Views.Components
         private void LeftRegion_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.XamlRoot = XamlRoot;
+            ViewModel.InitPlaylist();
         }
 
         private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -48,6 +49,11 @@ namespace OneLastSong.Views.Components
             var playlist = grid.DataContext as Playlist;
             var viewModel = DataContext as LeftFrameViewModel;
             ViewModel?.OpenPlaylistOptionsMenu(sender, e, playlist);
+        }
+
+        public void Dispose()
+        {
+            ViewModel?.Dispose();
         }
     }
 

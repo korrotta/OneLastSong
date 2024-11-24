@@ -41,6 +41,25 @@ namespace OneLastSong.Views.Components
             playlistService = PlaylistService.Get();
             userDAO = UserDAO.Get();
             playlistService.RegisterPlaylistNotifier(this);
+            InitUserPlaylist();
+        }
+
+        private async void InitUserPlaylist()
+        {
+            try
+            {
+                if(userDAO.SessionToken == null || userDAO.SessionToken == "")
+                {
+                    return;
+                }
+
+                var userPlaylists = await playlistDAO.GetUserPlaylists(userDAO.SessionToken);
+                Load(userPlaylists);
+            }
+            catch (Exception ex)
+            {
+                SnackbarUtils.ShowSnackbar(ex.Message, SnackbarType.Error);
+            }
         }
 
         private void Load(List<Playlist> userPlaylists)

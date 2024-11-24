@@ -25,12 +25,14 @@ namespace OneLastSong.ViewModels
     {
         public XamlRoot XamlRoot { get; set; }
         public ICommand CreateNewPlaylistCommand { get; set; }
+        private PlaylistDAO _playlistDAO;
         private PlaylistService _playlistService;
 
         public LeftFrameViewModel()
         {
             CreateNewPlaylistCommand = new RelayCommand(CreateNewPlaylist);
             _playlistService = PlaylistService.Get();
+            _playlistDAO = PlaylistDAO.Get();
             _playlistService.RegisterPlaylistNotifier(this);
         }
 
@@ -51,6 +53,26 @@ namespace OneLastSong.ViewModels
                     _playlistList = value;
                     OnPropertyChanged(nameof(PlaylistList));
                 }
+            }
+        }
+
+        public async void InitPlaylist()
+        {
+            string sessionToken = UserDAO.Get().SessionToken;
+
+            if(sessionToken == null || sessionToken == "")
+            {
+                return;
+            }
+
+            try
+            {
+                var playlists = await PlaylistDAO.Get().GetUserPlaylists(sessionToken);
+                PlaylistList = new ObservableCollection<Playlist>(playlists);
+            }
+            catch (Exception e)
+            {
+                SnackbarUtils.ShowSnackbar(e.Message, SnackbarType.Error);
             }
         }
 

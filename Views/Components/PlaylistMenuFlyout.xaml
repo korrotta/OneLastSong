@@ -16,7 +16,7 @@
 
     <MenuFlyoutItem Text="Play" Foreground="{ThemeResource TEXT_PRIMARY}"/>
     <MenuFlyoutItem Text="Add to Queue" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-    <MenuFlyoutItem Text="Remove" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+    <MenuFlyoutItem Text="Remove" Foreground="{ThemeResource TEXT_PRIMARY}" Click="RemovePlaylist_Click"/>
     <MenuFlyoutSeparator Foreground="{ThemeResource TEXT_PRIMARY}"/>
     <MenuFlyoutItem Text="Details" Foreground="{ThemeResource TEXT_PRIMARY}" Click="EditPlaylistDetails_Click"/>
 

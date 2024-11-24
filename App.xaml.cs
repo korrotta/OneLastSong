@@ -24,6 +24,7 @@ using OneLastSong.Services;
 using OneLastSong.Contracts;
 using System.Threading;
 using Microsoft.UI.Dispatching;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,6 +37,8 @@ namespace OneLastSong
     public partial class App : Application
     {
         public IServiceProvider Services { get; }
+
+        private IDb _db;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -69,6 +72,40 @@ namespace OneLastSong
             return services.BuildServiceProvider();
         }
 
+        private async Task OnServiceInitialized()
+        {
+            //this line is for testing purposes only
+            //await DoDbTest();
+            await AuthService.Get().OnSubsystemInitialized();
+            await ListeningService.Get().OnSubsystemInitialized();
+            await PlaylistService.Get().OnSubsystemInitialized();
+            await NavigationService.Get().OnSubsystemInitialized();
+        }
+
+        private async Task InitializeDatabase()
+        {
+            try
+            {
+                await _db.Connect();
+                LogUtils.Debug("Database initialized successfully");
+                ((App)Application.Current).Services.GetService<TestDAO>().Init();
+                ((App)Application.Current).Services.GetService<UserDAO>().Init();
+                ((App)Application.Current).Services.GetService<AudioDAO>().Init();
+                ((App)Application.Current).Services.GetService<AlbumDAO>().Init();
+                ((App)Application.Current).Services.GetService<PlaylistDAO>().Init();
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Debug($"Error initializing database: {ex.Message}");
+                SnackbarUtils.ShowSnackbar("Cannot connect to the database :(", SnackbarType.Error, 3);
+                // Close the app after 3 seconds
+                await Task.Delay(3000);
+                // Close the app
+                Application.Current.Exit();
+                // throw new InvalidOperationException("Connection failed", e);
+            }
+        }
+
         /// <summary>
         /// Invoked when the application is launched.
         /// </summary>
@@ -85,6 +122,9 @@ namespace OneLastSong
             _window = mainWindow;
             _window.Activate();
 
+            _db = ((App)Application.Current).Services.GetService<IDb>();
+            await InitializeDatabase();
+            await OnServiceInitialized();
             mainWindow.NavigateMainFrameTo(typeof(MainPage));
         }
 

@@ -105,7 +105,13 @@ namespace OneLastSong.DAOs
         public async Task DeletePlaylist(string sessionToken, int playlistId)
         {
             ResultMessage result = await _db.DeletePlaylist(sessionToken, playlistId);
-            if (result.Status != ResultMessage.STATUS_OK)
+            if (result.Status == ResultMessage.STATUS_OK)
+            {
+                // remove playlist from cache
+                _playlistList.RemoveAll(playlist => playlist.PlaylistId == playlistId);
+                _playlistService.NotifyPlaylistChanged(_playlistList);
+            }
+            else
             {
                 throw new Exception(result.ErrorMessage);
             }

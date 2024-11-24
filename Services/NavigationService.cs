@@ -35,11 +35,21 @@ namespace OneLastSong.Services
 
         public void RegisterNavChangeNotifier(INavChangeNotifier navChangeNotifier)
         {
+            if(navChangeNotifiers.Contains(navChangeNotifier))
+            {
+                return;
+            }
+
             navChangeNotifiers.Add(navChangeNotifier);
         }
 
         public void UnregisterNavChangeNotifier(INavChangeNotifier navChangeNotifier)
         {
+            if(!navChangeNotifiers.Contains(navChangeNotifier))
+            {
+                return;
+            }
+
             navChangeNotifiers.Remove(navChangeNotifier);
         }
 
@@ -53,6 +63,11 @@ namespace OneLastSong.Services
                     if (_frame.Content is INavigationStateSavable savable)
                     {
                         currentState = savable.GetCurrentParameterState();
+                    }
+
+                    if(_frame.Content is IDisposable)
+                    {
+                        ((IDisposable)_frame.Content).Dispose();
                     }
                 }
 
@@ -94,6 +109,11 @@ namespace OneLastSong.Services
                     if (_frame.Content is INavigationStateSavable savable)
                     {
                         currentState = savable.GetCurrentParameterState();
+                    }
+
+                    if (_frame.Content is IDisposable)
+                    {
+                        ((IDisposable)_frame.Content).Dispose();
                     }
                 }
 
@@ -141,6 +161,11 @@ namespace OneLastSong.Services
                     if (_frame.Content is INavigationStateSavable savable)
                     {
                         currentState = savable.GetCurrentParameterState();
+                    }
+
+                    if (_frame.Content is IDisposable)
+                    {
+                        ((IDisposable)_frame.Content).Dispose();
                     }
                 }
 
