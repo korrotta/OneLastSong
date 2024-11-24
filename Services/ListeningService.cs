@@ -206,5 +206,16 @@ namespace OneLastSong.Services
             await Task.CompletedTask;
             return true;
         }
+
+        internal void AddPlaylistToQueue(Playlist playlist)
+        {
+            PlayModeData.AddPlaylistToQueue(playlist);
+        }
+
+        internal void PlayPlaylist(Playlist playlist)
+        {
+            PlayModeData.PlayPlaylist(playlist);
+            PlayNext();
+        }
     }
 }

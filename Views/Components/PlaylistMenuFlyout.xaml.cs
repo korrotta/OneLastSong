@@ -18,6 +18,8 @@ using OneLastSong.DAOs;
 using OneLastSong.Utils;
 using System.Threading.Tasks;
 using OneLastSong.Views.Dialogs;
+using OneLastSong.Services;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,6 +32,7 @@ namespace OneLastSong.Views.Components
         private XamlRoot _xamlRoot;
         private PlaylistDAO _playlistDAO;
         private UserDAO _userDAO;
+        private ListeningService _listeningService;
 
         public PlaylistMenuFlyoutViewModel ViewModel { get; set; } = new PlaylistMenuFlyoutViewModel();
 
@@ -42,6 +45,7 @@ namespace OneLastSong.Views.Components
             ViewModel.Playlist = _playlist;
             _playlistDAO = PlaylistDAO.Get();
             _userDAO = UserDAO.Get();
+            _listeningService = ListeningService.Get();
         }
 
         private void EditPlaylistDetails_Click(object sender, RoutedEventArgs e)
@@ -80,6 +84,44 @@ namespace OneLastSong.Views.Components
             if (result == ContentDialogResult.Primary)
             {
                 RemovePlaylist();
+            }
+        }
+
+        private void AddToQueue_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (_playlist.Audios == null || _playlist.Audios.Length == 0)
+                {
+                    SnackbarUtils.ShowSnackbar("The playlist is empty", SnackbarType.Warning);
+                    return;
+                }
+
+                _listeningService.AddPlaylistToQueue(_playlist);
+                SnackbarUtils.ShowSnackbar("Playlist added to queue", SnackbarType.Success);
+            }
+            catch (Exception ex)
+            {
+                SnackbarUtils.ShowSnackbar(ex.Message, SnackbarType.Error);
+            }
+        }
+
+        private void PlayPlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (_playlist.Audios == null || _playlist.Audios.Length == 0)
+                {
+                    SnackbarUtils.ShowSnackbar("The playlist is empty", SnackbarType.Warning);
+                    return;
+                }
+
+                _listeningService.PlayPlaylist(_playlist);
+                SnackbarUtils.ShowSnackbar("Playlist is now playing", SnackbarType.Success);
+            }
+            catch (Exception ex)
+            {
+                SnackbarUtils.ShowSnackbar(ex.Message, SnackbarType.Error);
             }
         }
     }

@@ -19,6 +19,7 @@ using OneLastSong.Services;
 using OneLastSong.Utils;
 using OneLastSong.Cores.DataItems;
 using OneLastSong.Contracts;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,14 +42,22 @@ namespace OneLastSong.Views.Components
             playlistService = PlaylistService.Get();
             userDAO = UserDAO.Get();
             playlistService.RegisterPlaylistNotifier(this);
-            InitUserPlaylist();
+
+            this.Opened += AddToPlaylistMenuFlyout_Opened;
+            // Subscribe to the Closed event
+            this.Closed += AddToPlaylistMenuFlyout_Closed;
         }
 
-        private async void InitUserPlaylist()
+        private async void AddToPlaylistMenuFlyout_Opened(object sender, object e)
+        {
+            await InitUserPlaylist();
+        }
+
+        private async Task InitUserPlaylist()
         {
             try
             {
-                if(userDAO.SessionToken == null || userDAO.SessionToken == "")
+                if (string.IsNullOrEmpty(userDAO.SessionToken))
                 {
                     return;
                 }
@@ -84,7 +93,6 @@ namespace OneLastSong.Views.Components
                 menuItem.Click += AddToPlaylist_Click;
                 PlaylistsSubItem.Items.Add(menuItem);
             }
-
         }
 
         private async void AddToPlaylist_Click(object sender, RoutedEventArgs e)
@@ -103,6 +111,11 @@ namespace OneLastSong.Views.Components
         public void OnPlaylistUpdated(List<Playlist> playlists)
         {
             Load(playlists);
+        }
+
+        private void AddToPlaylistMenuFlyout_Closed(object sender, object e)
+        {
+            Dispose();
         }
 
         public void Dispose()

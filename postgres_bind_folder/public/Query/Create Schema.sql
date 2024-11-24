@@ -93,6 +93,7 @@ CREATE TABLE playlist_audios
 (
     playlist_id INTEGER REFERENCES playlists(id) ON DELETE CASCADE,
     audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (playlist_id, audio_id)
 );
 
@@ -537,10 +538,23 @@ BEGIN
         ),
         'Audios', (
             SELECT json_agg(json_build_object(
-                'AudioId', a.id,
+                'Url', a.url,
+                'Likes', (
+                    SELECT COUNT(*)
+                    FROM likes l
+                    WHERE l.audio_id = a.id
+                ),
                 'Title', a.title,
-                'Duration', a.duration
-            ))
+                'Artist', a.artist,
+                'AlbumId', a.album_id,
+                'CategoryId', a.category_id,
+                'Duration', a.duration,
+                'Duration', a.duration,
+                'CreatedAt', a.created_at,
+                'CategoryId', a.category_id,
+                'Description', a.description,
+                'CoverImageUrl', a.cover_image_url
+            ) ORDER BY pa.added_at)
             FROM audios a
             JOIN playlist_audios pa ON pa.audio_id = a.id
             WHERE pa.playlist_id = p.id
@@ -698,18 +712,24 @@ BEGIN
             RETURN get_result_message(1, 'Audio is already in the playlist', '{}'::JSONB);
         END IF;
 
+        -- If the audio is the first one in the playlist, update the playlist cover image to the audio's cover image
+        IF NOT EXISTS (
+            SELECT 1
+            FROM playlist_audios
+            WHERE playlist_id = ip_playlist_id AND audio_id <> ip_audio_id
+        ) THEN
+            UPDATE playlists
+            SET cover_image_url = (
+                SELECT cover_image_url
+                FROM audios
+                WHERE id = ip_audio_id
+            )
+            WHERE id = ip_playlist_id;
+        END IF;
+
         -- Add the audio to the playlist
         INSERT INTO playlist_audios (playlist_id, audio_id)
         VALUES (ip_playlist_id, ip_audio_id);
-
-        -- If the audio is the first one in the playlist, update the playlist cover image to the audio's cover image
-        UPDATE playlists
-        SET cover_image_url = (
-            SELECT a.cover_image_url
-            FROM audios a
-            WHERE a.id = ip_audio_id
-        )
-        WHERE id = ip_playlist_id AND cover_image_url IS NULL;
 
         -- Return success message
         RETURN get_result_message(0, '', '{}'::JSONB);

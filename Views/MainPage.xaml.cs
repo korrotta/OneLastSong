@@ -17,6 +17,7 @@ namespace OneLastSong.Views
     {
         public MainPageViewModel MainPageViewModel { get; set; }
         private NavigationService NavigationService { get; set; }
+        private AuthService AuthService { get; set; }
 
         public MainPage()
         {
@@ -38,9 +39,10 @@ namespace OneLastSong.Views
             (TopFrame.Content as TopFrame)?.TopFrameViewModel.SubscribeToSearchEvent(OnSearchEventTrigger);
 
             NavigationService = NavigationService.Get();
-            AuthService.Get().RegisterAuthChangeNotify(this);
+            AuthService = AuthService.Get();
+            AuthService.RegisterAuthChangeNotify(this);
             // Update user
-            AuthService.Get().OnComponentsLoaded();
+            AuthService.OnComponentsLoaded();
         }
 
         public async void OnUserChange(User user)

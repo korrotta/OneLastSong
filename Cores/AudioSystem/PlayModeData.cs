@@ -151,5 +151,35 @@ namespace OneLastSong.Cores.AudioSystem
                 Semaphore.Release();
             }
         }
+
+        internal async void AddPlaylistToQueue(Playlist playlist)
+        {
+            await Semaphore.WaitAsync();
+            try
+            {
+                PlayQueue.AddRange(playlist.Audios);
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
+
+        internal async void PlayPlaylist(Playlist playlist)
+        {
+            await Semaphore.WaitAsync();
+            try
+            {
+                CurrentPlayMode = PlayMode.Playlist;
+                PlaylistId = playlist.PlaylistId;
+                PlayQueue.Clear();
+                PlayQueue.AddRange(playlist.Audios);
+                CurrentAudio = PlayQueue[0];
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
     }
 }
