@@ -1,14 +1,11 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using OneLastSong.Views.Components;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using OneLastSong.Contracts;
-using Microsoft.UI.Dispatching;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace OneLastSong.Services
 {
@@ -20,7 +17,7 @@ namespace OneLastSong.Services
         private List<INavChangeNotifier> navChangeNotifiers = new();
         private DispatcherQueue _eventHandler;
 
-        public NavigationService(DispatcherQueue dispatcherQueue) 
+        public NavigationService(DispatcherQueue dispatcherQueue)
         {
             _eventHandler = dispatcherQueue;
         }
@@ -35,7 +32,7 @@ namespace OneLastSong.Services
 
         public void RegisterNavChangeNotifier(INavChangeNotifier navChangeNotifier)
         {
-            if(navChangeNotifiers.Contains(navChangeNotifier))
+            if (navChangeNotifiers.Contains(navChangeNotifier))
             {
                 return;
             }
@@ -45,7 +42,7 @@ namespace OneLastSong.Services
 
         public void UnregisterNavChangeNotifier(INavChangeNotifier navChangeNotifier)
         {
-            if(!navChangeNotifiers.Contains(navChangeNotifier))
+            if (!navChangeNotifiers.Contains(navChangeNotifier))
             {
                 return;
             }
@@ -65,7 +62,7 @@ namespace OneLastSong.Services
                         currentState = savable.GetCurrentParameterState();
                     }
 
-                    if(_frame.Content is IDisposable)
+                    if (_frame.Content is IDisposable)
                     {
                         ((IDisposable)_frame.Content).Dispose();
                     }
@@ -224,7 +221,7 @@ namespace OneLastSong.Services
 
         public void Dispose()
         {
-            
+
         }
     }
 }

@@ -38,6 +38,7 @@
     <None Remove="Views\Components\IconTextButton.xaml" />
     <None Remove="Views\Components\LeftRegion.xaml" />
     <None Remove="Views\Components\PlaylistMenuFlyout.xaml" />
+    <None Remove="Views\Components\PlaylistView.xaml" />
     <None Remove="Views\Components\RightRegion.xaml" />
     <None Remove="Views\Components\SignInPage.xaml" />
     <None Remove="Views\Components\TopFrame.xaml" />
@@ -47,6 +48,7 @@
     <None Remove="Views\Dialogs\SimpleMessageThemedDialog.xaml" />
     <None Remove="Views\Dialogs\SimpleThemedConfirmDialog.xaml" />
     <None Remove="Views\MainPage.xaml" />
+    <None Remove="Views\PlaylistViewPage.xaml" />
     <None Remove="Views\SearchPage.xaml" />
     <None Remove="Views\SignUpPage.xaml" />
   </ItemGroup>
@@ -189,6 +191,16 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\PlaylistViewPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\PlaylistView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\AudioLyricPage.xaml">
