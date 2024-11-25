@@ -2,10 +2,8 @@
 using Npgsql;
 using OneLastSong.Contracts;
 using OneLastSong.Models;
-using OneLastSong.Utils;
 using System;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace OneLastSong.Db
@@ -13,17 +11,14 @@ namespace OneLastSong.Db
     public class PgDb : IDb
     {
         private NpgsqlConnection _conn = null;
-        NpgsqlDataSourceBuilder dataSourceBuilder = null;
-        NpgsqlDataSource dataSource = null;
-        public String ConnectionString { get; set; } = new DbSpecs().GetQuickConnectionString();
+        private NpgsqlDataSource dataSource = null;
+        public string ConnectionString { get; set; } = new DbSpecs().GetQuickConnectionString();
 
         public async Task Connect()
         {
-            dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnectionString);
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnectionString);
             dataSourceBuilder.EnableRecordsAsTuples();
-
             dataSource = dataSourceBuilder.Build();
-
             _conn = await dataSource.OpenConnectionAsync();
 
             if (_conn.State != System.Data.ConnectionState.Open)
@@ -34,18 +29,12 @@ namespace OneLastSong.Db
 
         public async Task<DbDataReader> ExecuteQueryAsync(string query)
         {
-            if (_conn == null)
-            {
-                throw new InvalidOperationException("Connection not established");
-            }
-
+            CheckConnection();
             var cmd = _conn.CreateCommand();
             cmd.CommandText = query;
-
             return await cmd.ExecuteReaderAsync();
         }
 
-        // Close the connection
         public Task Dispose()
         {
             if (_conn != null)
@@ -53,7 +42,6 @@ namespace OneLastSong.Db
                 _conn.Close();
                 _conn.Dispose();
             }
-
             return Task.CompletedTask;
         }
 
@@ -70,604 +58,409 @@ namespace OneLastSong.Db
             }
         }
 
-        public Task<string> UserLogin(string username, string password)
+        public async Task<string> UserLogin(string username, string password)
         {
-            return Task.Run(async () =>
+            CheckConnection();
+            string res = "";
+
+            try
             {
-                CheckConnection();
-
-                string res = "";
-
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_USER_LOGIN))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_USER_LOGIN))
+                    cmd.Parameters.AddWithValue("username", username);
+                    cmd.Parameters.AddWithValue("password", password);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("username", username);
-                        cmd.Parameters.AddWithValue("password", password);
-
-                        LogUtils.Debug("Executing command: " + QUERY_USER_LOGIN);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            if (await reader.ReadAsync())
-                            {
-                                res = reader.GetString(0);
-                            }
-                            else
-                            {
-                                LogUtils.Debug("No rows returned.");
-                            }
+                            res = reader.GetString(0);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
-                return res;
-            });
+            return res;
         }
 
-        public Task<string> DoTest()
+        public async Task<string> DoTest()
         {
-            return Task.Run(async () =>
+            CheckConnection();
+            string res = "";
+
+            try
             {
-                return await UserLogin("test", "test");
-
-                if (_conn == null)
+                await using (var cmd = dataSource.CreateCommand("SELECT name FROM table_name"))
                 {
-                    throw new InvalidOperationException("Connection not established");
-                }
+                    cmd.CommandTimeout = 5; // Set a timeout of 5 seconds
 
-                string res = "";
-
-                try
-                {
-                    await using (var cmd = dataSource.CreateCommand("SELECT name FROM table_name"))
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.CommandTimeout = 5; // Set a timeout of 5 seconds
-
-                        LogUtils.Debug("Executing command: SELECT name FROM table_name");
-
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        while (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            while (await reader.ReadAsync())
+                            for (int i = 0; i < reader.FieldCount; i++)
                             {
-                                Debug.WriteLine("Row returned:" + reader.FieldCount.ToString());
-                                for (int i = 0; i < reader.FieldCount; i++)
-                                {
-                                    res += reader.GetString(i) + " ";
-                                    Debug.WriteLine($"Field {i}: {reader.GetString(i)}");
-                                }
-                            }
-
-                            if (string.IsNullOrEmpty(res))
-                            {
-                                LogUtils.Debug("No rows returned.");
+                                res += reader.GetString(i) + " ";
                             }
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
-                return res;
-            });
+            return res;
         }
 
-        public Task<User> GetUser(string sessionToken)
+        public async Task<User> GetUser(string sessionToken)
         {
-            return Task.Run(async () =>
+            CheckConnection();
+            User res = null;
+
+            try
             {
-                CheckConnection();
-                User res = new User();
-                String userJson = "";
-
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_GET_USER))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_GET_USER))
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("session_token", sessionToken);
-                        LogUtils.Debug("Executing command: " + QUERY_GET_USER);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            if (await reader.ReadAsync())
-                            {
-                                // if number of rows is 0, then the user is not found
-                                if (reader.FieldCount == 0)
-                                {
-                                    return null;
-                                }
-
-                                userJson = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + userJson);
-
-                                res = User.FromJson(userJson);
-                            }
-                            else
-                            {
-                                LogUtils.Debug("No rows returned.");
-                            }
-                        }
-                    }
-
-                    return res;
-                }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    // Error occurred or invalid session token, simply return null
-                    return null;
-                }
-            });
-        }
-
-        public Task<ResultMessage> UserSignUp(string username, string password)
-        {
-            return Task.Run(async () =>
-            {
-                CheckConnection();
-
-                try
-                {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_USER_SIGNUP))
-                    {
-                        cmd.Parameters.AddWithValue("username", username);
-                        cmd.Parameters.AddWithValue("password", password);
-
-                        LogUtils.Debug("Executing command: " + QUERY_USER_SIGNUP);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
-                        {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            if (await reader.ReadAsync())
-                            {
-                                string json = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + json);
-
-                                return ResultMessage.FromJson(json);
-                            }
-                            else
-                            {
-                                LogUtils.Debug("No rows returned.");
-                            }
+                            string userJson = reader.GetString(0);
+                            res = User.FromJson(userJson);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
-
+            }
+            catch (Exception)
+            {
                 return null;
-            });
+            }
+
+            return res;
         }
 
-        public Task<ResultMessage> GetMostLikeAudios(int limit = 1000)
+        public async Task<ResultMessage> UserSignUp(string username, string password)
         {
-            return Task.Run(async () =>
+            CheckConnection();
+
+            try
             {
-                CheckConnection();
-
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_USER_SIGNUP))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_GET_MOST_LIKE_AUDIOS))
+                    cmd.Parameters.AddWithValue("username", username);
+                    cmd.Parameters.AddWithValue("password", password);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("limit", limit);
-
-                        LogUtils.Debug("Executing command: " + QUERY_GET_MOST_LIKE_AUDIOS);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            if (await reader.ReadAsync())
-                            {
-                                string json = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + json);
-
-                                return ResultMessage.FromJson(json);
-                            }
-                            else
-                            {
-                                throw new Exception("No rows returned. While executing " + QUERY_GET_MOST_LIKE_AUDIOS);
-                            }
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
-            });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
         }
 
-        public Task<ResultMessage> GetFirstNAlbums(int limit = 20)
+        public async Task<ResultMessage> GetMostLikeAudios(int limit = 1000)
         {
-            return Task.Run(async () =>
+            CheckConnection();
+
+            try
             {
-                CheckConnection();
-
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_GET_MOST_LIKE_AUDIOS))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_GET_FIRST_N_ALBUMS))
+                    cmd.Parameters.AddWithValue("limit", limit);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("limit", limit);
-
-                        LogUtils.Debug("Executing command: " + QUERY_GET_FIRST_N_ALBUMS);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            if (await reader.ReadAsync())
-                            {
-                                string json = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + json);
-
-                                return ResultMessage.FromJson(json);
-                            }
-                            else
-                            {
-                                throw new Exception("No rows returned. While executing " + QUERY_GET_FIRST_N_ALBUMS);
-                            }
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
-            });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
         }
 
-        public Task<ResultMessage> GetAllUserPlaylists(string sessionToken)
+        public async Task<ResultMessage> GetFirstNAlbums(int limit = 20)
         {
-            return Task.Run(async () =>
+            CheckConnection();
+
+            try
             {
-                CheckConnection();
-
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_GET_FIRST_N_ALBUMS))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_GET_ALL_USER_PLAYLISTS))
+                    cmd.Parameters.AddWithValue("limit", limit);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("session_token", sessionToken);
-
-                        LogUtils.Debug("Executing command: " + QUERY_GET_ALL_USER_PLAYLISTS);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            if (await reader.ReadAsync())
-                            {
-                                string json = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + json);
-
-                                return ResultMessage.FromJson(json);
-                            }
-                            else
-                            {
-                                throw new Exception("No rows returned. While executing " + QUERY_GET_ALL_USER_PLAYLISTS);
-                            }
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
-            });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
         }
 
-        public Task<ResultMessage> AddUserPlaylist(string sessionToken, string playlistName, string coverImageUrl)
+        public async Task<ResultMessage> GetAllUserPlaylists(string sessionToken)
         {
-            return Task.Run(async () =>
+            CheckConnection();
+
+            try
             {
-                CheckConnection();
-
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_GET_ALL_USER_PLAYLISTS))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_ADD_USER_PLAYLIST))
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("session_token", sessionToken);
-                        cmd.Parameters.AddWithValue("playlist_name", playlistName);
-                        cmd.Parameters.AddWithValue("cover_image_url", coverImageUrl);
-
-                        LogUtils.Debug("Executing command: " + QUERY_ADD_USER_PLAYLIST);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            if (await reader.ReadAsync())
-                            {
-                                string json = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + json);
-
-                                return ResultMessage.FromJson(json);
-                            }
-                            else
-                            {
-                                throw new Exception("No rows returned. While executing " + QUERY_ADD_USER_PLAYLIST);
-                            }
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
-            });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
         }
 
-        public Task<ResultMessage> GetAllArtists()
+        public async Task<ResultMessage> AddUserPlaylist(string sessionToken, string playlistName, string coverImageUrl)
         {
-            return Task.Run(async () =>
+            CheckConnection();
+
+            try
             {
-                CheckConnection();
-
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_ADD_USER_PLAYLIST))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_GET_ALL_ARTISTS))
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+                    cmd.Parameters.AddWithValue("playlist_name", playlistName);
+                    cmd.Parameters.AddWithValue("cover_image_url", coverImageUrl);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        LogUtils.Debug("Executing command: " + QUERY_GET_ALL_ARTISTS);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            if (await reader.ReadAsync())
-                            {
-                                string json = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + json);
-
-                                return ResultMessage.FromJson(json);
-                            }
-                            else
-                            {
-                                throw new Exception("No rows returned. While executing " + QUERY_GET_ALL_ARTISTS);
-                            }
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
-            });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
         }
 
-        public Task<ResultMessage> AddAudioToPlaylist(string sessionToken, int playlistId, int audioId)
+        public async Task<ResultMessage> GetAllArtists()
         {
-            return Task.Run(async () =>
+            CheckConnection();
+
+            try
             {
-                CheckConnection();
-
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_GET_ALL_ARTISTS))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_ADD_AUDIO_TO_PLAYLIST))
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("session_token", sessionToken);
-                        cmd.Parameters.AddWithValue("playlist_id", playlistId);
-                        cmd.Parameters.AddWithValue("audio_id", audioId);
-
-                        LogUtils.Debug("Executing command: " + QUERY_ADD_AUDIO_TO_PLAYLIST);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            if (await reader.ReadAsync())
-                            {
-                                string json = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + json);
-
-                                return ResultMessage.FromJson(json);
-                            }
-                            else
-                            {
-                                throw new Exception("No rows returned. While executing " + QUERY_ADD_AUDIO_TO_PLAYLIST);
-                            }
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
-            });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
         }
 
-        public Task<ResultMessage> RemoveAudioFromPlaylist(string sessionToken, int playlistId, int audioId)
+        public async Task<ResultMessage> AddAudioToPlaylist(string sessionToken, int playlistId, int audioId)
         {
-            return Task.Run(async () =>
+            CheckConnection();
+
+            try
             {
-                CheckConnection();
-
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_ADD_AUDIO_TO_PLAYLIST))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_REMOVE_AUDIO_FROM_PLAYLIST))
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+                    cmd.Parameters.AddWithValue("playlist_id", playlistId);
+                    cmd.Parameters.AddWithValue("audio_id", audioId);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("session_token", sessionToken);
-                        cmd.Parameters.AddWithValue("playlist_id", playlistId);
-                        cmd.Parameters.AddWithValue("audio_id", audioId);
-
-                        LogUtils.Debug("Executing command: " + QUERY_REMOVE_AUDIO_FROM_PLAYLIST);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            if (await reader.ReadAsync())
-                            {
-                                string json = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + json);
-
-                                return ResultMessage.FromJson(json);
-                            }
-                            else
-                            {
-                                throw new Exception("No rows returned. While executing " + QUERY_REMOVE_AUDIO_FROM_PLAYLIST);
-                            }
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
-            });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
         }
 
-        public Task<ResultMessage> DeletePlaylist(string sessionToken, int playlistId)
+        public async Task<ResultMessage> RemoveAudioFromPlaylist(string sessionToken, int playlistId, int audioId)
         {
-            return Task.Run(async () =>
+            CheckConnection();
+
+            try
             {
-                CheckConnection();
-
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_REMOVE_AUDIO_FROM_PLAYLIST))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_DELETE_PLAYLIST))
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+                    cmd.Parameters.AddWithValue("playlist_id", playlistId);
+                    cmd.Parameters.AddWithValue("audio_id", audioId);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("session_token", sessionToken);
-                        cmd.Parameters.AddWithValue("playlist_id", playlistId);
-
-                        LogUtils.Debug("Executing command: " + QUERY_DELETE_PLAYLIST);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            if (await reader.ReadAsync())
-                            {
-                                string json = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + json);
-
-                                return ResultMessage.FromJson(json);
-                            }
-                            else
-                            {
-                                throw new Exception("No rows returned. While executing " + QUERY_DELETE_PLAYLIST);
-                            }
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
-            });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
         }
 
-        public Task<ResultMessage> SaveListeningSession(string sessionToken, int audioId, int progress)
+        public async Task<ResultMessage> DeletePlaylist(string sessionToken, int playlistId)
         {
-            return Task.Run(async () =>
+            CheckConnection();
+
+            try
             {
-                CheckConnection();
-
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_DELETE_PLAYLIST))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_SAVE_LISTENING_SESSION))
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+                    cmd.Parameters.AddWithValue("playlist_id", playlistId);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("session_token", sessionToken);
-                        cmd.Parameters.AddWithValue("audio_id", audioId);
-                        cmd.Parameters.AddWithValue("progress", progress);
-
-                        LogUtils.Debug("Executing command: " + QUERY_SAVE_LISTENING_SESSION);
-
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-
-                            if (await reader.ReadAsync())
-                            {
-                                string json = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + json);
-
-                                return ResultMessage.FromJson(json);
-                            }
-                            else
-                            {
-                                throw new Exception("No rows returned. While executing " + QUERY_SAVE_LISTENING_SESSION);
-                            }
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
-                }
-            });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
         }
 
-        public Task<ResultMessage> GetListeningSession(string sessionToken)
+        public async Task<ResultMessage> SaveListeningSession(string sessionToken, int audioId, int progress)
         {
-            return Task.Run(async () =>
+            CheckConnection();
+
+            try
             {
-                CheckConnection();
-                try
+                await using (var cmd = dataSource.CreateCommand(QUERY_SAVE_LISTENING_SESSION))
                 {
-                    await using (var cmd = dataSource.CreateCommand(QUERY_GET_LISTENING_SESSION))
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+                    cmd.Parameters.AddWithValue("audio_id", audioId);
+                    cmd.Parameters.AddWithValue("progress", progress);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("session_token", sessionToken);
-                        LogUtils.Debug("Executing command: " + QUERY_GET_LISTENING_SESSION);
-                        // Execute and log returned data
-                        await using (var reader = await cmd.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            LogUtils.Debug("Command executed, reading results...");
-                            if (await reader.ReadAsync())
-                            {
-                                string json = reader.GetString(0);
-                                LogUtils.Debug("Raw JSON data: " + json);
-                                return ResultMessage.FromJson(json);
-                            }
-                            else
-                            {
-                                throw new Exception("No rows returned. While executing " + QUERY_GET_LISTENING_SESSION);
-                            }
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
                         }
                     }
                 }
-                catch (Exception ex)
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
+        }
+
+        public async Task<ResultMessage> GetListeningSession(string sessionToken)
+        {
+            CheckConnection();
+
+            try
+            {
+                await using (var cmd = dataSource.CreateCommand(QUERY_GET_LISTENING_SESSION))
                 {
-                    LogUtils.Debug($"Error executing query: {ex.Message}");
-                    throw;
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+
+                    await using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
+                        }
+                    }
                 }
-            });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
         }
 
         // Our Query strings

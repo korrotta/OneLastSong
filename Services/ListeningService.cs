@@ -19,7 +19,6 @@ namespace OneLastSong.Services
     public class ListeningService : IDisposable, INotifySubsytemStateChanged, IAuthChangeNotify
     {
         public PlayModeData PlayModeData { get; private set; } = new PlayModeData();
-        // worker thread
         private Task _workerTask;
         private bool _isPlaying = false;
         private bool _shouldRun = true;
@@ -31,8 +30,35 @@ namespace OneLastSong.Services
         private UserDAO _userDAO;
         private AudioDAO _audioDAO;
         private AuthService _authService;
-
         private List<IAudioStateChanged> _audioStateChangeNotifiers = new List<IAudioStateChanged>();
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
+        public ListeningService(DispatcherQueue dispatcherQueue)
+        {
+            _eventHandler = dispatcherQueue;
+            _workerTask = Task.Run(WorkerLoop, _cancellationTokenSource.Token);
+        }
+
+        private async Task WorkerLoop()
+        {
+            while (_shouldRun)
+            {
+                var currentAudio = PlayModeData.CurrentAudio;
+
+                if (currentAudio != null)
+                {
+                    NotifyAudioChanged(currentAudio);
+                    await PlayAudioUrlAsync(currentAudio.Url);
+                }
+
+                if (PlayModeData.ListeningSession == null)
+                {
+                    currentAudio = await PlayModeData.NextAudioAsync();
+                }
+
+                await Task.Delay(1000);
+            }
+        }
 
         public async void PlayAudio(Audio audio)
         {
@@ -90,98 +116,63 @@ namespace OneLastSong.Services
 
         public void RegisterAudioStateChangeListeners(IAudioStateChanged audioStateChangeNotifier)
         {
-            if (_audioStateChangeNotifiers.Contains(audioStateChangeNotifier))
+            if (!_audioStateChangeNotifiers.Contains(audioStateChangeNotifier))
             {
-                return;
+                _audioStateChangeNotifiers.Add(audioStateChangeNotifier);
             }
-
-            _audioStateChangeNotifiers.Add(audioStateChangeNotifier);
         }
 
         public void UnregisterAudioStateChangeListeners(IAudioStateChanged audioStateChangeNotifier)
         {
-            if (!_audioStateChangeNotifiers.Contains(audioStateChangeNotifier))
-            {
-                return;
-            }
-
             _audioStateChangeNotifiers.Remove(audioStateChangeNotifier);
-        }
-
-        public ListeningService(DispatcherQueue dispatcherQueue)
-        {
-            _eventHandler = dispatcherQueue;
-            Audio currentAudio = null;
-
-            _workerTask = new Task(async () =>
-            {
-                while (_shouldRun)
-                {
-                    currentAudio = PlayModeData.CurrentAudio;      
-                    
-                    if (currentAudio != null)
-                    {
-                        NotifyAudioChanged(currentAudio);
-                        // play audio
-                        PlayAudioUrl(currentAudio.Url);
-                    }
-
-                    if(PlayModeData.ListeningSession == null)
-                    {
-                        currentAudio = await PlayModeData.NextAudioAsync();
-                    }
-
-                    Thread.Sleep(1000);
-                }
-            });
-            _workerTask.Start();
         }
 
         public void Dispose()
         {
             _shouldRun = false;
-            _workerTask.Dispose();
-            _authService.UnregisterAuthChangeNotify(this);
+            _cancellationTokenSource.Cancel();
+            _workerTask?.Dispose();
+            _authService?.UnregisterAuthChangeNotify(this);
+            mf?.Dispose();
+            wo?.Dispose();
+            _cancellationTokenSource.Dispose();
         }
 
-        private void PlayAudioUrl(string url)
+        private async Task PlayAudioUrlAsync(string url)
         {
-            // play audio from url
             mf = new MediaFoundationReader(url);
             wo = new WasapiOut();
+            wo.Init(mf);
+
+            if (PlayModeData.ListeningSession != null)
             {
-                wo.Init(mf);
-
-                if(PlayModeData.ListeningSession != null)
-                {
-                    IsPlaying = false;
-                    NotifyAudioChanged(PlayModeData.CurrentAudio);
-                    NotifyProgressChanged(PlayModeData.ListeningSession.Progress);
-                    _shouldContinuePlayingCurrentAudio = true;
-                    wo.Play();
-                    mf.CurrentTime = TimeSpan.FromSeconds(PlayModeData.ListeningSession.Progress);
-                    wo.Pause();
-                    PlayModeData.ListeningSession = null;
-                }
-                else
-                {
-                    wo.Play();
-                    _shouldContinuePlayingCurrentAudio = true;
-                    IsPlaying = true;
-                }                
-
-                while (wo.PlaybackState != PlaybackState.Stopped && _shouldContinuePlayingCurrentAudio)
-                {
-                    NotifyProgressChanged((int)mf.CurrentTime.TotalSeconds);
-                    SaveListeningProgress();
-                    Thread.Sleep(1000);
-                }
                 IsPlaying = false;
-                wo.Stop();
+                NotifyAudioChanged(PlayModeData.CurrentAudio);
+                NotifyProgressChanged(PlayModeData.ListeningSession.Progress);
+                _shouldContinuePlayingCurrentAudio = true;
+                wo.Play();
+                mf.CurrentTime = TimeSpan.FromSeconds(PlayModeData.ListeningSession.Progress);
+                wo.Pause();
+                PlayModeData.ListeningSession = null;
             }
+            else
+            {
+                wo.Play();
+                _shouldContinuePlayingCurrentAudio = true;
+                IsPlaying = true;
+            }
+
+            while (wo.PlaybackState != PlaybackState.Stopped && _shouldContinuePlayingCurrentAudio)
+            {
+                NotifyProgressChanged((int)mf.CurrentTime.TotalSeconds);
+                await SaveListeningProgressAsync();
+                await Task.Delay(1000);
+            }
+            IsPlaying = false;
+            wo.Stop();
         }
 
-        private async void SaveListeningProgress()
+        private async Task SaveListeningProgressAsync()
         {
             if (_userDAO.SessionToken == null)
             {
@@ -263,19 +254,18 @@ namespace OneLastSong.Services
             NotifyPlayStateChanged(IsPlaying);
             NotifyProgressChanged(0);
 
-            // #Todo: Retrieve listening history
             await Task.CompletedTask;
             return true;
         }
 
         internal void AddPlaylistToQueue(Playlist playlist)
         {
-            PlayModeData.AddPlaylistToQueue(playlist);
+            PlayModeData.AddPlaylistToQueueAsync(playlist);
         }
 
         internal void PlayPlaylist(Playlist playlist)
         {
-            PlayModeData.PlayPlaylist(playlist);
+            PlayModeData.PlayPlaylistAsync(playlist);
             PlayNext();
         }
 
@@ -283,7 +273,6 @@ namespace OneLastSong.Services
         {
             if (user != null)
             {
-                // Retrieve the listening session
                 string token = _userDAO.SessionToken;
                 var listeningSession = await _listeningSessionDAO.GetListeningSession(token);
                 var audio = await _audioDAO.GetAudioById(listeningSession.AudioId);

@@ -25,76 +25,55 @@ namespace OneLastSong.Cores.AudioSystem
 
         public async Task PlayMashUpAsync(Audio audio)
         {
-            await Semaphore.WaitAsync();
-            try
+            await ExecuteWithSemaphoreAsync(async () =>
             {
                 CurrentPlayMode = PlayMode.MashUp;
                 PlayQueue.Clear();
                 PlayQueue.Add(audio);
                 CurrentAudio = audio;
                 PlayQueue.Add(AudioDAO.Get().GetRandom());
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
+            });
         }
 
         public async Task PlayPlaylistAsync(int playlistId)
         {
-            await Semaphore.WaitAsync();
-            try
+            await ExecuteWithSemaphoreAsync(async () =>
             {
                 CurrentPlayMode = PlayMode.Playlist;
                 PlaylistId = playlistId;
                 PlayQueue.Clear();
                 PlayQueue.AddRange(AudioDAO.Get().GetPlaylistAudios(playlistId));
                 CurrentAudio = PlayQueue[0];
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
+            });
         }
 
         public async Task PlayAlbumAsync(int albumId)
         {
-            await Semaphore.WaitAsync();
-            try
+            await ExecuteWithSemaphoreAsync(async () =>
             {
                 CurrentPlayMode = PlayMode.Album;
                 AlbumId = albumId;
                 PlayQueue.Clear();
                 PlayQueue.AddRange(AudioDAO.Get().GetAlbumAudios(albumId));
                 CurrentAudio = PlayQueue[0];
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
+            });
         }
 
         public async Task PlayArtistAsync(int artistId)
         {
-            await Semaphore.WaitAsync();
-            try
+            await ExecuteWithSemaphoreAsync(async () =>
             {
                 CurrentPlayMode = PlayMode.Artist;
                 ArtistId = artistId;
                 PlayQueue.Clear();
                 PlayQueue.AddRange(AudioDAO.Get().GetArtistAudios(artistId));
                 CurrentAudio = PlayQueue[0];
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
+            });
         }
 
         public async Task<Audio> NextAudioAsync()
         {
-            await Semaphore.WaitAsync();
-            try
+            return await ExecuteWithSemaphoreAsync(async () =>
             {
                 if (CurrentPlayMode == PlayMode.NotPlaying)
                 {
@@ -119,67 +98,43 @@ namespace OneLastSong.Cores.AudioSystem
 
                 CurrentAudio = nextAudio;
                 return nextAudio;
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
+            });
         }
 
         public async Task<bool> IsTheCurrentAudioFromMashup(int id)
         {
-            await Semaphore.WaitAsync();
-            try
+            return await ExecuteWithSemaphoreAsync(async () =>
             {
                 return CurrentPlayMode == PlayMode.MashUp && CurrentAudio.AudioId == id;
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
+            });
         }
 
         public async Task<PlayMode> GetCurrentPlayModeSafe()
         {
-            await Semaphore.WaitAsync();
-            try
+            return await ExecuteWithSemaphoreAsync(async () =>
             {
                 return CurrentPlayMode;
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
+            });
         }
 
-        internal async void AddPlaylistToQueue(Playlist playlist)
+        internal async Task AddPlaylistToQueueAsync(Playlist playlist)
         {
-            await Semaphore.WaitAsync();
-            try
+            await ExecuteWithSemaphoreAsync(async () =>
             {
                 PlayQueue.AddRange(playlist.Audios);
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
+            });
         }
 
-        internal async void PlayPlaylist(Playlist playlist)
+        internal async Task PlayPlaylistAsync(Playlist playlist)
         {
-            await Semaphore.WaitAsync();
-            try
+            await ExecuteWithSemaphoreAsync(async () =>
             {
                 CurrentPlayMode = PlayMode.Playlist;
                 PlaylistId = playlist.PlaylistId;
                 PlayQueue.Clear();
                 PlayQueue.AddRange(playlist.Audios);
                 CurrentAudio = PlayQueue[0];
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
+            });
         }
 
         internal void RetrievePlayingSession(Audio audio, int progress)
@@ -199,6 +154,32 @@ namespace OneLastSong.Cores.AudioSystem
             CurrentAudio = null;
             ListeningSession = null;
             PlayQueue.Clear();
+        }
+
+        private async Task ExecuteWithSemaphoreAsync(Func<Task> action)
+        {
+            await Semaphore.WaitAsync();
+            try
+            {
+                await action();
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
+
+        private async Task<T> ExecuteWithSemaphoreAsync<T>(Func<Task<T>> action)
+        {
+            await Semaphore.WaitAsync();
+            try
+            {
+                return await action();
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
         }
     }
 }
