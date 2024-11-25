@@ -48,7 +48,7 @@ namespace OneLastSong.Services
                 if (currentAudio != null)
                 {
                     NotifyAudioChanged(currentAudio);
-                    await PlayAudioUrlAsync(currentAudio.Url);
+                    await PlayAudioUrlAsync(currentAudio.Url, currentAudio.Duration);
                 }
 
                 if (PlayModeData.ListeningSession == null)
@@ -138,7 +138,7 @@ namespace OneLastSong.Services
             _cancellationTokenSource.Dispose();
         }
 
-        private async Task PlayAudioUrlAsync(string url)
+        private async Task PlayAudioUrlAsync(string url, int duration)
         {
             mf = new MediaFoundationReader(url);
             wo = new WasapiOut();
@@ -147,10 +147,8 @@ namespace OneLastSong.Services
             if (PlayModeData.ListeningSession != null)
             {
                 IsPlaying = false;
-                NotifyAudioChanged(PlayModeData.CurrentAudio);
                 NotifyProgressChanged(PlayModeData.ListeningSession.Progress);
                 _shouldContinuePlayingCurrentAudio = true;
-                wo.Play();
                 mf.CurrentTime = TimeSpan.FromSeconds(PlayModeData.ListeningSession.Progress);
                 wo.Pause();
                 PlayModeData.ListeningSession = null;
@@ -162,10 +160,14 @@ namespace OneLastSong.Services
                 IsPlaying = true;
             }
 
-            while (wo.PlaybackState != PlaybackState.Stopped && _shouldContinuePlayingCurrentAudio)
+            while (_shouldContinuePlayingCurrentAudio)
             {
                 NotifyProgressChanged((int)mf.CurrentTime.TotalSeconds);
                 await SaveListeningProgressAsync();
+                if(mf.CurrentTime >= TimeSpan.FromSeconds(duration))
+                {
+                    PlayNext();
+                }
                 await Task.Delay(1000);
             }
             IsPlaying = false;
