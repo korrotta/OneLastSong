@@ -142,6 +142,15 @@ CREATE TABLE followers
     PRIMARY KEY (user_id, follower_id)
 );
 
+-- Playlist --
+CREATE TABLE lyrics
+(
+    id SERIAL PRIMARY KEY,
+    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+    timestamp FLOAT,
+    lyric TEXT
+);
+
 DROP FUNCTION IF EXISTS create_liked_playlist;
 
 -- ### Procedures region ###
@@ -953,6 +962,41 @@ BEGIN
 END;
 $$;
 
+-- Get lyrics by audio id
+DROP FUNCTION IF EXISTS get_lyrics;
+
+CREATE OR REPLACE FUNCTION get_lyrics(ip_audio_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_json_data JSONB;
+BEGIN
+    -- Check if the audio exists
+    IF NOT EXISTS (
+        SELECT 1
+        FROM audios a
+        WHERE a.id = ip_audio_id
+    ) THEN
+        RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
+    END IF;
+
+    -- Select the lyrics for the given audio id
+    SELECT json_agg(json_build_object(
+        'Id', l.id,
+        'AudioId', l.audio_id,
+        'Timestamp', l.timestamp,
+        'Lyric', l.lyric
+    ) ORDER BY l.timestamp) INTO v_json_data
+    FROM lyrics l
+    WHERE l.audio_id = ip_audio_id;
+
+    -- Return the result message
+    RETURN get_result_message(0, '', v_json_data);
+END;
+$$;
+
 
 -- ### Triggers region ###
 -- Trigger to call the function after a new user is inserted
@@ -988,6 +1032,7 @@ GRANT EXECUTE ON FUNCTION delete_playlist(VARCHAR, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION save_listening_session(VARCHAR, INT, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION save_listening_session(VARCHAR, INT, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_listening_session(VARCHAR, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_lyrics(INT) TO restricted_user;
 
 
 SELECT user_login('test', 'test');

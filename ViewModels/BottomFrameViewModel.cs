@@ -14,6 +14,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using OneLastSong.Views;
 
 namespace OneLastSong.ViewModels
 {
@@ -22,6 +23,7 @@ namespace OneLastSong.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         private ListeningService _listeningService;
+        private SidePanelNavigationService _sidePanelNavigationService;
         private Audio _currentAudio = Audio.Default;
         private int _currentProgress = 0;
         private Slider _slider;
@@ -33,6 +35,7 @@ namespace OneLastSong.ViewModels
         public BottomFrameViewModel(DispatcherQueue dispatcherQueue, Slider slider)
         {
             _listeningService = ListeningService.Get();
+            _sidePanelNavigationService = SidePanelNavigationService.Get();
             _listeningService.RegisterAudioStateChangeListeners(this);
             this._slider = slider;
             ChangePlayStateCommand = new RelayCommand(ChangePlayState);
@@ -102,6 +105,7 @@ namespace OneLastSong.ViewModels
         public void OnAudioChanged(Audio newAudio)
         {
             CurrentAudio = newAudio;
+            _sidePanelNavigationService.Navigate(typeof(AudioLyricPage), newAudio);
             OnPropertyChanged(nameof(CurrentAudio));
         }
 

@@ -21,6 +21,9 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\AudioLyricPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Dialogs\SimpleThemedConfirmDialog.xaml">
       <SubType>Designer</SubType>
     </Page>

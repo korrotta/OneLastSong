@@ -29,5 +29,6 @@ namespace OneLastSong.Contracts
         /* Play */
         public Task<ResultMessage> SaveListeningSession(string sessionToken, int audioId, int progress);
         public Task<ResultMessage> GetListeningSession(string sessionToken);
+        public Task<ResultMessage> GetLyrics(int audioId);
     }
 }

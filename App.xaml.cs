@@ -63,9 +63,11 @@ namespace OneLastSong
             services.AddSingleton<AlbumDAO>();
             services.AddSingleton<PlaylistDAO>();
             services.AddSingleton<ListeningSessionDAO>();
+            services.AddSingleton<LyricDAO>();
             // Services
             var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             services.AddSingleton<NavigationService>(provider => new NavigationService(dispatcherQueue));
+            services.AddSingleton<SidePanelNavigationService>(provider => new SidePanelNavigationService(dispatcherQueue));
             services.AddSingleton<AuthService>(provider => new AuthService(dispatcherQueue));
             services.AddSingleton<ListeningService>(provider => new ListeningService(dispatcherQueue));
             services.AddSingleton<PlaylistService>(provider => new PlaylistService(dispatcherQueue));
@@ -81,6 +83,7 @@ namespace OneLastSong
             await ListeningService.Get().OnSubsystemInitialized();
             await PlaylistService.Get().OnSubsystemInitialized();
             await NavigationService.Get().OnSubsystemInitialized();
+            await SidePanelNavigationService.Get().OnSubsystemInitialized();
         }
 
         private async Task InitializeDatabase()
