@@ -24,6 +24,16 @@ namespace OneLastSong.Services
 
         public void Navigate(Type pageType, object parameter = null)
         {
+            if(_sidePanelFrame == null)
+            {
+                throw new InvalidOperationException("SidePanelFrame is not initialized");
+            }
+
+            if(_sidePanelFrame.Content != null && _sidePanelFrame.Content.GetType() == pageType)
+            {
+                return;
+            }
+
             if (_sidePanelFrame.Content is IDisposable disposableContent)
             {
                 disposableContent.Dispose();

@@ -6,11 +6,33 @@
     xmlns:local="using:OneLastSong.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:OneLastSong.Converters"
     mc:Ignorable="d"
     Background="Transparent">
 
+    <Page.Resources>
+        <converters:IsFocusedToBrushConverter x:Key="IsFocusedToBrushConverter"/>
+    </Page.Resources>
+
     <Grid>
-        <TextBlock Text="Welcome to Lyric Page" Foreground="{ThemeResource TEXT_PRIMARY}"
-                   Style="{StaticResource Body2}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Lyrics" Foreground="{ThemeResource TEXT_PRIMARY}"
+                   Style="{StaticResource HeaderTextBlockStyle}" Grid.Row="0"/>
+
+        <ListView x:Name="LyricsListView" ItemsSource="{Binding Lyrics}" Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding LyricText}"
+                                   Foreground="{Binding IsFocused, Converter={StaticResource IsFocusedToBrushConverter}}"
+                                    Style="{StaticResource Body2}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>

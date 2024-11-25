@@ -16,6 +16,7 @@ namespace OneLastSong.Utils
         public readonly static string TEXT_PRIMARY = "TEXT_PRIMARY";
         public readonly static string TEXT_DISABLED = "TEXT_DISABLED";
         public readonly static string TEXT_CONTRAST1 = "TEXT_CONTRAST1";
+        public readonly static string TEXT_LIGHT = "TEXT_LIGHT";
 
         public readonly static string INFO_BRUSH = "INFO_BRUSH";
         public readonly static string SUCCESS_BRUSH = "SUCCESS_BRUSH";

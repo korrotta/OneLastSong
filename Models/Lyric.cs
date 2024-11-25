@@ -1,16 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
-namespace OneLastSong.Models
+public class Lyric : INotifyPropertyChanged
 {
-    public class Lyric
+    private bool _isFocused;
+
+    public int Id { get; set; }
+    public int AudioId { get; set; }
+    public float Timestamp { get; set; }
+    public string LyricText { get; set; }
+
+    public bool IsFocused
     {
-        public int Id { get; set; }
-        public int AudioId { get; set; }
-        public float Timestamp { get; set; }
-        public string LyricText { get; set; }
+        get => _isFocused;
+        set
+        {
+            if (_isFocused != value)
+            {
+                _isFocused = value;
+                OnPropertyChanged(nameof(IsFocused));
+            }
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

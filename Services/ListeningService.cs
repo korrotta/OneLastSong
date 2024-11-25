@@ -48,6 +48,7 @@ namespace OneLastSong.Services
                 if (currentAudio != null)
                 {
                     NotifyAudioChanged(currentAudio);
+                    NotifyProgressChanged(0);
                     await PlayAudioUrlAsync(currentAudio.Url, currentAudio.Duration);
                 }
 
@@ -64,8 +65,6 @@ namespace OneLastSong.Services
         {
             await PlayModeData.PlayMashUpAsync(audio);
             _shouldContinuePlayingCurrentAudio = false;
-            NotifyAudioChanged(audio);
-            NotifyProgressChanged(0);
         }
 
         public bool IsPlaying
@@ -83,48 +82,61 @@ namespace OneLastSong.Services
 
         public void NotifyProgressChanged(int progress)
         {
-            foreach (var notifier in _audioStateChangeNotifiers)
+            _eventHandler.TryEnqueue(() =>
             {
-                _eventHandler.TryEnqueue(() =>
+                foreach (var notifier in _audioStateChangeNotifiers)
                 {
-                    notifier.OnAudioProgressChanged(progress);
-                });
-            }
+                   notifier.OnAudioProgressChanged(progress);                
+                }
+            });
         }
 
         private void NotifyAudioChanged(Audio newAudio)
         {
-            foreach (var notifier in _audioStateChangeNotifiers)
+            _eventHandler.TryEnqueue(() =>
             {
-                _eventHandler.TryEnqueue(() =>
+                foreach (var notifier in _audioStateChangeNotifiers)
                 {
                     notifier.OnAudioChanged(newAudio);
-                });
-            }
+                }
+            });
         }
 
         public void NotifyPlayStateChanged(bool isPlaying)
         {
-            foreach (var notifier in _audioStateChangeNotifiers)
+            _eventHandler.TryEnqueue(() =>
             {
-                _eventHandler.TryEnqueue(() =>
-                {
+                foreach (var notifier in _audioStateChangeNotifiers)
+                {                
                     notifier.OnAudioPlayStateChanged(isPlaying);
-                });
-            }
+                }
+            });
         }
 
         public void RegisterAudioStateChangeListeners(IAudioStateChanged audioStateChangeNotifier)
         {
-            if (!_audioStateChangeNotifiers.Contains(audioStateChangeNotifier))
+            _eventHandler.TryEnqueue(() =>
             {
-                _audioStateChangeNotifiers.Add(audioStateChangeNotifier);
-            }
+                if (!_audioStateChangeNotifiers.Contains(audioStateChangeNotifier))
+                {
+                    _audioStateChangeNotifiers.Add(audioStateChangeNotifier);
+                }
+
+                if(mf!=null)
+                {
+                    audioStateChangeNotifier.OnAudioProgressChanged((int)mf.CurrentTime.TotalSeconds);
+                }
+                audioStateChangeNotifier.OnAudioChanged(PlayModeData.CurrentAudio);
+                audioStateChangeNotifier.OnAudioPlayStateChanged(IsPlaying);
+            });            
         }
 
         public void UnregisterAudioStateChangeListeners(IAudioStateChanged audioStateChangeNotifier)
         {
-            _audioStateChangeNotifiers.Remove(audioStateChangeNotifier);
+            _eventHandler.TryEnqueue(() =>
+            {
+                _audioStateChangeNotifiers.Remove(audioStateChangeNotifier);
+            });
         }
 
         public void Dispose()

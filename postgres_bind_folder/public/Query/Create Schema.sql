@@ -979,7 +979,8 @@ BEGIN
         FROM audios a
         WHERE a.id = ip_audio_id
     ) THEN
-        RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
+        -- if not exists return an error message
+        RETURN get_result_message(1, 'Audio not found', '[]'::JSONB);
     END IF;
 
     -- Select the lyrics for the given audio id
@@ -987,10 +988,15 @@ BEGIN
         'Id', l.id,
         'AudioId', l.audio_id,
         'Timestamp', l.timestamp,
-        'Lyric', l.lyric
+        'LyricText', l.lyric
     ) ORDER BY l.timestamp) INTO v_json_data
     FROM lyrics l
     WHERE l.audio_id = ip_audio_id;
+
+    -- If no lyrics are found, return an empty JSON array
+    IF v_json_data IS NULL THEN
+        v_json_data := '[]'::JSONB;
+    END IF;
 
     -- Return the result message
     RETURN get_result_message(0, '', v_json_data);
