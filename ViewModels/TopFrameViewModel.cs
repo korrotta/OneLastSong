@@ -36,6 +36,7 @@ namespace OneLastSong.ViewModels
         public ICommand NavigateToSignInPageCommand { get; }
         public ICommand LogoutCommand { get; }
         public ICommand SearchCommand { get; }
+        public ICommand GoToAIPageCommand { get; }
 
         public TopFrameViewModel()
         {
@@ -54,6 +55,7 @@ namespace OneLastSong.ViewModels
             NavigateToSignInPageCommand = new RelayCommand(() => Navigate(typeof(SignInPage)));
             LogoutCommand = new RelayCommand(LogOut);
             SearchCommand = new RelayCommand(Search);
+            GoToAIPageCommand = new RelayCommand(() => Navigate(typeof(AIRecommendationPage)));
         }
 
         public bool IsUserLoggedIn

@@ -6,6 +6,8 @@ using OneLastSong.Utils;
 using System;
 using System.Collections.ObjectModel;
 using WinUI3Localizer;
+using OpenAI;
+using OpenAI.Chat;
 
 namespace OneLastSong
 {

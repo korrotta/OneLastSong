@@ -25,6 +25,7 @@ using OneLastSong.Contracts;
 using System.Threading;
 using Microsoft.UI.Dispatching;
 using System.Threading.Tasks;
+using OpenAI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -71,6 +72,15 @@ namespace OneLastSong
             services.AddSingleton<AuthService>(provider => new AuthService(dispatcherQueue));
             services.AddSingleton<ListeningService>(provider => new ListeningService(dispatcherQueue));
             services.AddSingleton<PlaylistService>(provider => new PlaylistService(dispatcherQueue));
+
+            // OpenAI
+            var openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            if (openAiKey == null)
+            {
+                // Contact me to get the key
+                throw new InvalidOperationException("OPENAI_API_KEY environment variable is not set");
+            }
+            services.AddSingleton<OpenAIClient>(provider => new OpenAIClient(openAiKey));
 
             return services.BuildServiceProvider();
         }

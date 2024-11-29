@@ -23,6 +23,15 @@
 
         <DataTemplate x:Key="LoggedInTemplate">
             <StackPanel Orientation="Horizontal">
+                <Border
+                    CornerRadius="10"
+                    Background="{ThemeResource BG_CONTRAST1}"
+                    Margin="{StaticResource MediumRightMargin}">
+                    <Button Style="{StaticResource IconButton}" Margin="8 0 8 0"
+                        Command="{Binding ElementName=TopFramePage, Path=TopFrameViewModel.GoToAIPageCommand}">
+                        <TextBlock Foreground="{ThemeResource TEXT_CONTRAST1}" Text="AI" Style="{StaticResource SongBigTitle}"/>
+                    </Button>
+                </Border>                
                 <Button Style="{StaticResource IconButton}" Margin="{StaticResource MediumRightMargin}">
                     <FontIcon Glyph="&#xEA8F;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
                 </Button>
