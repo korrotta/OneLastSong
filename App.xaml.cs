@@ -71,16 +71,8 @@ namespace OneLastSong
             services.AddSingleton<SidePanelNavigationService>(provider => new SidePanelNavigationService(dispatcherQueue));
             services.AddSingleton<AuthService>(provider => new AuthService(dispatcherQueue));
             services.AddSingleton<ListeningService>(provider => new ListeningService(dispatcherQueue));
-            services.AddSingleton<PlaylistService>(provider => new PlaylistService(dispatcherQueue));
-
-            // OpenAI
-            var openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-            if (openAiKey == null)
-            {
-                // Contact me to get the key
-                throw new InvalidOperationException("OPENAI_API_KEY environment variable is not set");
-            }
-            services.AddSingleton<OpenAIClient>(provider => new OpenAIClient(openAiKey));
+            services.AddSingleton<PlaylistService>(provider => new PlaylistService(dispatcherQueue));            
+            services.AddSingleton<AIService>(provider => new AIService(dispatcherQueue)); // OpenAI
 
             return services.BuildServiceProvider();
         }
@@ -94,6 +86,7 @@ namespace OneLastSong
             await PlaylistService.Get().OnSubsystemInitialized();
             await NavigationService.Get().OnSubsystemInitialized();
             await SidePanelNavigationService.Get().OnSubsystemInitialized();
+            await AIService.Get().OnSubsystemInitialized(); // OpenAI
         }
 
         private async Task InitializeDatabase()
