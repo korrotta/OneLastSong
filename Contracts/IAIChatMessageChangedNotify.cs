@@ -9,5 +9,6 @@ namespace OneLastSong.Contracts
     public interface IAIChatMessageChangedNotify
     {
         public void OnNewMessageToUser(string message);
+        public void OnSuggestionActionsChanged(List<string> actions);
     }
 }

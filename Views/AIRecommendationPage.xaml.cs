@@ -10,6 +10,7 @@ using OneLastSong.Contracts;
 using OneLastSong.DAOs;
 using OneLastSong.Services;
 using OneLastSong.Utils;
+using OneLastSong.ViewModels;
 using OpenAI;
 using OpenAI.Chat;
 using System;
@@ -28,79 +29,39 @@ namespace OneLastSong.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AIRecommendationPage : Page, IAIChatMessageChangedNotify, IDisposable
+    public sealed partial class AIRecommendationPage : Page, IDisposable
     {
-        public class MessageItem
-        {
-            public string Text { get; set; }
-            public SolidColorBrush Color { get; set; }
-        }
-
-        AIService aiService;
+        public AIRecommendationPageViewModel ViewModel { get; } = new AIRecommendationPageViewModel();
 
         public AIRecommendationPage()
         {
             this.InitializeComponent();
-            aiService = AIService.Get();
-            aiService.RegisterChatMessageChangedNotify(this);
         }
 
-        private void SendButton_Click(object sender, RoutedEventArgs e)
+        public void SendButton_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                string userInput = InputTextBox.Text;
-
-                if (!string.IsNullOrEmpty(userInput))
-                {
-                    AddMessageToConversation($"User: {userInput}");
-                    InputTextBox.Text = string.Empty;                    
-
-                    // Assemble the chat prompt with a system message and the user's input
-                    aiService.SendUserMessage(userInput);
-                }
-            }
-            catch (Exception ex)
-            {
-                AddMessageToConversation($"GPT: Sorry, something bad happened: {ex.Message}");
-            }
-            finally
-            {
-                ResponseProgressBar.Visibility = Visibility.Collapsed;
-            }
+            ViewModel.HandleUserChat();
         }
 
-        private void AddMessageToConversation(string message)
+        public void InputTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            var messageItem = new MessageItem
-            {
-                Text = message,
-                Color = message.StartsWith("User:") ? ThemeUtils.GetBrush(ThemeUtils.TEXT_PRIMARY)
-                                                    : ThemeUtils.GetBrush(ThemeUtils.TEXT_LIGHT)
-            };
-            ConversationList.Items.Add(messageItem);
-
-            // handle scrolling
-            ConversationScrollViewer.UpdateLayout();
-            ConversationScrollViewer.ChangeView(null, ConversationScrollViewer.ScrollableHeight, null);
-        }
-
-        private void InputTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == Windows.System.VirtualKey.Enter && !string.IsNullOrWhiteSpace(InputTextBox.Text))
+            if (e.Key == Windows.System.VirtualKey.Enter)
             {
                 SendButton_Click(this, new RoutedEventArgs());
             }
         }
 
-        public void OnNewMessageToUser(string message)
-        {
-            AddMessageToConversation($"CoChiller: {message}");
-        }
-
         public void Dispose()
         {
-            aiService.UnregisterChatMessageChangedNotify(this);
+            ViewModel.Dispose();
+        }
+
+        public void QuickAction_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                LogUtils.Debug(button.Content.ToString());
+            }
         }
     }
 }
