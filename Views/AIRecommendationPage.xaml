@@ -9,28 +9,34 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:OneLastSong.Models"
     xmlns:items="using:OneLastSong.Cores.DataItems"
+    xmlns:converters="using:OneLastSong.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <converters:HtmlToRichTextConverter x:Key="HtmlToRichTextConverter"/>
+    </Page.Resources>
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      Grid.Row="0" Margin="10">
+                      Grid.Row="1" Margin="10">
             <ItemsControl ItemsSource="{x:Bind ViewModel.ConversationList}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="items:MessageItem">
-                        <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Margin="5" Foreground="{Binding Color}"/>
+                        <ContentControl Content="{Binding Text, Converter={StaticResource HtmlToRichTextConverter}}" Margin="5" Foreground="{Binding Color}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
 
-        <ListView ItemsSource="{x:Bind ViewModel.SuggestedActions}" Grid.Row="1" Margin="10,0,10,0">
+        <ListView ItemsSource="{x:Bind ViewModel.SuggestedActions}" Grid.Row="2" Margin="10,0,10,0">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding}" Click="QuickAction_Click"/>
@@ -38,7 +44,7 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <Grid Grid.Row="2" Margin="10" HorizontalAlignment="Stretch">
+        <Grid Grid.Row="3" Margin="10" HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -53,3 +59,4 @@
         <ProgressBar Height="5" IsIndeterminate="True" Visibility="{x:Bind ViewModel.ResponseProgressBar, Mode=OneWay}" Grid.Row="1" VerticalAlignment="Top" Margin="10,0,10,0"/>
     </Grid>
 </Page>
+

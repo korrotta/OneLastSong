@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
 using OneLastSong.Cores.Classes;
 using OneLastSong.DAOs;
+using OneLastSong.Models;
 using OneLastSong.Utils;
 using OpenAI;
 using OpenAI.Assistants;
@@ -23,9 +24,10 @@ namespace OneLastSong.Services
         private DispatcherQueue _eventHandler;
         private OpenAIClient _client;
         ChatClient _chatClient;
-        private List<ChatMessage> _conversationHistory;
+        ContextWindow _history = new ContextWindow();
         ChatCompletionOptions _chatOptions;
         List<IAIChatMessageChangedNotify> _chatMessageChangedNotify = new List<IAIChatMessageChangedNotify>();
+        
 
         // DAOs
         AudioDAO _audioDAO;
@@ -36,14 +38,15 @@ namespace OneLastSong.Services
         public AIService(DispatcherQueue dispatcherQueue)
         {
             _eventHandler = dispatcherQueue;
-            _conversationHistory = new List<ChatMessage>();
-            _conversationHistory.Add(ChatMessage.CreateSystemMessage(
+            _history.Add(ChatMessage.CreateSystemMessage(
                 "You are a helpful assistant can help user to control a desktop music application \"OneLastSong\" like Spotify" +
                 "You can control the application on behave of the user including change Play/Pause state, Play asking playlist by user if exists" +
                 "Play a requested song from user by name when user asks" +
                 "Play a random mashup based on user suggestions like genres, artists, categories, ..." +
                 "You can response the system with recommended options so that the system can display for the user to choose next action instead of typing" +
-                "After handle user requests you should response what you have done politely" +
+                "After handling every user request you should response what you have done politely and show suggested options if any" +
+                "You should fetch, get all the data twice to save tokens" +
+                "Start playing the song when user asks to play a song not showing the audio's Url" +
                 "If there is no function you can call to execute the user's request you should say it is out of your scope and politely apologize user and recommend what you can do"));
             _chatOptions = GetChatOptions();
         }
@@ -116,8 +119,7 @@ namespace OneLastSong.Services
                                 "description": "an array of string contains possible actions user can take, maximum 4 items",
                                 "type": "array",
                                 "items": {
-                                    "type": "string",
-                                    "enum": ["Play", "Pause", "Play a song", "Play a playlist", "Play a mashup"]
+                                    "type": "string"
                                 }
                             }
                         },
@@ -128,7 +130,75 @@ namespace OneLastSong.Services
                     true
                 )
             );
-
+            chatOptions.Tools.Add(
+                ChatTool.CreateFunctionTool(
+                    "GetAllAudios",
+                    "Get all the audios/songs(id, title, artist, album, category, genres, description, ...) in json format"));
+            chatOptions.Tools.Add(
+                ChatTool.CreateFunctionTool(
+                    "PlayAudio",
+                    "Play a song/audio by id",
+                    BinaryData.FromBytes("""
+                    {
+                        "type": "object",
+                        "properties": {
+                            "Id": 
+                                { 
+                                    "type": "integer",
+                                    "description": "The id of the audio to play"
+                                }
+                        },
+                        "additionalProperties": false,
+                        "required": ["Id"]
+                    }
+                    """u8.ToArray()),
+                    true
+                )
+            );
+            chatOptions.Tools.Add(
+                ChatTool.CreateFunctionTool(
+                    "PlaySong",
+                    "Play a song by id",
+                    BinaryData.FromBytes("""
+                    {
+                        "type": "object",
+                        "properties": {
+                            "Id": 
+                                { 
+                                    "type": "integer",
+                                    "description": "The id of the audio to play"
+                                }
+                        },
+                        "additionalProperties": false,
+                        "required": ["Id"]
+                    }
+                    """u8.ToArray()),
+                    true
+                )
+            );
+            chatOptions.Tools.Add(
+                ChatTool.CreateFunctionTool(
+                    "PlayAudioList",
+                    "Play a list of audio ids",
+                    BinaryData.FromBytes("""
+                    {
+                        "type": "object",
+                        "properties": {
+                            "Ids": {
+                                "type": "array",
+                                "items": {
+                                    "type": "integer"
+                                },
+                                "description": "The list of audio ids to play"
+                            }
+                        },
+                        "additionalProperties": false,
+                        "required": ["Ids"]
+                    }
+                    """u8.ToArray()),
+                    true
+                )
+            );
             return chatOptions;
         }
 
@@ -140,17 +210,17 @@ namespace OneLastSong.Services
         public async void SendUserMessage(string userInput)
         {
             var chatClient = _chatClient;
-            _conversationHistory.Add(ChatMessage.CreateUserMessage(userInput));
+            _history.Add(ChatMessage.CreateUserMessage(userInput));
             // Assemble the chat prompt with a system message and the user's input
             var completionResult = await chatClient.CompleteChatAsync(
-                _conversationHistory,
+                _history.GetContextWindow(),
                 _chatOptions);
 
             var toolCalls = completionResult.Value.ToolCalls;
 
             if (completionResult.Value.FinishReason == ChatFinishReason.ToolCalls)
             {
-                _conversationHistory.Add(ChatMessage.CreateAssistantMessage(toolCalls));
+                _history.Add(ChatMessage.CreateAssistantMessage(toolCalls));
                 foreach (var toolCall in toolCalls)
                 {
                     HandleToolCall(toolCall);
@@ -160,7 +230,7 @@ namespace OneLastSong.Services
             if (IsValidCompletionResult(completionResult))
             {
                 string msg = completionResult.Value.Content.First().Text;
-                _conversationHistory.Add(ChatMessage.CreateAssistantMessage(msg));
+                _history.Add(ChatMessage.CreateAssistantMessage(msg));
                 NotifyNewMessageToUser(msg);
             }
         }
@@ -204,18 +274,33 @@ namespace OneLastSong.Services
                     functionCallResult = "Here are some options for you to choose from: " + string.Join(", ", optionsObj.Options);
                     NotifySuggestionsChanged(optionsObj.Options);
                     break;
+                case "GetAllAudios":
+                    functionCallResult = await HandleGetAllAudios();
+                    break;
+                case "PlayAudio":
+                    int id = JsonSerializer.Deserialize<JsonAudioIdObj>(toolCall.FunctionArguments.ToString()).Id;
+                    functionCallResult = await HandlePlayAudioById(id);
+                    break;
+                case "PlaySong":
+                    JsonAudioIdObj audioIdObj = JsonSerializer.Deserialize<JsonAudioIdObj>(toolCall.FunctionArguments.ToString());
+                    functionCallResult = await HandlePlayAudioById(audioIdObj.Id);
+                    break;
+                case "PlayAudioList":
+                    JsonListAudioIdObj audioListObj = JsonSerializer.Deserialize<JsonListAudioIdObj>(toolCall.FunctionArguments.ToString());
+                    functionCallResult = await HandlePlayAudioList(audioListObj.Ids);
+                    break;
                 default:
                     functionCallResult = "I'm sorry, I can't do that";
                     break;
             }
-            _conversationHistory.Add(ChatMessage.CreateToolMessage(toolCall.Id, functionCallResult));
+            _history.Add(ChatMessage.CreateToolMessage(toolCall.Id, functionCallResult));
             // send function result back to OpenAI
-            var response = await _chatClient.CompleteChatAsync(_conversationHistory);
+            var response = await _chatClient.CompleteChatAsync(_history.GetContextWindow());
 
             if (IsValidCompletionResult(response))
             {
                 string msg = response.Value.Content.First().Text;
-                _conversationHistory.Add(ChatMessage.CreateAssistantMessage(msg));
+                _history.Add(ChatMessage.CreateAssistantMessage(msg));
                 NotifyNewMessageToUser(msg);
             }
         }
@@ -233,12 +318,18 @@ namespace OneLastSong.Services
 
         public void RegisterChatMessageChangedNotify(IAIChatMessageChangedNotify notify)
         {
-            _chatMessageChangedNotify.Add(notify);
+            _eventHandler.TryEnqueue(() =>
+            {
+                _chatMessageChangedNotify.Add(notify);
+            });
         }
 
         public void UnregisterChatMessageChangedNotify(IAIChatMessageChangedNotify notify)
         {
-            _chatMessageChangedNotify.Remove(notify);
+            _eventHandler.TryEnqueue(() =>
+            {
+                _chatMessageChangedNotify.Remove(notify);
+            });
         }
 
         /*
@@ -282,6 +373,31 @@ namespace OneLastSong.Services
                 _listeningService.ChangePlayState();
                 return "The music app is now paused";
             }
+        }
+
+        async Task<string> HandleGetAllAudios()
+        {
+            var res = await _audioDAO.GetAllAudiosInRawJson();
+            return res;
+        }
+
+        private async Task<string> HandlePlayAudioById(int id)
+        {
+            Audio audio = await _audioDAO.GetAudioById(id);
+            _listeningService.PlayAudio(audio);
+            return "Playing the requested song " + audio.Title;
+        }
+
+        private async Task<string> HandlePlayAudioList(List<int> ids)
+        {
+            List<Audio> audioList = new List<Audio>();
+            foreach (var id in ids)
+            {
+                Audio audio = await _audioDAO.GetAudioById(id);
+                audioList.Add(audio);
+            }
+            _listeningService.PlayAudioList(audioList);
+            return "Playing the requested songs";
         }
     }
 }

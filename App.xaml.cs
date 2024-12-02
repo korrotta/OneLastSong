@@ -48,7 +48,15 @@ namespace OneLastSong
         public App()
         {
             this.InitializeComponent();
+            this.UnhandledException += OnUnhandledException;
             Services = ConfigureServices();
+        }
+
+        private void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            // Log the exception and ignore it
+            LogUtils.Debug($"Unhandled exception: {e.Exception.Message}");
+            e.Handled = true;
         }
 
         private static IServiceProvider ConfigureServices()

@@ -73,12 +73,29 @@ namespace OneLastSong.DAOs
 
         internal async Task<Audio> GetAudioById(int audioId)
         {
-            if(_audios.Count == 0)
+            if (_audios.Count == 0)
             {
                 await GetMostLikeAudios();
             }
 
             return _audios.Find(audio => audio.AudioId == audioId);
+        }
+
+        public async Task<string> GetAllAudiosInRawJson(bool willRefresh = false)
+        {
+            if(willRefresh || _audios.Count == 0)
+            {
+                await GetMostLikeAudios();
+            }
+
+            List<ConciseAudioObj> conciseAudioObjs = new List<ConciseAudioObj>();
+
+            foreach (Audio audio in _audios)
+            {
+                conciseAudioObjs.Add(new ConciseAudioObj(audio));
+            }
+
+            return JsonSerializer.Serialize(conciseAudioObjs);
         }
     }
 }

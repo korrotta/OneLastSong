@@ -295,5 +295,11 @@ namespace OneLastSong.Services
                 _shouldContinuePlayingCurrentAudio = false;
             }
         }
+
+        internal void PlayAudioList(List<Audio> audioList)
+        {
+            PlayModeData.PlayAudioList(audioList);
+            _shouldContinuePlayingCurrentAudio = false;
+        }
     }
 }

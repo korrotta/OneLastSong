@@ -74,7 +74,30 @@ CREATE TABLE audios
     cover_image_url VARCHAR(255),
     author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    country_id VARCHAR(2) REFERENCES countries(id) DEFAULT '__',
     description TEXT
+);
+
+-- Genres table
+CREATE TABLE genres
+(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL
+);
+
+-- Audios_Genres table to establish many-to-many relationship
+CREATE TABLE audios_genres
+(
+    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+    genre_id INTEGER REFERENCES genres(id) ON DELETE CASCADE,
+    PRIMARY KEY (song_id, genre_id)
+);
+
+-- Countries table
+CREATE TABLE countries
+(
+    id VARCHAR(2) PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL
 );
 
 -- Playlists table
@@ -437,10 +460,17 @@ BEGIN
             a.author_id,
             a.created_at,
             a.description,
+            c.name AS country,
+            cat.name AS category_name,
+            ARRAY_AGG(g.name) AS genres,
             COUNT(l.audio_id) AS likes
         FROM audios a
         LEFT JOIN likes l ON a.id = l.audio_id
-        GROUP BY a.id
+        LEFT JOIN countries c ON a.country_id = c.id
+        LEFT JOIN categories cat ON a.category_id = cat.id
+        LEFT JOIN audios_genres ag ON a.id = ag.audio_id
+        LEFT JOIN genres g ON ag.genre_id = g.id
+        GROUP BY a.id, c.name, cat.name
         ORDER BY COUNT(l.audio_id) DESC
         LIMIT n
     )
@@ -457,6 +487,9 @@ BEGIN
         'AuthorId', al.author_id,
         'CreatedAt', al.created_at,
         'Description', al.description,
+        'Country', al.country,
+        'CategoryName', al.category_name,
+        'Genres', al.genres,
         'Likes', al.likes
     )) INTO v_json_data
     FROM audio_likes al;

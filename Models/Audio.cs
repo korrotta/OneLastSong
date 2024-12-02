@@ -21,6 +21,9 @@ namespace OneLastSong.Models
         private DateTime _createdAt;
         private int? _categoryId;
         private string _description;
+        private string _country;
+        private List<string> _genres = new List<string>();
+        private string _categoryName;
         private string _coverImageUrl;
 
         [JsonPropertyName("Url")]
@@ -177,6 +180,48 @@ namespace OneLastSong.Models
             }
         }
 
+        [JsonPropertyName("Country")]
+        public string Country
+        {
+            get => _country;
+            set
+            {
+                if (_country != value)
+                {
+                    _country = value;
+                    OnPropertyChanged(nameof(Country));
+                }
+            }
+        }
+
+        [JsonPropertyName("Genres")]
+        public List<string> Genres
+        {
+            get => _genres;
+            set
+            {
+                if (_genres != value)
+                {
+                    _genres = value;
+                    OnPropertyChanged(nameof(Genres));
+                }
+            }
+        }
+
+        [JsonPropertyName("CategoryName")]
+        public string CategoryName
+        {
+            get => _categoryName;
+            set
+            {
+                if (_categoryName != value)
+                {
+                    _categoryName = value;
+                    OnPropertyChanged(nameof(CategoryName));
+                }
+            }
+        }
+
         [JsonPropertyName("CoverImageUrl")]
         public string CoverImageUrl
         {
@@ -204,6 +249,9 @@ namespace OneLastSong.Models
             Description = "Unknown",
             CoverImageUrl = "Unknown",
             Url = "Unknown",
+            Country = "Unknown",
+            Genres = new List<string>(),
+            CategoryName = "Unknown",
             Likes = 0
         };
 

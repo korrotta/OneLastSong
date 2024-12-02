@@ -129,25 +129,29 @@ namespace OneLastSong.ViewModels
 
         internal void HandleUserChat()
         {
+            SendMessage(InputTextBoxText);
+            InputTextBoxText = string.Empty;
+        }
+
+        internal void SendMessage(string msg)
+        {
             try
             {
                 ResponseProgressBar = Visibility.Visible;
-                if (!string.IsNullOrEmpty(InputTextBoxText))
+                if (!string.IsNullOrEmpty(msg))
                 {
-                    AddMessageToConversation($"User: {InputTextBoxText}");
-                    InputTextBoxText = string.Empty;
-
-                    // Assemble the chat prompt with a system message and the user's input
-                    aiService.SendUserMessage(InputTextBoxText);
+                    AddMessageToConversation($"User: {msg}");
+                    aiService.SendUserMessage(msg);
                 }
+                SuggestedActions.Clear();
             }
             catch (Exception ex)
             {
-                AddMessageToConversation($"GPT: Sorry, something bad happened: {ex.Message}");
+                AddMessageToConversation($"CoChiller: Sorry, something bad happened: {ex.Message}");
             }
             finally
             {
-                
+
             }
         }
     }

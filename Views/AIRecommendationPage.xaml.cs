@@ -60,7 +60,7 @@ namespace OneLastSong.Views
         {
             if (sender is Button button)
             {
-                LogUtils.Debug(button.Content.ToString());
+                ViewModel.SendMessage(button.Content.ToString());
             }
         }
     }

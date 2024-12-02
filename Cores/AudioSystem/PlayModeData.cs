@@ -181,5 +181,13 @@ namespace OneLastSong.Cores.AudioSystem
                 Semaphore.Release();
             }
         }
+
+        internal void PlayAudioList(List<Audio> audioList)
+        {
+            PlayQueue.Clear();
+            PlayQueue.AddRange(audioList);
+            CurrentAudio = audioList[0];
+            CurrentPlayMode = PlayMode.MashUp;
+        }
     }
 }
