@@ -226,8 +226,7 @@ namespace OneLastSong.Services
                     HandleToolCall(toolCall);
                 }
             }
-
-            if (IsValidCompletionResult(completionResult))
+            else if (IsValidCompletionResult(completionResult))
             {
                 string msg = completionResult.Value.Content.First().Text;
                 _history.Add(ChatMessage.CreateAssistantMessage(msg));
@@ -295,9 +294,18 @@ namespace OneLastSong.Services
             }
             _history.Add(ChatMessage.CreateToolMessage(toolCall.Id, functionCallResult));
             // send function result back to OpenAI
-            var response = await _chatClient.CompleteChatAsync(_history.GetContextWindow());
+            var response = await _chatClient.CompleteChatAsync(_history.GetContextWindow(), _chatOptions);
 
-            if (IsValidCompletionResult(response))
+            var toolCalls = response.Value.ToolCalls;
+
+            if (response.Value.FinishReason == ChatFinishReason.ToolCalls)
+            {
+                _history.Add(ChatMessage.CreateAssistantMessage(toolCalls));
+                foreach (var tc in toolCalls)
+                {
+                    HandleToolCall(tc);
+                }
+            }else if (IsValidCompletionResult(response))
             {
                 string msg = response.Value.Content.First().Text;
                 _history.Add(ChatMessage.CreateAssistantMessage(msg));
