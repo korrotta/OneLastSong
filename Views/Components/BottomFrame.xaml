@@ -204,8 +204,10 @@
                     Glyph="&#xE8F2;" />
             </Button>
 
-            <!--  Connect Device button  -->
-            <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+            <!--  Equalizer button  -->
+            <Button Margin="{StaticResource MediumRightMargin}" 
+                    Style="{StaticResource IconButton}"
+                    Command="{x:Bind ViewModel.ConfigEqualizerCommand}">
                 <FontIcon
                     FontSize="{StaticResource MediumTextSize}"
                     Foreground="{ThemeResource TEXT_PRIMARY}"

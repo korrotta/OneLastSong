@@ -47,6 +47,7 @@
     <None Remove="Views\Dialogs\EditPlaylistDetailsDialog.xaml" />
     <None Remove="Views\Dialogs\SimpleMessageThemedDialog.xaml" />
     <None Remove="Views\Dialogs\SimpleThemedConfirmDialog.xaml" />
+    <None Remove="Views\EqualizerPage.xaml" />
     <None Remove="Views\MainPage.xaml" />
     <None Remove="Views\SearchPage.xaml" />
     <None Remove="Views\SignUpPage.xaml" />
@@ -192,6 +193,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\EqualizerPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\AIRecommendationPage.xaml">

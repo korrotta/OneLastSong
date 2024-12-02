@@ -23,6 +23,7 @@ namespace OneLastSong.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         private ListeningService _listeningService;
+        private NavigationService _navigationService;
         private SidePanelNavigationService _sidePanelNavigationService;
         private Audio _currentAudio = Audio.Default;
         private int _currentProgress = 0;
@@ -31,16 +32,24 @@ namespace OneLastSong.ViewModels
         public ICommand ChangePlayStateCommand { get; set; }
         public ICommand PlayNextCommand { get; set; }
         public ICommand RestartPlayCommand { get; set; }
+        public ICommand ConfigEqualizerCommand { get; set; }
 
         public BottomFrameViewModel(DispatcherQueue dispatcherQueue, Slider slider)
         {
             _listeningService = ListeningService.Get();
             _sidePanelNavigationService = SidePanelNavigationService.Get();
+            _navigationService = NavigationService.Get();
             _listeningService.RegisterAudioStateChangeListeners(this);
             this._slider = slider;
             ChangePlayStateCommand = new RelayCommand(ChangePlayState);
             PlayNextCommand = new RelayCommand(PlayNext);
             RestartPlayCommand = new RelayCommand(RestartPlay);
+            ConfigEqualizerCommand = new RelayCommand(ConfigEqualizer);
+        }
+
+        private void ConfigEqualizer()
+        {
+            _navigationService.Navigate(typeof(EqualizerPage));
         }
 
         private void RestartPlay()
