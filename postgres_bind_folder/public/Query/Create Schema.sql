@@ -549,62 +549,103 @@ BEGIN
 END;
 $$;
 
--- Function get all user's playlists
-DROP FUNCTION IF EXISTS get_all_user_playlists(VARCHAR);
+-- Function get audio by id
+DROP FUNCTION IF EXISTS get_audio_by_id;
 
-CREATE OR REPLACE FUNCTION get_all_user_playlists(ip_session_token VARCHAR)
+CREATE OR REPLACE FUNCTION get_audio_by_id(ip_audio_id INTEGER)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 DECLARE
-    v_user_id INT;
     v_json_data JSONB;
 BEGIN
-    -- Get the user id
-    v_user_id := validate_session(ip_session_token);
-
-    IF v_user_id IS NULL THEN
-        RETURN get_result_message(1, 'Invalid session token', '[]'::JSONB);
+    -- If not existed, return an error message
+    IF NOT EXISTS (
+        SELECT 1
+        FROM audios a
+        WHERE a.id = ip_audio_id
+    ) THEN
+        RETURN get_result_message(1, 'Audio not found', '[]'::JSONB);
     END IF;
 
-    -- Select all user's playlists
-    SELECT json_agg(json_build_object(
-        'PlaylistId', p.id,
-        'Name', p.name,
-        'CoverImageUrl', p.cover_image_url,
-        'ItemCount', (
+    -- Select the audio by id
+    SELECT Top 1 json_build_object(
+        'AudioId', a.id,
+        'Title', a.title,
+        'Artist', a.artist,
+        'AlbumId', a.album_id,
+        'CategoryId', a.category_id,
+        'Duration', a.duration,
+        'Url', a.url,
+        'CoverImageUrl', a.cover_image_url,
+        'AuthorId', a.author_id,
+        'CreatedAt', a.created_at,
+        'Description', a.description,
+        'CountryId', a.country_id,
+        'Likes', (
             SELECT COUNT(*)
-            FROM playlist_audios pa
-            WHERE pa.playlist_id = p.id
-        ),
-        'Audios', (
-            SELECT json_agg(json_build_object(
-                'AudioId', a.id,
-                'Title', a.title,
-                'Artist', a.artist,
-                'AlbumId', a.album_id,
-                'CategoryId', a.category_id,
-                'Duration', a.duration,
-                'Url', a.url,
-                'CoverImageUrl', a.cover_image_url,
-                'AuthorId', a.author_id,
-                'CreatedAt', a.created_at,
-                'Description', a.description,
-                'Likes', (
-                    SELECT COUNT(*)
-                    FROM likes l
-                    WHERE l.audio_id = a.id
-                )
-            ) ORDER BY pa.added_at)
-            FROM audios a
-            JOIN playlist_audios pa ON pa.audio_id = a.id
-            WHERE pa.playlist_id = p.id
-        ),
-        'CreatedAt', p.created_at
-    )) INTO v_json_data
-    FROM playlists p
-    WHERE p.user_id = v_user_id;
+            FROM likes l
+            WHERE l.audio_id = a.id
+        )
+    ) INTO v_json_data
+    FROM audios a
+    WHERE a.id = ip_audio_id;
+
+    -- Return the result message
+    RETURN get_result_message(0, '', v_json_data);
+END;
+$$;
+
+-- Function get all user's playlists
+DROP FUNCTION IF EXISTS get_all_user_playlists(VARCHAR);
+
+CREATE OR REPLACE FUNCTION get_audio_by_id(ip_audio_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_json_data JSONB;
+BEGIN
+    -- If not existed, return an error message
+    IF NOT EXISTS (
+        SELECT 1
+        FROM audios a
+        WHERE a.id = ip_audio_id
+    ) THEN
+        RETURN get_result_message(1, 'Audio not found', '[]'::JSONB);
+    END IF;
+
+    -- Select the audio by id
+    SELECT json_build_object(
+        'AudioId', a.id,
+        'Title', a.title,
+        'Artist', a.artist,
+        'AlbumId', a.album_id,
+        'CategoryId', a.category_id,
+        'Duration', a.duration,
+        'Url', a.url,
+        'CoverImageUrl', a.cover_image_url,
+        'AuthorId', a.author_id,
+        'CreatedAt', a.created_at,
+        'Description', a.description,
+        'Country', c.name,
+        'CategoryName', cat.name,
+        'Genres', ARRAY_AGG(g.name),
+        'Likes', (
+            SELECT COUNT(*)
+            FROM likes l
+            WHERE l.audio_id = a.id
+        )
+    ) INTO v_json_data
+    FROM audios a
+    LEFT JOIN countries c ON a.country_id = c.id
+    LEFT JOIN categories cat ON a.category_id = cat.id
+    LEFT JOIN audios_genres ag ON a.id = ag.audio_id
+    LEFT JOIN genres g ON ag.genre_id = g.id
+    WHERE a.id = ip_audio_id
+    GROUP BY a.id, c.name, cat.name;
 
     -- Return the result message
     RETURN get_result_message(0, '', v_json_data);
@@ -1029,6 +1070,183 @@ BEGIN
     -- If no lyrics are found, return an empty JSON array
     IF v_json_data IS NULL THEN
         v_json_data := '[]'::JSONB;
+    END IF;
+
+    -- Return the result message
+    RETURN get_result_message(0, '', v_json_data);
+END;
+$$;
+
+-- Comment an audio
+DROP FUNCTION IF EXISTS comment_audio;
+
+CREATE OR REPLACE FUNCTION comment_audio(ip_session_token VARCHAR, ip_audio_id INTEGER, ip_comment TEXT)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_audio_exists BOOLEAN;
+    v_result JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, proceed with saving the listening session
+    IF v_user_id IS NOT NULL THEN
+        -- Check if the audio exists
+        SELECT EXISTS (
+            SELECT 1
+            FROM audios a
+            WHERE a.id = ip_audio_id
+        ) INTO v_audio_exists;
+
+        IF NOT v_audio_exists THEN
+            RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Insert the comment
+        INSERT INTO comments (user_id, audio_id, comment_text, created_at)
+        VALUES (v_user_id, ip_audio_id, ip_comment, CURRENT_TIMESTAMP);
+
+        -- Return success message
+        RETURN get_result_message(0, '', '{}'::JSONB);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
+-- Get comments by audio id
+DROP FUNCTION IF EXISTS get_comments_by_audio_id;
+
+CREATE OR REPLACE FUNCTION get_comments_by_audio_id(ip_audio_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_json_data JSONB;
+BEGIN
+    -- Check if the audio exists
+    IF NOT EXISTS (
+        SELECT 1
+        FROM audios a
+        WHERE a.id = ip_audio_id
+    ) THEN
+        -- if not exists return an error message
+        RETURN get_result_message(1, 'Audio not found', '[]'::JSONB);
+    END IF;
+
+    -- Select the comments for the given audio id
+    SELECT json_agg(json_build_object(
+        'Id', c.id,
+        'UserId', c.user_id,
+        'AudioId', c.audio_id,
+        'CommentText', c.comment_text,
+        'CreatedAt', c.created_at
+    ) ORDER BY c.created_at DESC) INTO v_json_data
+    FROM comments c
+    WHERE c.audio_id = ip_audio_id;
+
+    -- If no comments are found, return an empty JSON array
+    IF v_json_data IS NULL THEN
+        v_json_data := '[]'::JSONB;
+    END IF;
+
+    -- Return the result message
+    RETURN get_result_message(0, '', v_json_data);
+END;
+$$;
+
+-- Rate an audio
+DROP FUNCTION IF EXISTS rate_audio;
+
+CREATE OR REPLACE FUNCTION rate_audio(ip_session_token VARCHAR, ip_audio_id INTEGER, ip_rating INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_audio_exists BOOLEAN;
+    v_rating_exists BOOLEAN;
+    v_result JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, proceed with saving the listening session
+    IF v_user_id IS NOT NULL THEN
+        -- Check if the audio exists
+        SELECT EXISTS (
+            SELECT 1
+            FROM audios a
+            WHERE a.id = ip_audio_id
+        ) INTO v_audio_exists;
+
+        IF NOT v_audio_exists THEN
+            RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Check if the user has already rated the audio
+        SELECT EXISTS (
+            SELECT 1
+            FROM ratings r
+            WHERE r.user_id = v_user_id AND r.audio_id = ip_audio_id
+        ) INTO v_rating_exists;
+
+        IF v_rating_exists THEN
+            RETURN get_result_message(1, 'User has already rated the audio', '{}'::JSONB);
+        END IF;
+
+        -- Insert the rating
+        INSERT INTO ratings (user_id, audio_id, rating, created_at)
+        VALUES (v_user_id, ip_audio_id, ip_rating, CURRENT_TIMESTAMP);
+
+        -- Return success message
+        RETURN get_result_message(0, '', '{}'::JSONB);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
+-- Get rating score by audio id, return an object contains the average rating score and the number of ratings
+DROP FUNCTION IF EXISTS get_rating_score_by_audio_id;
+
+CREATE OR REPLACE FUNCTION get_rating_score_by_audio_id(ip_audio_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_json_data JSONB;
+BEGIN
+    -- Check if the audio exists
+    IF NOT EXISTS (
+        SELECT 1
+        FROM audios a
+        WHERE a.id = ip_audio_id
+    ) THEN
+        -- if not exists return an error message
+        RETURN get_result_message(1, 'Audio not found', '[]'::JSONB);
+    END IF;
+
+    -- Select the rating score for the given audio id
+    SELECT json_build_object(
+        'AverageRating', AVG(r.rating),
+        'RatingCount', COUNT(r.rating)
+    ) INTO v_json_data
+    FROM ratings r
+    WHERE r.audio_id = ip_audio_id;
+
+    -- If no ratings are found, return an empty JSON object
+    IF v_json_data IS NULL THEN
+        v_json_data := '{}'::JSONB;
     END IF;
 
     -- Return the result message

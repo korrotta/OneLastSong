@@ -19,8 +19,8 @@ namespace OneLastSong.ViewModels
 {
     public class AIRecommendationPageViewModel : INotifyPropertyChanged, IAIChatMessageChangedNotify, IDisposable
     {
-        ObservableCollection<MessageItem> _conversationList = new ObservableCollection<MessageItem>();
-        public ObservableCollection<MessageItem> ConversationList
+        ObservableCollection<ChatMessageItem> _conversationList = new ObservableCollection<ChatMessageItem>();
+        public ObservableCollection<ChatMessageItem> ConversationList
         {
             get => _conversationList;
             set
@@ -102,13 +102,19 @@ namespace OneLastSong.ViewModels
 
         private void AddMessageToConversation(string message)
         {
-            var messageItem = new MessageItem
+            // only split the first colon
+            string[] parts = message.Split(new char[] { ':' }, 2);
+            ChatMessageItem newMsg = null;
+
+            if (parts[0].StartsWith("User"))
             {
-                Text = message,
-                Color = message.StartsWith("User:") ? ThemeUtils.GetBrush(ThemeUtils.TEXT_PRIMARY)
-                                                    : ThemeUtils.GetBrush(ThemeUtils.TEXT_LIGHT)
-            };
-            ConversationList.Add(messageItem);
+                newMsg = new ChatMessageItem(ChatMessageItem.Type.Sent, parts[1].Trim());
+            }
+            else
+            {
+                newMsg = new ChatMessageItem(ChatMessageItem.Type.Received, parts[1].Trim());
+            }
+            ConversationList.Add(newMsg);
         }
 
         public void OnNewMessageToUser(string message)

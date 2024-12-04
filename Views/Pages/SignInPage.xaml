@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="OneLastSong.Views.Components.SignInPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneLastSong.Views.Components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:l="using:WinUI3Localizer"
+    mc:Ignorable="d">
+
+    <Page.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{ThemeResource cBG_LIGHT_TERTIARY}" Offset="0.0" />
+            <GradientStop Color="{ThemeResource cBG_TERTIARY}" Offset="1.0" />
+        </LinearGradientBrush>
+    </Page.Background>
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="464" Spacing="20"
+                    Padding="{StaticResource MediumPadding}"
+                    CornerRadius="13">
+            <StackPanel.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="{ThemeResource cBG_TERTIARY}" Offset="0.0" />
+                    <GradientStop Color="{ThemeResource cBG_PRIMARY}" Offset="0.8" />
+                </LinearGradientBrush>
+            </StackPanel.Background>
+            
+            <!-- App Logo -->
+            <Image Source="ms-appx:///Assets/Logo.svg" Width="100" Height="100" HorizontalAlignment="Center"/>
+
+            <TextBlock HorizontalAlignment="Center" l:Uids.Uid="Log_in_to_OneLastSong_TextBlock" Style="{StaticResource Body1}" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
+
+            <!-- Horizontal Line -->
+            <Rectangle Height="1" Fill="{ThemeResource TEXT_PRIMARY}" HorizontalAlignment="Stretch" Margin="0,10,0,10"/>
+
+            <TextBlock l:Uids.Uid="Username_TextBlock" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
+            <!-- Username TextBox -->
+            <TextBox x:Name="tbUsername" l:Uids.Uid="Username_TextBox" Height="40" VerticalAlignment="Center" Margin="0,-10,0,0"/>
+
+            <!-- Password TextBox -->
+            <TextBlock l:Uids.Uid="Password_TextBlock" Foreground="{ThemeResource TEXT_PRIMARY}" FontWeight="Bold"/>
+            <PasswordBox x:Name="pbPassword" l:Uids.Uid="Password_PasswordBox" Height="40" VerticalAlignment="Center" Margin="0,-10,0,0"/>
+
+            <!-- Forgot Password Link -->
+            <TextBlock HorizontalAlignment="Center" Foreground="{ThemeResource TEXT_PRIMARY}">
+                <Hyperlink Click="ForgotPassword_Click">
+                    <Run l:Uids.Uid="Forgot_your_password?_Run" />
+                </Hyperlink>
+            </TextBlock>
+
+            <!-- Sign In Button -->
+            <Border CornerRadius="16" Background="{ThemeResource BG_CONTRAST1}" Margin="{StaticResource MediumRightMargin}"
+                Padding="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Style="{StaticResource IconButton}" Width="200" Height="40"
+                        Click="SignInButton_Click">
+                    <TextBlock l:Uids.Uid="SignIn_TextBlock" Foreground="{ThemeResource TEXT_CONTRAST1}" Style="{StaticResource TextBigButton}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+            </Border>
+
+            <!-- Sign Up Link -->
+            <TextBlock HorizontalAlignment="Center" Foreground="{ThemeResource TEXT_PRIMARY}">
+                <Run l:Uids.Uid="Dont_have_an_account?_Run"/> 
+                <Hyperlink Click="{x:Bind SignInPageViewModel.signUpButton_Click}">
+                    <Run l:Uids.Uid="Sign_up_for_OneLastSong" />
+                </Hyperlink>
+            </TextBlock>
+        </StackPanel>
+    </Grid>
+</Page>

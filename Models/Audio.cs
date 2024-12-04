@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OneLastSong.Models
 {
-    public class Audio : INotifyPropertyChanged
+    public class Audio : INotifyPropertyChanged, IComparable, IEquatable
     {
         private string _url;
         private int _likes;
@@ -260,6 +260,11 @@ namespace OneLastSong.Models
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public int CompareTo(object obj)
+        {
+            return obj is Audio audio ? AudioId.CompareTo(audio.AudioId) : 1;
         }
     }
 }

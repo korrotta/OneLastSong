@@ -2,9 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <SolidColorBrush x:Key="MainBg" Color="#000000"/>
     <SolidColorBrush x:Key="BG_PRIMARY" Color="#010B17"/>
-    <SolidColorBrush x:Key="TEXT_PRIMARY" Color="#ffffff"/>
+    <SolidColorBrush x:Key="TEXT_PRIMARY" Color="#D4D4D4"/>
     <SolidColorBrush x:Key="BG_SECONDARY" Color="#0D224A"/>
-    <SolidColorBrush x:Key="BG_CONTRAST1" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="BG_CONTRAST1" Color="#D4D4D4"/>
     <SolidColorBrush x:Key="TEXT_CONTRAST1" Color="#000000"/>
     <SolidColorBrush x:Key="TEXT_LIGHT" Color="#D9D9D9"/>
     <SolidColorBrush x:Key="BG_TERTIARY" Color="#1F1F1F"/>
@@ -17,9 +17,9 @@
 
     <Color x:Key="cMainBg">#000000</Color>
     <Color x:Key="cBG_PRIMARY">#010B17</Color>
-    <Color x:Key="cTEXT_PRIMARY">#ffffff</Color>
+    <Color x:Key="cTEXT_PRIMARY">#D4D4D4</Color>
     <Color x:Key="cBG_SECONDARY">#0D224A</Color>
-    <Color x:Key="cBG_CONTRAST1">#FFFFFF</Color>
+    <Color x:Key="cBG_CONTRAST1">#D4D4D4</Color>
     <Color x:Key="cTEXT_CONTRAST1">#000000</Color>
     <Color x:Key="cTEXT_LIGHT">#D9D9D9</Color>
     <Color x:Key="cBG_TERTIARY">#1F1F1F</Color>

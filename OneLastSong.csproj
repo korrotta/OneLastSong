@@ -49,6 +49,7 @@
     <None Remove="Views\Dialogs\SimpleThemedConfirmDialog.xaml" />
     <None Remove="Views\EqualizerPage.xaml" />
     <None Remove="Views\MainPage.xaml" />
+    <None Remove="Views\Pages\AudioDetailsPage.xaml" />
     <None Remove="Views\SearchPage.xaml" />
     <None Remove="Views\SignUpPage.xaml" />
   </ItemGroup>
@@ -193,6 +194,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\AudioDetailsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\EqualizerPage.xaml">

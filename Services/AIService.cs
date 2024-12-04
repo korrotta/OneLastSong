@@ -91,7 +91,7 @@ namespace OneLastSong.Services
         {
             var chatOptions = new ChatCompletionOptions
             {
-                MaxOutputTokenCount = 400,
+                MaxOutputTokenCount = 300,
                 AllowParallelToolCalls = false
             };
 
@@ -110,7 +110,7 @@ namespace OneLastSong.Services
             chatOptions.Tools.Add(
                 ChatTool.CreateFunctionTool(
                     "ShowOptionsSuggestion",
-                    "Show prompt suggestions for user to choose from instead of typing manually, maximum 4 options",
+                    "Show prompt suggestions for user to choose from instead of typing manually, maximum 4 options. Try to use this as much as possible, when there are available suggestions/actions/choices user can choose from",
                     BinaryData.FromBytes("""
                     {
                         "type": "object",

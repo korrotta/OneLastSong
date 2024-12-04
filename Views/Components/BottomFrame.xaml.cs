@@ -2,6 +2,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using OneLastSong.Utils;
 using OneLastSong.ViewModels;
@@ -31,6 +32,11 @@ namespace OneLastSong.Views.Components
         {
             var slider = sender as Slider;
             ViewModel.OnSliderValueChanged((int)slider.Value);
+        }
+
+        private void SongTitleHyperlink_Clicked(Hyperlink sender, HyperlinkClickEventArgs args)
+        {
+            ViewModel.OnSongTitleClicked();
         }
     }
 }

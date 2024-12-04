@@ -25,6 +25,7 @@ namespace OneLastSong.Utils
 
         public readonly static string BG_TERTIARY = "BG_TERTIARY";
         public readonly static string BG_CONTRAST1 = "BG_CONTRAST1";
+        public readonly static string BG_LIGHT_TERTIARY = "BG_LIGHT_TERTIARY";
 
         private static bool _isInitialized = false;
 
@@ -144,6 +145,11 @@ namespace OneLastSong.Utils
             }
             //return white brush if color not found
             return new SolidColorBrush(Microsoft.UI.Colors.White);
+        }
+
+        internal static SolidColorBrush GetBrush(object bG_LIGHT)
+        {
+            throw new NotImplementedException();
         }
     }
 }

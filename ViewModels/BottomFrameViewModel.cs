@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Controls;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using OneLastSong.Views;
+using OneLastSong.Views.Pages;
 
 namespace OneLastSong.ViewModels
 {
@@ -138,6 +139,11 @@ namespace OneLastSong.ViewModels
         {
             // Add any additional logic you need when the slider value changes
             _listeningService.Seek(newValue);
+        }
+
+        internal void OnSongTitleClicked()
+        {          
+            _navigationService.NavigateOrReloadOnParameterChanged(typeof(AudioDetailsPage), CurrentAudio.AudioId.ToString());
         }
     }
 }

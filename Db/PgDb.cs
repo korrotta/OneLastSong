@@ -490,6 +490,33 @@ namespace OneLastSong.Db
             return null;
         }
 
+        public async Task<ResultMessage> GetAudioById(int audioId)
+        {
+            CheckConnection();
+
+            try
+            {
+                await using (var cmd = dataSource.CreateCommand(QUERY_GET_AUDIO_BY_ID))
+                {
+                    cmd.Parameters.AddWithValue("audio_id", audioId);
+                    await using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
+        }
+
         // Our Query strings
         public static readonly string QUERY_USER_LOGIN = "SELECT user_login(@username, @password)";
         public static readonly string QUERY_GET_USER = "SELECT get_user_data(@session_token)";
@@ -505,5 +532,6 @@ namespace OneLastSong.Db
         public static readonly string QUERY_SAVE_LISTENING_SESSION = "SELECT save_listening_session(@session_token, @audio_id, @progress)";
         public static readonly string QUERY_GET_LISTENING_SESSION = "SELECT get_listening_session(@session_token)";
         public static readonly string QUERY_GET_LYRICS = "SELECT get_lyrics(@audio_id)";
+        public static readonly string QUERY_GET_AUDIO_BY_ID = "SELECT get_audio_by_id(@audio_id)";
     }
 }

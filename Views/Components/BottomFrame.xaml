@@ -46,7 +46,7 @@
                 Foreground="{ThemeResource TEXT_PRIMARY}"
                 Style="{StaticResource Body2}"
                 TextAlignment="Left">
-                    <Hyperlink Foreground="{ThemeResource TEXT_PRIMARY}">
+                    <Hyperlink Foreground="{ThemeResource TEXT_PRIMARY}" Click="SongTitleHyperlink_Clicked">
                         <Run Text="{x:Bind ViewModel.CurrentAudio.Title, Mode=OneWay}" />
                     </Hyperlink>
                 </TextBlock>

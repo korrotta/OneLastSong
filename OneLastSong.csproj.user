@@ -21,13 +21,7 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
-    <Page Update="Views\EqualizerPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\AIRecommendationPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\AudioLyricPage.xaml">
+    <Page Update="Views\Pages\AudioDetailsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Dialogs\SimpleThemedConfirmDialog.xaml">
@@ -45,9 +39,6 @@
     <Page Update="Views\Components\PlaylistMenuFlyout.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\SearchPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Views\Dialogs\SimpleMessageThemedDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -58,12 +49,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Components\BottomFrame.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\ContentFrame.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\SignUpPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Components\TopFrame.xaml">
@@ -94,9 +79,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Styles\Texts.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Themes\LightMode.xaml">

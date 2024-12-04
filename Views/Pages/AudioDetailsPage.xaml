@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="OneLastSong.Views.Pages.AudioDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneLastSong.Views.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <Grid Padding="20">
+        <StackPanel>
+            <TextBlock Text="Audio Details" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="Title:" FontWeight="Bold"  Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.Title, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Artist:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.Artist, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Album ID:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.AlbumId, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Audio ID:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.AudioId, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Author ID:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.AuthorId, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Duration:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.Duration, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Created At:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.CreatedAt, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Category ID:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.CategoryId, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Description:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.Description, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Country:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.Country, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Audio.Genres, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" Margin="0,0,0,5" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="Category Name:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.CategoryName, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Cover Image URL:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.CoverImageUrl, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="Likes:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.Likes, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+
+            <TextBlock Text="URL:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="{x:Bind ViewModel.Audio.Url, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+        </StackPanel>
+    </Grid>
+</Page>

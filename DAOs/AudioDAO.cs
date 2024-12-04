@@ -71,8 +71,31 @@ namespace OneLastSong.DAOs
             throw new NotImplementedException();
         }
 
-        internal async Task<Audio> GetAudioById(int audioId)
+        internal async Task<Audio> GetAudioById(int audioId, bool forcedRefresh = false)
         {
+            if (forcedRefresh)
+            {
+                ResultMessage result = await _db.GetAudioById(audioId);
+                if (result.Status == ResultMessage.STATUS_OK)
+                {
+                    Audio audio = JsonSerializer.Deserialize<Audio>(result.JsonData);
+                    if(_audios.Find(a => a.AudioId == audio.AudioId) == null)
+                    {
+                        _audios.Add(audio);
+                    }
+                    else
+                    {
+                        _audios[_audios.FindIndex(a => a.AudioId == audio.AudioId)] = audio;
+                    }
+
+                    return audio;
+                }
+                else
+                {
+                    throw new Exception(result.ErrorMessage);
+                }
+            }
+
             if (_audios.Count == 0)
             {
                 await GetMostLikeAudios();
