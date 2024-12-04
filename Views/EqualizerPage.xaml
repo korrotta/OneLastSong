@@ -11,7 +11,7 @@
 
     <StackPanel>
         <TextBlock Text="Equalizer" FontSize="20" Margin="10"/>
-        <ItemsControl ItemsSource="{x:Bind ViewModel.Bands}">
+        <ItemsControl ItemsSource="{x:Bind ViewModel.EqualizerViewModel.Bands}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" Margin="5">

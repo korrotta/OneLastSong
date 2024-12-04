@@ -13,6 +13,8 @@ using OneLastSong.Cores.AudioSystem;
 using Microsoft.UI.Dispatching;
 using OneLastSong.DAOs;
 using System.Security.Policy;
+using NAudio.Extras;
+using OneLastSong.ViewModels;
 
 namespace OneLastSong.Services
 {
@@ -32,11 +34,19 @@ namespace OneLastSong.Services
         private AuthService _authService;
         private List<IAudioStateChanged> _audioStateChangeNotifiers = new List<IAudioStateChanged>();
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private Equalizer _equalizer;
+        private EqualizerViewModel _equalizerViewModel;
+
+        public EqualizerViewModel EqualizerViewModel
+        {
+            get => _equalizerViewModel;
+        }
 
         public ListeningService(DispatcherQueue dispatcherQueue)
         {
             _eventHandler = dispatcherQueue;
             _workerTask = Task.Run(WorkerLoop, _cancellationTokenSource.Token);
+            _equalizerViewModel = new EqualizerViewModel();
         }
 
         private async Task WorkerLoop()
@@ -86,7 +96,7 @@ namespace OneLastSong.Services
             {
                 foreach (var notifier in _audioStateChangeNotifiers)
                 {
-                   notifier.OnAudioProgressChanged(progress);                
+                    notifier.OnAudioProgressChanged(progress);
                 }
             });
         }
@@ -107,7 +117,7 @@ namespace OneLastSong.Services
             _eventHandler.TryEnqueue(() =>
             {
                 foreach (var notifier in _audioStateChangeNotifiers)
-                {                
+                {
                     notifier.OnAudioPlayStateChanged(isPlaying);
                 }
             });
@@ -122,13 +132,13 @@ namespace OneLastSong.Services
                     _audioStateChangeNotifiers.Add(audioStateChangeNotifier);
                 }
 
-                if(mf!=null)
+                if (mf != null)
                 {
                     audioStateChangeNotifier.OnAudioProgressChanged((int)mf.CurrentTime.TotalSeconds);
                 }
                 audioStateChangeNotifier.OnAudioChanged(PlayModeData.CurrentAudio);
                 audioStateChangeNotifier.OnAudioPlayStateChanged(IsPlaying);
-            });            
+            });
         }
 
         public void UnregisterAudioStateChangeListeners(IAudioStateChanged audioStateChangeNotifier)
@@ -153,8 +163,9 @@ namespace OneLastSong.Services
         private async Task PlayAudioUrlAsync(string url, int duration)
         {
             mf = new MediaFoundationReader(url);
+            _equalizer = new Equalizer(mf.ToSampleProvider(), _equalizerViewModel.Bands.Select(b => new EqualizerBand { Frequency = b.Frequency, Gain = (float)b.Gain }).ToArray());
             wo = new WasapiOut();
-            wo.Init(mf);
+            wo.Init(_equalizer);
 
             if (PlayModeData.ListeningSession != null)
             {
@@ -176,7 +187,7 @@ namespace OneLastSong.Services
             {
                 NotifyProgressChanged((int)mf.CurrentTime.TotalSeconds);
                 await SaveListeningProgressAsync();
-                if(mf.CurrentTime >= TimeSpan.FromSeconds(duration))
+                if (mf.CurrentTime >= TimeSpan.FromSeconds(duration))
                 {
                     PlayNext();
                 }
@@ -300,6 +311,14 @@ namespace OneLastSong.Services
         {
             PlayModeData.PlayAudioList(audioList);
             _shouldContinuePlayingCurrentAudio = false;
+        }
+
+        public void ApplyEQ()
+        {
+            if (_equalizer != null)
+            {
+                _equalizer.Update(_equalizerViewModel.Bands.Select(b => new EqualizerBand { Frequency = b.Frequency, Gain = (float)b.Gain }).ToArray());
+            }
         }
     }
 }

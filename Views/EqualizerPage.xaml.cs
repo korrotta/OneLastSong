@@ -32,7 +32,7 @@ namespace OneLastSong.Views
 
         private void ApplyEQ_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            LogUtils.Info("ApplyEQ_Click");
+            ViewModel.UpdateEqualizer();
         }
     }
 }
