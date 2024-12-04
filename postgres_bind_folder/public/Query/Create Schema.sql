@@ -174,6 +174,26 @@ CREATE TABLE lyrics
     lyric TEXT
 );
 
+-- Comments --
+CREATE TABLE audio_comments
+(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+    comment_text TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Ratings --
+CREATE TABLE audio_ratings
+(
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+    rating FLOAT CHECK (rating >= 0 AND rating <= 5),
+    rated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, audio_id)
+);
+
 DROP FUNCTION IF EXISTS create_liked_playlist;
 
 -- ### Procedures region ###
@@ -1107,7 +1127,7 @@ BEGIN
         END IF;
 
         -- Insert the comment
-        INSERT INTO comments (user_id, audio_id, comment_text, created_at)
+        INSERT INTO audio_comments (user_id, audio_id, comment_text, created_at)
         VALUES (v_user_id, ip_audio_id, ip_comment, CURRENT_TIMESTAMP);
 
         -- Return success message
@@ -1148,7 +1168,7 @@ BEGIN
         'CommentText', c.comment_text,
         'CreatedAt', c.created_at
     ) ORDER BY c.created_at DESC) INTO v_json_data
-    FROM comments c
+    FROM audio_comments c
     WHERE c.audio_id = ip_audio_id;
 
     -- If no comments are found, return an empty JSON array
@@ -1194,7 +1214,7 @@ BEGIN
         -- Check if the user has already rated the audio
         SELECT EXISTS (
             SELECT 1
-            FROM ratings r
+            FROM audio_ratings r
             WHERE r.user_id = v_user_id AND r.audio_id = ip_audio_id
         ) INTO v_rating_exists;
 
@@ -1203,7 +1223,7 @@ BEGIN
         END IF;
 
         -- Insert the rating
-        INSERT INTO ratings (user_id, audio_id, rating, created_at)
+        INSERT INTO audio_ratings (user_id, audio_id, rating, created_at)
         VALUES (v_user_id, ip_audio_id, ip_rating, CURRENT_TIMESTAMP);
 
         -- Return success message
@@ -1290,6 +1310,10 @@ GRANT EXECUTE ON FUNCTION save_listening_session(VARCHAR, INT, INT) TO restricte
 GRANT EXECUTE ON FUNCTION save_listening_session(VARCHAR, INT, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_listening_session(VARCHAR, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_lyrics(INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION comment_audio(VARCHAR, INT, TEXT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_comments_by_audio_id(INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION rate_audio(VARCHAR, INT, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_rating_score_by_audio_id(INT) TO restricted_user;
 
 
 SELECT user_login('test', 'test');

@@ -14,14 +14,14 @@
         <converters:IsFocusedToBrushConverter x:Key="IsFocusedToBrushConverter"/>
     </Page.Resources>
 
-    <Grid>
+    <Grid Padding="{StaticResource MediumPadding}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <TextBlock Text="Lyrics" Foreground="{ThemeResource TEXT_PRIMARY}"
-                   Style="{StaticResource HeaderTextBlockStyle}" Grid.Row="0"/>
+                   Style="{StaticResource SongBigTitle}" Grid.Row="0"/>
 
         <ListView x:Name="LyricsListView" ItemsSource="{Binding Lyrics}" Grid.Row="1">
             <ListView.ItemTemplate>
