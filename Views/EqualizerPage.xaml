@@ -9,18 +9,24 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel>
-        <TextBlock Text="Equalizer" FontSize="20" Margin="10"/>
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="Equalizer" FontSize="20" Margin="10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
         <ItemsControl ItemsSource="{x:Bind ViewModel.EqualizerViewModel.Bands}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Margin="5">
+                    <StackPanel Orientation="Vertical">                        
+                        <Slider Minimum="-10" Maximum="10" Value="{Binding Gain, Mode=TwoWay}" Width="100" Orientation="Vertical" Height="300"
+                    TickFrequency="2" TickPlacement="Outside"/>
                         <TextBlock Text="{Binding Frequency}" Width="50"/>
-                        <Slider Minimum="-10" Maximum="10" Value="{Binding Gain, Mode=TwoWay}" Width="200"/>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Button Content="Apply" Click="ApplyEQ_Click" Margin="10"/>
+        <Button Content="Default" Click="DefaultButton_Click" Margin="0 24 0 0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{ThemeResource BG_CONTRAST1}" Foreground="{ThemeResource TEXT_CONTRAST1}"/>
     </StackPanel>
 </Page>

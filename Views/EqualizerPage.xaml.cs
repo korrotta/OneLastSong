@@ -30,9 +30,9 @@ namespace OneLastSong.Views
             this.InitializeComponent();
         }
 
-        private void ApplyEQ_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void DefaultButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            ViewModel.UpdateEqualizer();
+            ViewModel.ResetEqualizer();
         }
     }
 }

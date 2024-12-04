@@ -1,16 +1,19 @@
 ﻿using OneLastSong.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace OneLastSong.ViewModels
 {
-    public class EqualizerPageViewModel
+    public class EqualizerPageViewModel : INotifyPropertyChanged
     {
         private EqualizerViewModel _equalizerViewModel;
         private ListeningService _listeningService;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public EqualizerViewModel EqualizerViewModel
         {
@@ -26,6 +29,11 @@ namespace OneLastSong.ViewModels
         public void UpdateEqualizer()
         {
             _listeningService.ApplyEQ();
+        }
+
+        internal void ResetEqualizer()
+        {
+            _equalizerViewModel.ResetEqualizer();
         }
     }
 }

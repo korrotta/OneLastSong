@@ -13,8 +13,8 @@ using OneLastSong.Cores.AudioSystem;
 using Microsoft.UI.Dispatching;
 using OneLastSong.DAOs;
 using System.Security.Policy;
-using NAudio.Extras;
 using OneLastSong.ViewModels;
+using OneLastSong.Cores.Equalizer;
 
 namespace OneLastSong.Services
 {
@@ -47,6 +47,7 @@ namespace OneLastSong.Services
             _eventHandler = dispatcherQueue;
             _workerTask = Task.Run(WorkerLoop, _cancellationTokenSource.Token);
             _equalizerViewModel = new EqualizerViewModel();
+            EqualizerViewModel.EqualizerBandsChanged += (sender, e) => ApplyEQ();
         }
 
         private async Task WorkerLoop()
@@ -57,9 +58,20 @@ namespace OneLastSong.Services
 
                 if (currentAudio != null)
                 {
-                    NotifyAudioChanged(currentAudio);
-                    NotifyProgressChanged(0);
-                    await PlayAudioUrlAsync(currentAudio.Url, currentAudio.Duration);
+                    try
+                    {
+                        NotifyAudioChanged(currentAudio);
+                        NotifyProgressChanged(0);
+                        await PlayAudioUrlAsync(currentAudio.Url, currentAudio.Duration);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogUtils.Error(ex.Message);
+                        _eventHandler.TryEnqueue(() =>
+                        {
+                            SnackbarUtils.ShowSnackbar("Failed to play audio", SnackbarType.Error);
+                        });
+                    }
                 }
 
                 if (PlayModeData.ListeningSession == null)
@@ -283,14 +295,14 @@ namespace OneLastSong.Services
             return true;
         }
 
-        internal void AddPlaylistToQueue(Playlist playlist)
+        internal async void AddPlaylistToQueue(Playlist playlist)
         {
-            PlayModeData.AddPlaylistToQueueAsync(playlist);
+            await PlayModeData.AddPlaylistToQueueAsync(playlist);
         }
 
-        internal void PlayPlaylist(Playlist playlist)
+        internal async void PlayPlaylist(Playlist playlist)
         {
-            PlayModeData.PlayPlaylistAsync(playlist);
+            await PlayModeData.PlayPlaylistAsync(playlist);
             PlayNext();
         }
 

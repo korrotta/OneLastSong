@@ -2,6 +2,7 @@ using NAudio.Wave;
 using NAudio.Dsp;
 using System;
 using System.Linq;
+using OneLastSong.Cores.Equalizer;
 
 public class Equalizer : ISampleProvider
 {
@@ -41,11 +42,4 @@ public class Equalizer : ISampleProvider
             filters[i] = BiQuadFilter.PeakingEQ(source.WaveFormat.SampleRate, bands[i].Frequency, bands[i].Bandwidth, bands[i].Gain);
         }
     }
-}
-
-public class EqualizerBand
-{
-    public float Frequency { get; set; }
-    public float Bandwidth { get; set; } = 1.0f;
-    public float Gain { get; set; }
 }
