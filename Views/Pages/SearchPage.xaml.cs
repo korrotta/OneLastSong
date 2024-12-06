@@ -49,5 +49,21 @@ namespace OneLastSong.Views
         {
             SearchPageViewModel.OnSearchEventTrigger(parameter.ToString());
         }
+
+        public void AudioTitleHyperlinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is HyperlinkButton hyperlinkButton)
+            {
+                try
+                {
+                    SearchPageViewModel.NavigateToAudioDetails(((int)hyperlinkButton.Tag).ToString());
+                }
+                catch (Exception ex)
+                {
+                    // Log exception
+                    SnackbarUtils.ShowSnackbar("There was an error while navigating to audio details", SnackbarType.Error);
+                }
+            }
+        }
     }
 }

@@ -73,6 +73,8 @@ namespace OneLastSong
             services.AddSingleton<PlaylistDAO>();
             services.AddSingleton<ListeningSessionDAO>();
             services.AddSingleton<LyricDAO>();
+            services.AddSingleton<RatingDAO>();
+            services.AddSingleton<CommentDAO>();
             // Services
             var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             services.AddSingleton<NavigationService>(provider => new NavigationService(dispatcherQueue));
@@ -110,6 +112,8 @@ namespace OneLastSong
                 ((App)Application.Current).Services.GetService<PlaylistDAO>().Init();
                 ((App)Application.Current).Services.GetService<ListeningSessionDAO>().Init();
                 ((App)Application.Current).Services.GetService<LyricDAO>().Init();
+                ((App)Application.Current).Services.GetService<RatingDAO>().Init();
+                ((App)Application.Current).Services.GetService<CommentDAO>().Init();
             }
             catch (Exception ex)
             {

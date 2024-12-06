@@ -1184,7 +1184,7 @@ $$;
 -- Rate an audio
 DROP FUNCTION IF EXISTS rate_audio;
 
-CREATE OR REPLACE FUNCTION rate_audio(ip_session_token VARCHAR, ip_audio_id INTEGER, ip_rating INTEGER)
+CREATE OR REPLACE FUNCTION rate_audio(ip_session_token VARCHAR, ip_audio_id INTEGER, ip_rating FLOAT)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -1211,20 +1211,21 @@ BEGIN
             RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
         END IF;
 
-        -- Check if the user has already rated the audio
+        -- Insert or update the rating
         SELECT EXISTS (
             SELECT 1
-            FROM audio_ratings r
-            WHERE r.user_id = v_user_id AND r.audio_id = ip_audio_id
+            FROM audio_ratings ar
+            WHERE ar.user_id = v_user_id AND ar.audio_id = ip_audio_id
         ) INTO v_rating_exists;
 
         IF v_rating_exists THEN
-            RETURN get_result_message(1, 'User has already rated the audio', '{}'::JSONB);
+            UPDATE audio_ratings
+            SET rating = ip_rating
+            WHERE user_id = v_user_id AND audio_id = ip_audio_id;
+        ELSE
+            INSERT INTO audio_ratings (user_id, audio_id, rating, rated_at)
+            VALUES (v_user_id, ip_audio_id, ip_rating, CURRENT_TIMESTAMP);
         END IF;
-
-        -- Insert the rating
-        INSERT INTO audio_ratings (user_id, audio_id, rating, created_at)
-        VALUES (v_user_id, ip_audio_id, ip_rating, CURRENT_TIMESTAMP);
 
         -- Return success message
         RETURN get_result_message(0, '', '{}'::JSONB);
@@ -1258,10 +1259,10 @@ BEGIN
 
     -- Select the rating score for the given audio id
     SELECT json_build_object(
-        'AverageRating', AVG(r.rating),
+        'AverageRating', AVG(r.rating)::FLOAT,
         'RatingCount', COUNT(r.rating)
     ) INTO v_json_data
-    FROM ratings r
+    FROM audio_ratings r
     WHERE r.audio_id = ip_audio_id;
 
     -- If no ratings are found, return an empty JSON object
@@ -1274,6 +1275,71 @@ BEGIN
 END;
 $$;
 
+-- Get user display info --
+DROP FUNCTION IF EXISTS get_user_display_info;
+
+CREATE OR REPLACE FUNCTION get_user_display_info(ip_user_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_json_data JSONB;
+BEGIN
+    -- Select basic info of the user with the given userId
+    SELECT json_build_object(
+        'UserId', u.id,
+        'DisplayName', u.username,
+        'AvatarUrl', u.avatar_url
+    ) INTO v_json_data
+    FROM users u
+    WHERE u.id = ip_user_id;
+
+    -- If no user is found, return an error message
+    IF v_json_data IS NULL THEN
+        RETURN get_result_message(1, 'User not found', '{}'::JSONB);
+    END IF;
+
+    -- Return the result message
+    RETURN get_result_message(0, '', v_json_data);
+END;
+$$;
+
+-- Get user audio rating --
+DROP FUNCTION IF EXISTS get_user_audio_rating;
+
+CREATE OR REPLACE FUNCTION get_user_audio_rating(ip_user_id INTEGER, ip_audio_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_json_data JSONB;
+BEGIN
+    -- Check if the rating exists
+    IF NOT EXISTS (
+        SELECT 1
+        FROM audio_ratings ar
+        WHERE ar.user_id = ip_user_id AND ar.audio_id = ip_audio_id
+    ) THEN
+        -- If not exists, return an error message
+        RETURN get_result_message(1, 'Rating not found', '{}'::JSONB);
+    END IF;
+
+    -- Select the rating for the given user and audio id
+    SELECT json_build_object(
+        'UserId', ar.user_id,
+        'AudioId', ar.audio_id,
+        'Rating', ar.rating,
+        'RatedAt', ar.rated_at
+    ) INTO v_json_data
+    FROM audio_ratings ar
+    WHERE ar.user_id = ip_user_id AND ar.audio_id = ip_audio_id;
+
+    -- Return the result message
+    RETURN get_result_message(0, '', v_json_data);
+END;
+$$;
 
 -- ### Triggers region ###
 -- Trigger to call the function after a new user is inserted
@@ -1312,8 +1378,10 @@ GRANT EXECUTE ON FUNCTION get_listening_session(VARCHAR, INT) TO restricted_user
 GRANT EXECUTE ON FUNCTION get_lyrics(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION comment_audio(VARCHAR, INT, TEXT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_comments_by_audio_id(INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION rate_audio(VARCHAR, INT, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION rate_audio(VARCHAR, INT, FLOAT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_rating_score_by_audio_id(INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_user_display_info(INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_user_audio_rating(INT, INT) TO restricted_user;
 
 
 SELECT user_login('test', 'test');

@@ -12,17 +12,17 @@
         Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
         CornerRadius="12"
         Padding="8,4"
-        Margin="4"
         BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
         BorderThickness="1"
         x:Name="ChipBackground"
         Tapped="OnChip_Tapped">
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
             <TextBlock
                 x:Name="ChipText"
-                Text="Chip"
+                Text="{x:Bind Text, Mode=OneWay}"
                 VerticalAlignment="Center"
-                Margin="0,0,8,0"/>
+                TextWrapping="Wrap"
+                MaxWidth="200"/>
         </StackPanel>
     </Border>
 </UserControl>

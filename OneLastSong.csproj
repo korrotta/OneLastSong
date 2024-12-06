@@ -45,6 +45,7 @@
     <None Remove="Views\ContentFrame.xaml" />
     <None Remove="Views\Dialogs\CreateNewPlaylistDialog.xaml" />
     <None Remove="Views\Dialogs\EditPlaylistDetailsDialog.xaml" />
+    <None Remove="Views\Dialogs\RatingAudioDialog.xaml" />
     <None Remove="Views\Dialogs\SimpleMessageThemedDialog.xaml" />
     <None Remove="Views\Dialogs\SimpleThemedConfirmDialog.xaml" />
     <None Remove="Views\EqualizerPage.xaml" />
@@ -194,6 +195,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\RatingAudioDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Pages\AudioDetailsPage.xaml">

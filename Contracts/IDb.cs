@@ -31,5 +31,13 @@ namespace OneLastSong.Contracts
         public Task<ResultMessage> SaveListeningSession(string sessionToken, int audioId, int progress);
         public Task<ResultMessage> GetListeningSession(string sessionToken);
         public Task<ResultMessage> GetLyrics(int audioId);
+        /* Comment and rating */
+        public Task<ResultMessage> CommentAudio(string sessionToken, int audioId, string comment);
+        public Task<ResultMessage> GetCommentsByAudioId(int audioId);
+        public Task<ResultMessage> RateAudio(string sessionToken, int audioId, float rating);
+        public Task<ResultMessage> GetRatingScoreByAudioId(int audioId);
+        public Task<ResultMessage> GetUserAudioRating(int userId, int audioId);
+        /* User */
+        public Task<ResultMessage> GetUserDisplayInfo(int userId);
     }
 }

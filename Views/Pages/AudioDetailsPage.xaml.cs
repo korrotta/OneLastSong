@@ -31,6 +31,12 @@ namespace OneLastSong.Views.Pages
         public AudioDetailsPage()
         {
             this.InitializeComponent();
+            Loaded += AudioDetailsPage_Loaded;
+        }
+
+        private void AudioDetailsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.XamlRoot = XamlRoot;
         }
 
         public object GetCurrentParameterState()

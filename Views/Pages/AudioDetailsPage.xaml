@@ -7,36 +7,86 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:OneLastSong.Models"
+    xmlns:dataItems="using:OneLastSong.Cores.DataItems"
+    xmlns:components="using:OneLastSong.Views.Components"
     mc:Ignorable="d"
     Background="Transparent">
+
+    <Page.Resources>
+        <DataTemplate x:DataType="dataItems:CommentDataItem" x:Key="CommentDataTemplate">
+            <Grid Margin="{StaticResource MediumBottomMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="64"/>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <Ellipse Width="40" Height="40">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{x:Bind AuthorAvatarUrl, Mode=OneWay}" Stretch="UniformToFill"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+
+                <StackPanel Grid.Column="1" >
+                    <TextBlock Text="{x:Bind AuthorName, Mode=OneWay}" FontSize="14" FontWeight="SemiBold" Style="{StaticResource SongBigTitle}"
+                        HorizontalAlignment="Left" LineHeight="20" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                    <TextBlock Text="{x:Bind Content, Mode=OneWay}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}"
+                        TextTrimming="CharacterEllipsis" FontSize="16" Foreground="{ThemeResource TEXT_PRIMARY}" HorizontalAlignment="Left"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind RelativeTime, Mode=OneWay}" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid Padding="{StaticResource MediumPadding}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Grid  Width="400" CornerRadius="16">
+                <ParallaxView Source="{Binding ElementName=listView}">
+                    <Image Source="{x:Bind ViewModel.Audio.CoverImageUrl, Mode=OneWay}" Stretch="Fill" />
+                </ParallaxView>
+                <ListView>
+                    <ListView.Header>
+                        <TextBlock Text="" />
+                    </ListView.Header>
+                </ListView>
+            </Grid>
+            <StackPanel Orientation="Vertical" Margin="20,0,0,0" Grid.Row="0" Spacing="4">
+                <TextBlock Text="{x:Bind ViewModel.Audio.Title, Mode=OneWay}" FontSize="24" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                <StackPanel Orientation="Horizontal">
+                    <RatingControl MaxRating="5" Value="{x:Bind ViewModel.Rating, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Left" Margin="{StaticResource MediumRightMargin}"/>
+                    <TextBlock FontSize="18" Foreground="{ThemeResource TEXT_PRIMARY}" TextAlignment="Center">
+                        <Run Text="{x:Bind ViewModel.RatingCount, Mode=OneWay}" FontWeight="Bold"/>
+                        <Run Text=" Ratings"/>              
+                    </TextBlock>
+                </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,20" Grid.Row="0">
-            <TextBlock Text="Audio Details" FontSize="24" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-            <RatingControl x:Name="RatingControl" Margin="10,0,0,0" MaxRating="5" Value="{x:Bind ViewModel.Rating, Mode=TwoWay}" />
-        </StackPanel>
-
-        <ScrollViewer Grid.Row="1">
-            <StackPanel>
-                <TextBlock Text="Title:" FontWeight="Bold"  Foreground="{ThemeResource TEXT_PRIMARY}"/>
-                <TextBlock Text="{x:Bind ViewModel.Audio.Title, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                <Button Content="Rate this song" Command="{x:Bind ViewModel.RateAudioCommand}"
+                        Foreground="{ThemeResource TEXT_CONTRAST1}"
+                        Background="{ThemeResource BG_CONTRAST1}"/>     
 
                 <TextBlock Text="Artist:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                 <TextBlock Text="{x:Bind ViewModel.Audio.Artist, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                <TextBlock Text="Description:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                <TextBlock Text="{x:Bind ViewModel.Audio.Description, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}" TextWrapping="Wrap" Width="400"/>
+            </StackPanel>
+        </StackPanel>
+        
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel>
+                <TextBlock Text="Your ratings:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                <TextBlock Text="{x:Bind ViewModel.YourRating, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
 
                 <TextBlock Text="Album ID:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                 <TextBlock Text="{x:Bind ViewModel.Audio.AlbumId, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
 
                 <TextBlock Text="Audio ID:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                 <TextBlock Text="{x:Bind ViewModel.Audio.AudioId, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-
-                <TextBlock Text="Author ID:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-                <TextBlock Text="{x:Bind ViewModel.Audio.AuthorId, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
 
                 <TextBlock Text="Duration:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                 <TextBlock Text="{x:Bind ViewModel.Audio.Duration, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
@@ -47,44 +97,40 @@
                 <TextBlock Text="Category ID:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                 <TextBlock Text="{x:Bind ViewModel.Audio.CategoryId, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
 
-                <TextBlock Text="Description:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-                <TextBlock Text="{x:Bind ViewModel.Audio.Description, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-
                 <TextBlock Text="Country:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                 <TextBlock Text="{x:Bind ViewModel.Audio.Country, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
 
                 <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                 <ItemsControl ItemsSource="{x:Bind ViewModel.Audio.Genres, Mode=OneWay}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}" Margin="0,0,0,5" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                        <DataTemplate x:DataType="x:String">
+                            <components:Chip Text="{x:Bind}" IsSelected="True" HorizontalAlignment="Left"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
                 <TextBlock Text="Category Name:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-                <TextBlock Text="{x:Bind ViewModel.Audio.CategoryName, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-
-                <TextBlock Text="Cover Image URL:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-                <TextBlock Text="{x:Bind ViewModel.Audio.CoverImageUrl, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                <components:Chip Text="{x:Bind ViewModel.Audio.CategoryName, Mode=OneWay}" IsSelected="True" HorizontalAlignment="Left"/>
 
                 <TextBlock Text="Likes:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                 <TextBlock Text="{x:Bind ViewModel.Audio.Likes, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
 
-                <TextBlock Text="URL:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-                <TextBlock Text="{x:Bind ViewModel.Audio.Url, Mode=OneWay}" Margin="0,0,0,10" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-
                 <TextBlock Text="Comments:" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}" Margin="0,20,0,10"/>
-                <ListView ItemsSource="{x:Bind ViewModel.Comments, Mode=OneWay}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:Comment">
-                            <TextBlock Text="{Binding CommentText}" Margin="0,0,0,5" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                
+                <!-- New Comment -->
+                <TextBox PlaceholderText="Add a comment..." Margin="0,10,0,0" Text="{x:Bind ViewModel.NewCommentContent, Mode=TwoWay}" Grid.RowSpan="4" MinHeight="64"/>
+                <Button Content="Submit" Command="{x:Bind ViewModel.SubmitCommentCommand}" Margin="0,10,0,0"
+                        Foreground="{ThemeResource TEXT_CONTRAST1}"
+                        Background="{ThemeResource BG_CONTRAST1}" HorizontalAlignment="Right"/>
 
-                <TextBox PlaceholderText="Add a comment..." Margin="0,10,0,0" Text="{x:Bind ViewModel.NewCommentContent, Mode=TwoWay}" Grid.RowSpan="4"/>
-                <Button Content="Submit" Command="{x:Bind ViewModel.SubmitCommentCommand}" Margin="0,10,0,0"/>
+                <ListView
+                    ItemsSource="{x:Bind ViewModel.Comments, Mode=OneWay}"
+                    ItemTemplate="{StaticResource CommentDataTemplate}"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

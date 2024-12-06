@@ -3,7 +3,9 @@ using Microsoft.UI.Xaml.Controls;
 using OneLastSong.Contracts;
 using OneLastSong.DAOs;
 using OneLastSong.Models;
+using OneLastSong.Services;
 using OneLastSong.Utils;
+using OneLastSong.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,6 +20,7 @@ namespace OneLastSong.ViewModels
     public class SearchPageViewModel : INotifyPropertyChanged
     {
         private string _currentSearchQuery = "";
+        private NavigationService navigationService;
 
         public static readonly string ALL_CATEGORY = "ALL_CATEGORY";
         public static readonly string SONG_CATEGORY = "SONG_CATEGORY";
@@ -155,6 +158,7 @@ namespace OneLastSong.ViewModels
 
         public SearchPageViewModel()
         {
+            navigationService = NavigationService.Get();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -264,6 +268,10 @@ namespace OneLastSong.ViewModels
             OnPropertyChanged(nameof(IsSongSelected));
             OnPropertyChanged(nameof(IsArtistSelected));
             OnPropertyChanged(nameof(IsAlbumSelected));
+        }
+        internal void NavigateToAudioDetails(string audioId)
+        {
+            navigationService.NavigateOrReloadOnParameterChanged(typeof(AudioDetailsPage), audioId);
         }
     }
 }

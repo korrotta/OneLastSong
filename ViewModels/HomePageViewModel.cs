@@ -7,6 +7,7 @@ using OneLastSong.Models;
 using OneLastSong.Services;
 using OneLastSong.Utils;
 using OneLastSong.Views.Components;
+using OneLastSong.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,12 +23,14 @@ namespace OneLastSong.ViewModels
     {
         public ICommand PlayCommand { get; }
         public event PropertyChangedEventHandler PropertyChanged;
-        private ListeningService listeningService = null;
+        private ListeningService listeningService;
+        private NavigationService navigationService;
         private AudioItem _selectedAudio;
 
         public HomePageViewModel()
         {
             listeningService = ListeningService.Get();
+            navigationService = NavigationService.Get();
             PlayCommand = new RelayCommand<Audio>(PlayAudio);
             listeningService.RegisterAudioStateChangeListeners(this);
         }
@@ -170,6 +173,11 @@ namespace OneLastSong.ViewModels
         {
             OnAudioPlayStateChanged(listeningService.IsPlaying);
             OnAudioChanged(listeningService.PlayModeData.CurrentAudio);
+        }
+
+        internal void NavigateToAudioDetails(string audioId)
+        {
+            navigationService.NavigateOrReloadOnParameterChanged(typeof(AudioDetailsPage), audioId);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
+using OneLastSong.Cores.Classes;
 using OneLastSong.Models;
 using OneLastSong.Services;
 using System;
@@ -17,6 +18,7 @@ namespace OneLastSong.DAOs
     {
         IDb _db = null;
         List<User> _artists = new List<User>();
+        Dictionary<int, UserDisplayInfo> _userDisplayInfoCache = new Dictionary<int, UserDisplayInfo>();
         private static readonly String STORED_TOKEN_PATH = "Session token";
         public User User { private set; get; } = null;
         public String SessionToken { get; private set; } = null;
@@ -128,6 +130,25 @@ namespace OneLastSong.DAOs
             SessionToken = null;
             ClearStoredToken();
             _authService.NotifyUserChange(null);
+        }
+
+        public async Task<UserDisplayInfo> GetUserDisplayInfo(int authorId, bool forcedRefresh = false)
+        {
+            if(!_userDisplayInfoCache.ContainsKey(authorId) || forcedRefresh)
+            {
+                ResultMessage result = await _db.GetUserDisplayInfo(authorId);
+                if (result.Status == ResultMessage.STATUS_OK)
+                {
+                    var userDisplayInfo = JsonSerializer.Deserialize<UserDisplayInfo>(result.JsonData);
+                    _userDisplayInfoCache[authorId] = userDisplayInfo;
+                }
+                else
+                {
+                    throw new Exception(result.ErrorMessage);
+                }
+            }
+
+            return _userDisplayInfoCache[authorId];
         }
     }
 }

@@ -42,23 +42,23 @@
                     <Image Source="{x:Bind CoverImageUrl}" Height="100" Width="200" Stretch="Fill"/>
 
                     <StackPanel Margin="12,0,0,0" Grid.Column="1" >
-                        <TextBlock Text="{x:Bind Title}" FontSize="14" FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}"
-                    HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20"
-                    Foreground="{ThemeResource TEXT_PRIMARY}"
-                    />
+                        <HyperlinkButton HorizontalAlignment="Left" Foreground="{ThemeResource TEXT_PRIMARY}"
+                            Click="AudioTitleHyperlinkButton_Click" Tag="{x:Bind AudioId}" Padding="0">
+                            <TextBlock Text="{x:Bind Title, Mode=OneWay}" FontSize="14" FontWeight="Bold" LineHeight="20"/>
+                        </HyperlinkButton>
                         <TextBlock Text="{x:Bind Description}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}"
                             HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
                             Foreground="{ThemeResource TEXT_LIGHT}"/>
                         <TextBlock Text="{x:Bind Artist}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}"
-                    HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
-                    Foreground="{ThemeResource TEXT_LIGHT}"/>
+                            HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"
+                            Foreground="{ThemeResource TEXT_LIGHT}"/>   
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{x:Bind Likes}" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,0,0,0"
                                                        Foreground="{ThemeResource TEXT_LIGHT}"/>
                             <TextBlock l:Uids.Uid="Views_TextBlock" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}"
                                                        Foreground="{ThemeResource TEXT_LIGHT}"/>
                             <TextBlock Text=" ⋅ " Style="{ThemeResource CaptionTextBlockStyle}"
-                        HorizontalAlignment="Left"
+                                HorizontalAlignment="Left"
                                                        Foreground="{ThemeResource TEXT_LIGHT}"/>
                             <TextBlock Text="{x:Bind Likes}" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}" Margin="5,0,0,0"
                                                        Foreground="{ThemeResource TEXT_LIGHT}"/>

@@ -16,6 +16,8 @@ using OneLastSong.Models;
 using OneLastSong.DAOs;
 using OneLastSong.ViewModels;
 using OneLastSong.Services;
+using OneLastSong.Utils;
+using Microsoft.VisualBasic.Devices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -49,6 +51,22 @@ namespace OneLastSong.Views.Components
         public void Dispose()
         {
             ViewModel?.Dispose();
+        }
+
+        public void AudioTitleHyperlinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is HyperlinkButton hyperlinkButton)
+            {
+                try
+                {
+                    ViewModel.NavigateToAudioDetails(((int)hyperlinkButton.Tag).ToString());
+                }
+                catch (Exception ex)
+                {
+                    // Log exception
+                    SnackbarUtils.ShowSnackbar("There was an error while navigating to audio details", SnackbarType.Error);
+                }
+            }
         }
     }
 }
