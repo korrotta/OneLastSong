@@ -16,7 +16,7 @@
         </Style>
     </MenuFlyout.MenuFlyoutPresenterStyle>
 
-    <MenuFlyoutItem Text="Play" Foreground="{ThemeResource TEXT_PRIMARY}" Click="AddToQueue_ButtonClicked">
+    <MenuFlyoutItem Text="Play" Foreground="{ThemeResource TEXT_PRIMARY}" Click="Play_ButtonClicked">
         <MenuFlyoutItem.Icon>
             <FontIcon Glyph="&#xF5B0;" Foreground="{ThemeResource TEXT_PRIMARY}" />
         </MenuFlyoutItem.Icon>
@@ -31,31 +31,31 @@
             <FontIcon Glyph="&#xE8FE;" Foreground="{ThemeResource TEXT_PRIMARY}" />
         </MenuFlyoutItem.Icon>
     </MenuFlyoutItem>
-    <MenuFlyoutItem Text="Like" Foreground="{ThemeResource TEXT_PRIMARY}" Click="AddToQueue_ButtonClicked">
+    <MenuFlyoutItem Text="Like" Foreground="{ThemeResource TEXT_PRIMARY}" Click="Like_ButtonClicked">
         <MenuFlyoutItem.Icon>
             <FontIcon Glyph="&#xEB52;" Foreground="{ThemeResource TEXT_PRIMARY}" />
         </MenuFlyoutItem.Icon>
     </MenuFlyoutItem>
-    <MenuFlyoutItem Text="Details" Foreground="{ThemeResource TEXT_PRIMARY}">
+    <MenuFlyoutItem Text="Details" Foreground="{ThemeResource TEXT_PRIMARY}" Click="Details_ButtonClicked">
         <MenuFlyoutItem.Icon>
             <FontIcon Glyph="&#xE8D6;" Foreground="{ThemeResource TEXT_PRIMARY}" />
         </MenuFlyoutItem.Icon>
     </MenuFlyoutItem>
-    <MenuFlyoutItem Text="Go to Artist" Foreground="{ThemeResource TEXT_PRIMARY}">
+    <MenuFlyoutItem Text="Go to Artist" Foreground="{ThemeResource TEXT_PRIMARY}" Click="GoToArtist_ButtonClicked">
         <MenuFlyoutItem.Icon>
             <FontIcon Glyph="&#xECA7;" Foreground="{ThemeResource TEXT_PRIMARY}" />
         </MenuFlyoutItem.Icon>
     </MenuFlyoutItem>
-    <MenuFlyoutItem Text="Go to Album" Foreground="{ThemeResource TEXT_PRIMARY}">
+    <MenuFlyoutItem Text="Go to Album" Foreground="{ThemeResource TEXT_PRIMARY}" Click="GoToAlbum_ButtonClicked">
         <MenuFlyoutItem.Icon>
             <FontIcon Glyph="&#xE93C;" Foreground="{ThemeResource TEXT_PRIMARY}" />
         </MenuFlyoutItem.Icon>
     </MenuFlyoutItem>
     <!-- Separator -->
     <MenuFlyoutSeparator Foreground="{ThemeResource TEXT_PRIMARY}" />
-    <MenuFlyoutItem Text="Share" Foreground="{ThemeResource TEXT_PRIMARY}">
+    <MenuFlyoutItem Text="Share" Foreground="{ThemeResource TEXT_PRIMARY}" Click="Share_ButtonClicked">
         <MenuFlyoutItem.Icon>
-            <FontIcon Glyph="&#xE72D;" Foreground="{ThemeResource TEXT_PRIMARY}" />
+            <FontIcon Glyph="&#xE72D;" Foreground="{ThemeResource TEXT_PRIMARY}"/>
         </MenuFlyoutItem.Icon>
     </MenuFlyoutItem>
 

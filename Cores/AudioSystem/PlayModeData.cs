@@ -81,20 +81,7 @@ namespace OneLastSong.Cores.AudioSystem
                     return null;
                 }
 
-                if (PlayQueue.Count == 0)
-                {
-                    if (CurrentPlayMode == PlayMode.MashUp)
-                    {
-                        Audio newAudio = await AudioDAO.Get().GetRandom();
-                        PlayQueue.Add(newAudio);
-                    }
-                    else
-                    {
-                        CurrentPlayMode = PlayMode.MashUp;
-                        Audio newAudio = await AudioDAO.Get().GetRandom();
-                        PlayQueue.Add(newAudio);
-                    }
-                }
+                await CheckIfQueueIsEmpty();
 
                 Audio nextAudio = PlayQueue[0];
                 PlayQueue.RemoveAt(0);
@@ -208,6 +195,121 @@ namespace OneLastSong.Cores.AudioSystem
             {
                 PlayQueue.AddRange(audios);
                 CurrentPlayMode = PlayMode.MashUp;
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
+
+        internal async Task RemoveAudioFromQueue(int index)
+        {
+            await Semaphore.WaitAsync();
+            try
+            {
+                if (index < PlayQueue.Count)
+                {
+                    PlayQueue.RemoveAt(index);
+                }
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
+
+        internal Task<List<Audio>> GetCurrentQueueSafe()
+        {
+            return ExecuteWithSemaphoreAsync(async () =>
+            {
+                return PlayQueue;
+            });
+        }
+
+        /**
+         * Remove all preceding audios in the queue
+         * Make the audio at the given index the first audio in the queue
+         * This method has no effect if the index is invalid
+         */
+        internal async Task PlayAudioInQueue(int index)
+        {
+            // If the index is invalid, do nothing
+            if (index < 1 || index >= PlayQueue.Count)
+            {
+                return;
+            }
+
+            await Semaphore.WaitAsync();
+            try
+            {
+                if (index < PlayQueue.Count)
+                {
+                    List<Audio> newQueue = new List<Audio>();
+                    for (int i = index; i < PlayQueue.Count; i++)
+                    {
+                        newQueue.Add(PlayQueue[i]);
+                    }
+                    PlayQueue = newQueue;
+                }
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
+
+        private async Task CheckIfQueueIsEmpty()
+        {
+            if (PlayQueue.Count == 0)
+            {
+                if (CurrentPlayMode == PlayMode.MashUp)
+                {
+                    Audio newAudio = await AudioDAO.Get().GetRandom();
+                    PlayQueue.Add(newAudio);
+                }
+                else
+                {
+                    CurrentPlayMode = PlayMode.MashUp;
+                    Audio newAudio = await AudioDAO.Get().GetRandom();
+                    PlayQueue.Add(newAudio);
+                }
+            }
+        }
+
+        internal async Task<Audio> GetCurrentAudioSafe()
+        {
+            return await ExecuteWithSemaphoreAsync(async () =>
+            {
+                await CheckIfQueueIsEmpty();
+                return CurrentAudio;
+            });
+        }
+
+        internal async Task SetFirstInQueue(Audio audio)
+        {
+            await Semaphore.WaitAsync();
+            try
+            {
+                List<Audio> newQueue = new List<Audio>();
+                newQueue.Add(audio);
+                for (int i = 0; i < PlayQueue.Count; i++)
+                {
+                    newQueue.Add(PlayQueue[i]);
+                }
+                PlayQueue = newQueue;
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
+
+        internal async Task AddToQueue(Audio audio)
+        {
+            await Semaphore.WaitAsync();
+            try
+            {
+                PlayQueue.Add(audio);
             }
             finally
             {

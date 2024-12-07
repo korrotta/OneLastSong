@@ -132,7 +132,7 @@ namespace OneLastSong.ViewModels
         public void OnAudioChanged(Audio newAudio)
         {
             CurrentAudio = newAudio;
-            _sidePanelNavigationService.Navigate(typeof(AudioLyricPage), newAudio);
+            // _sidePanelNavigationService.Navigate(typeof(AudioLyricPage), newAudio);
             OnPropertyChanged(nameof(CurrentAudio));
         }
 

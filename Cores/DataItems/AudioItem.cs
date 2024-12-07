@@ -10,6 +10,11 @@ namespace OneLastSong.Cores.DataItems
 {
     public class AudioItem : Audio
     {
+        public AudioItem()
+        {
+            Audio = this;
+        }
+
         private bool _isPlaying;
         public bool IsPlaying
         {
@@ -23,5 +28,7 @@ namespace OneLastSong.Cores.DataItems
                 }
             }
         }
+
+        public Audio Audio { get; private set; }
     }
 }

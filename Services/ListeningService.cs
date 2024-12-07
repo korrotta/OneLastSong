@@ -15,6 +15,7 @@ using OneLastSong.DAOs;
 using System.Security.Policy;
 using OneLastSong.ViewModels;
 using OneLastSong.Cores.Equalizer;
+using Windows.Devices.AllJoyn;
 
 namespace OneLastSong.Services
 {
@@ -55,18 +56,14 @@ namespace OneLastSong.Services
         {
             while (_shouldRun)
             {
-                var currentAudio = PlayModeData.CurrentAudio;
-
-                if (PlayModeData.PlayQueue.Count == 0)
-                {
-                    GenNewQueue(5);
-                }
+                Audio currentAudio = await PlayModeData.GetCurrentAudioSafe();
 
                 if (currentAudio != null)
                 {
                     try
                     {
                         NotifyAudioChanged(currentAudio);
+                        NotifyPlayQueueChanged();
                         NotifyProgressChanged(0);
                         await PlayAudioUrlAsync(currentAudio.Url, currentAudio.Duration);
                     }
@@ -161,11 +158,12 @@ namespace OneLastSong.Services
 
         public void NotifyPlayQueueChanged()
         {
-            _eventHandler.TryEnqueue(() =>
+            _eventHandler.TryEnqueue(async () =>
             {
                 foreach (var notifier in _playQueueChangeNotifiers)
                 {
-                    notifier.OnPlayQueueChanged(PlayModeData.PlayQueue);
+                    List<Audio> currentQueue = await PlayModeData.GetCurrentQueueSafe();
+                    notifier.OnPlayQueueChanged(currentQueue);
                 }
             });
         }
@@ -251,8 +249,11 @@ namespace OneLastSong.Services
 
             while (_shouldContinuePlayingCurrentAudio)
             {
-                NotifyProgressChanged((int)mf.CurrentTime.TotalSeconds);
-                await SaveListeningProgressAsync();
+                if (IsPlaying)
+                {
+                    NotifyProgressChanged((int)mf.CurrentTime.TotalSeconds);
+                    await SaveListeningProgressAsync();
+                }
                 if (mf.CurrentTime >= TimeSpan.FromSeconds(duration))
                 {
                     PlayNext();
@@ -387,6 +388,36 @@ namespace OneLastSong.Services
             {
                 _equalizer.Update(_equalizerViewModel.Bands.Select(b => new EqualizerBand { Frequency = b.Frequency, Gain = (float)b.Gain }).ToArray());
             }
+        }
+
+        internal async void RemoveAudioFromQueue(int index)
+        {
+            await PlayModeData.RemoveAudioFromQueue(index);
+            NotifyPlayQueueChanged();
+        }
+
+        internal async void PlayAudioInQueue(int index)
+        {
+            await PlayModeData.PlayAudioInQueue(index);
+            _shouldContinuePlayingCurrentAudio = false;
+        }
+
+        /*
+         * Set the next audio to play in the queue
+         */
+        internal async void PlayNextAudio(Audio audio)
+        {
+            await PlayModeData.SetFirstInQueue(audio);
+            NotifyPlayQueueChanged();
+        }
+
+        /*
+         * Add audio to the end of the queue
+         */
+        internal async void AddToQueue(Audio audio)
+        {
+            await PlayModeData.AddToQueue(audio);
+            NotifyPlayQueueChanged();
         }
     }
 }

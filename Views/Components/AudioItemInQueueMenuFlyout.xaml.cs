@@ -28,20 +28,24 @@ namespace OneLastSong.Views.Components
 {
     public sealed partial class AudioItemInQueueMenuFlyout : MenuFlyout
     {
-        public Audio Audio
-        {
-            get { return (Audio)GetValue(AudioProperty); }
-            set { SetValue(AudioProperty, value); }
-        }
+        public AudioItemInQueueMenuFlyoutViewModel ViewModel { get; set; }
 
-        public static readonly DependencyProperty AudioProperty =
-            DependencyProperty.Register("Audio", typeof(Audio), typeof(AudioExtraControlsFlyout), new PropertyMetadata(null));
-
-        public AudioItemInQueueMenuFlyout(XamlRoot xamlRoot, Audio currentAudio)
+        public AudioItemInQueueMenuFlyout(XamlRoot xamlRoot, int index)
         {
             this.InitializeComponent();
             XamlRoot = xamlRoot;
-            Audio = currentAudio;
+
+            ViewModel = new AudioItemInQueueMenuFlyoutViewModel(index);
+        }
+
+        private void Play_ButtonClicked(object sender, RoutedEventArgs e)
+        {
+            ViewModel.PlayAudio();
+        }
+
+        private void RemoveFromQueue_ButtonClicked(object sender, RoutedEventArgs e)
+        {
+            ViewModel.RemoveAudioFromQueue();
         }
     }
 }

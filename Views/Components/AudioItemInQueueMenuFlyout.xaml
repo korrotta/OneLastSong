@@ -14,7 +14,13 @@
         </Style>
     </MenuFlyout.MenuFlyoutPresenterStyle>
 
-    <MenuFlyoutItem Text="Remove from queue" Foreground="{ThemeResource TEXT_PRIMARY}">
+    <MenuFlyoutItem Text="Play" Foreground="{ThemeResource TEXT_PRIMARY}" Click="Play_ButtonClicked">
+        <MenuFlyoutItem.Icon>
+            <FontIcon Glyph="&#xF5B0;" Foreground="{ThemeResource TEXT_PRIMARY}" />
+        </MenuFlyoutItem.Icon>
+    </MenuFlyoutItem>
+
+    <MenuFlyoutItem Text="Remove from queue" Foreground="{ThemeResource TEXT_PRIMARY}" Click="RemoveFromQueue_ButtonClicked">
         <MenuFlyoutItem.Icon>
             <FontIcon Glyph="&#xECC9;" Foreground="{ThemeResource TEXT_PRIMARY}" />
         </MenuFlyoutItem.Icon>

@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OneLastSong.Utils;
+using System.Collections.ObjectModel;
 
 namespace OneLastSong.ViewModels
 {
@@ -35,7 +36,7 @@ namespace OneLastSong.ViewModels
         {
             _listeningService = ListeningService.Get();
             _playModeData = _listeningService.PlayModeData;
-            _playingQueue = new List<Audio>();
+            _playingQueue = new ObservableCollection<Audio>();
 
             _listeningService.RegisterPlayQueueChangeListeners(this);
             _listeningService.RegisterAudioStateChangeListeners(this);
@@ -51,7 +52,7 @@ namespace OneLastSong.ViewModels
             }
         }
 
-        private List<Audio> _playingQueue;
+        private ObservableCollection<Audio> _playingQueue;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -68,7 +69,8 @@ namespace OneLastSong.ViewModels
 
         public void OnPlayQueueChanged(List<Audio> audios)
         {
-            PlayingQueue = audios;
+            _playingQueue.Clear();
+            AddAudiosToList(audios);
         }
 
         public void OnAudioChanged(Audio newAudio)
@@ -86,7 +88,7 @@ namespace OneLastSong.ViewModels
 
         }
 
-        public List<Audio> PlayingQueue
+        public ObservableCollection<Audio> PlayingQueue
         {
             get { return _playingQueue; }
             set
@@ -103,8 +105,7 @@ namespace OneLastSong.ViewModels
             // Get item index
             var item = sender as SimpleAudioItem;
             var index = PlayingQueue.IndexOf(item.Audio);
-            LogUtils.Info("Item index: " + index);
-            var flyout = new AudioItemInQueueMenuFlyout(XamlRoot, item.Audio);
+            var flyout = new AudioItemInQueueMenuFlyout(XamlRoot, index);
             flyout.ShowAt(sender as FrameworkElement, e.GetPosition(sender as UIElement));
         }
     }
