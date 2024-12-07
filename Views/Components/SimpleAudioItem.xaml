@@ -6,24 +6,32 @@
     xmlns:local="using:OneLastSong.Views.Components"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:components="using:OneLastSong.Views.Components"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid 
+        PointerEntered="OnPointerEntered"
+        PointerExited="OnPointerExited">
         <StackPanel Orientation="Horizontal" Spacing="10">
-            <Border
-                Width="64"
-                Height="64"
-                CornerRadius="4"
-                >
-                <Image
-                    Source="{x:Bind Audio.CoverImageUrl, Mode=OneWay}"
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border
                     Width="64"
                     Height="64"
-                    Stretch="UniformToFill"
-                    HorizontalAlignment="Left"/>            
-            </Border>
+                    CornerRadius="4"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    >
+                    <Image
+                        Source="{x:Bind Audio.CoverImageUrl, Mode=OneWay}"
+                        Width="64"
+                        Height="64"
+                        Stretch="UniformToFill"
+                        HorizontalAlignment="Left"/>
+                </Border>
+                <components:AudioPlayButton x:Name="PlayButton" Audio="{x:Bind Audio, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+            
 
-            <StackPanel Spacing="8" VerticalAlignment="Center">
+            <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Stretch">
                 <TextBlock 
                     Text="{x:Bind Audio.Title, Mode=OneWay}" 
                     Foreground="{ThemeResource TEXT_PRIMARY}" 
@@ -35,8 +43,10 @@
                     Foreground="{ThemeResource TEXT_LIGHT}" 
                     Style="{StaticResource SongBigTitle}" 
                     FontSize="12"/>
-            </StackPanel>
-            
+            </StackPanel>            
+
         </StackPanel>
+
+        <components:AudioExtraControlsButton Audio="{x:Bind Audio, Mode=OneWay}" HorizontalAlignment="Right"/>
     </Grid>
 </UserControl>

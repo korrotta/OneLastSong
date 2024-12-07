@@ -21,6 +21,18 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\Components\AudioPlayButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\AudioExtraControlsFlyout.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\AudioExtraControlsButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\AudioItemInQueueMenuFlyout.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Components\SimpleAudioItem.xaml">
       <SubType>Designer</SubType>
     </Page>

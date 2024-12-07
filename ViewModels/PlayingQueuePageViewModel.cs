@@ -1,13 +1,17 @@
-﻿using OneLastSong.Contracts;
+﻿using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml;
+using OneLastSong.Contracts;
 using OneLastSong.Cores.AudioSystem;
 using OneLastSong.Models;
 using OneLastSong.Services;
+using OneLastSong.Views.Components;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OneLastSong.Utils;
 
 namespace OneLastSong.ViewModels
 {
@@ -90,6 +94,18 @@ namespace OneLastSong.ViewModels
                 _playingQueue = value;
                 NotifyPropertyChanged(nameof(PlayingQueue));
             }
+        }
+
+        public XamlRoot XamlRoot { get; set; }
+
+        public void OpenPlaylistOptionsMenu(object sender, RightTappedRoutedEventArgs e)
+        {
+            // Get item index
+            var item = sender as SimpleAudioItem;
+            var index = PlayingQueue.IndexOf(item.Audio);
+            LogUtils.Info("Item index: " + index);
+            var flyout = new AudioItemInQueueMenuFlyout(XamlRoot, item.Audio);
+            flyout.ShowAt(sender as FrameworkElement, e.GetPosition(sender as UIElement));
         }
     }
 }

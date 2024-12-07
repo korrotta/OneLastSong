@@ -13,6 +13,8 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using OneLastSong.ViewModels;
+using OneLastSong.Views.Components;
+using OneLastSong.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,11 +31,22 @@ namespace OneLastSong.Views.Pages
         public PlayingQueuePage()
         {
             this.InitializeComponent();
+            Loaded += PlayingQueuePage_Loaded;
+        }
+
+        private void PlayingQueuePage_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.XamlRoot = this.XamlRoot;
         }
 
         public void Dispose()
         {
             ViewModel.Dispose();
+        }
+
+        private void AudioItem_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            ViewModel.OpenPlaylistOptionsMenu(sender, e);
         }
     }
 }

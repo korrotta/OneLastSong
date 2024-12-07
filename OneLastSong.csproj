@@ -33,6 +33,9 @@
     <None Remove="Views\AIRecommendationPage.xaml" />
     <None Remove="Views\AudioLyricPage.xaml" />
     <None Remove="Views\Components\AddToPlaylistMenuFlyout.xaml" />
+    <None Remove="Views\Components\AudioExtraControlsButton.xaml" />
+    <None Remove="Views\Components\AudioExtraControlsFlyout.xaml" />
+    <None Remove="Views\Components\AudioPlayButton.xaml" />
     <None Remove="Views\Components\BodyFrame.xaml" />
     <None Remove="Views\Components\BottomFrame.xaml" />
     <None Remove="Views\Components\Chip.xaml" />
@@ -119,6 +122,9 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Components\AudioItemInQueueMenuFlyout.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\MainPage.xaml">
@@ -199,6 +205,21 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\AudioPlayButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\AudioExtraControlsFlyout.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\AudioExtraControlsButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Components\SimpleAudioItem.xaml">

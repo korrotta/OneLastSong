@@ -36,8 +36,17 @@ namespace OneLastSong.Views.Components
             this.InitializeComponent();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            PlayButton.ChangePlayButtonVisibility(true);
+        }
 
+        private void OnPointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            PlayButton.ChangePlayButtonVisibility(false);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

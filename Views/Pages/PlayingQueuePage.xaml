@@ -22,7 +22,7 @@
             ItemsSource="{x:Bind ViewModel.PlayingQueue, Mode=OneWay}">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <components:SimpleAudioItem Audio="{Binding}" Margin="{StaticResource MediumBottomMargin}"/>
+                    <components:SimpleAudioItem Audio="{Binding}" Margin="{StaticResource MediumBottomMargin}" RightTapped="AudioItem_RightTapped"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

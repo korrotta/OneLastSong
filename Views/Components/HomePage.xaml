@@ -91,9 +91,7 @@
                         </Button.Flyout>
                     </Button>
                     <!-- More -->
-                    <Button Style="{StaticResource IconButton}">
-                        <FontIcon Glyph="&#xE712;" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-                    </Button>
+                    <components:AudioExtraControlsButton Audio="{Binding}"/>
                     <!-- Play button -->
                     <Button Style="{StaticResource IconButton}"
                             Command="{Binding ElementName=HomePageName, Path=ViewModel.PlayCommand}"

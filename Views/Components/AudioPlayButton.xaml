@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="OneLastSong.Views.Components.AudioPlayButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneLastSong.Views.Components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:OneLastSong.Converters"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:PlayStateToIconConverter x:Key="PlayStateToIconConverter"/>
+    </UserControl.Resources>
+
+    <Button Style="{StaticResource IconButton}" Click="Play_ButtonClicked" Visibility="{x:Bind PlayButtonVisibility, Mode=OneWay}">
+        <Border Width="32" Height="32" CornerRadius="16" Background="{ThemeResource BG_PRIMARY}" Opacity="0.8">
+            <FontIcon Glyph="{x:Bind IsPlaying, Mode=OneWay, Converter={StaticResource PlayStateToIconConverter}}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+        </Border>
+    </Button>
+</UserControl>

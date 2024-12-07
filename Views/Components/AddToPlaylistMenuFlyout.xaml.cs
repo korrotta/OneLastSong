@@ -33,7 +33,14 @@ namespace OneLastSong.Views.Components
         private PlaylistService playlistService;
         private UserDAO userDAO;
 
-        public int AudioId { get; set; }
+        public int AudioId
+        {
+            get { return (int)GetValue(AudioIdProperty); }
+            set { SetValue(AudioIdProperty, value); }
+        }
+
+        public static readonly DependencyProperty AudioIdProperty =
+            DependencyProperty.Register("AudioId", typeof(int), typeof(AddToPlaylistMenuFlyout), new PropertyMetadata(0));
 
         public AddToPlaylistMenuFlyout()
         {
