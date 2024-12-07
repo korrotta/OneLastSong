@@ -33,6 +33,7 @@ namespace OneLastSong.Services
         private AudioDAO _audioDAO;
         private AuthService _authService;
         private List<IAudioStateChanged> _audioStateChangeNotifiers = new List<IAudioStateChanged>();
+        private List<INotifyPlayQueueChanged> _playQueueChangeNotifiers = new List<INotifyPlayQueueChanged>();
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private Equalizer _equalizer;
         private EqualizerViewModel _equalizerViewModel;
@@ -55,6 +56,11 @@ namespace OneLastSong.Services
             while (_shouldRun)
             {
                 var currentAudio = PlayModeData.CurrentAudio;
+
+                if (PlayModeData.PlayQueue.Count == 0)
+                {
+                    GenNewQueue(5);
+                }
 
                 if (currentAudio != null)
                 {
@@ -81,6 +87,24 @@ namespace OneLastSong.Services
 
                 await Task.Delay(1000);
             }
+        }
+
+        private async void GenNewQueue(int v)
+        {
+            if(_audioDAO == null)
+            {
+                return;
+            }
+
+            List<Audio> audios = new List<Audio>();
+            // get random audios
+            for (int i = 0; i < v; i++)
+            {
+                Audio newAudio = await _audioDAO.GetRandom();
+                audios.Add(newAudio);
+            }
+            await PlayModeData.AddNewAudiosToQueue(audios);
+            NotifyPlayQueueChanged();
         }
 
         public async void PlayAudio(Audio audio)
@@ -135,6 +159,17 @@ namespace OneLastSong.Services
             });
         }
 
+        public void NotifyPlayQueueChanged()
+        {
+            _eventHandler.TryEnqueue(() =>
+            {
+                foreach (var notifier in _playQueueChangeNotifiers)
+                {
+                    notifier.OnPlayQueueChanged(PlayModeData.PlayQueue);
+                }
+            });
+        }
+
         public void RegisterAudioStateChangeListeners(IAudioStateChanged audioStateChangeNotifier)
         {
             _eventHandler.TryEnqueue(() =>
@@ -158,6 +193,25 @@ namespace OneLastSong.Services
             _eventHandler.TryEnqueue(() =>
             {
                 _audioStateChangeNotifiers.Remove(audioStateChangeNotifier);
+            });
+        }
+
+        public void RegisterPlayQueueChangeListeners(INotifyPlayQueueChanged playQueueChangeNotifier)
+        {
+            _eventHandler.TryEnqueue(() =>
+            {
+                if (!_playQueueChangeNotifiers.Contains(playQueueChangeNotifier))
+                {
+                    _playQueueChangeNotifiers.Add(playQueueChangeNotifier);
+                }
+            });
+        }
+
+        public void UnregisterPlayQueueChangeListeners(INotifyPlayQueueChanged playQueueChangeNotifier)
+        {
+            _eventHandler.TryEnqueue(() =>
+            {
+                _playQueueChangeNotifiers.Remove(playQueueChangeNotifier);
             });
         }
 
@@ -286,6 +340,8 @@ namespace OneLastSong.Services
 
             _listeningSessionDAO.SetListeningService(this);
             _authService.RegisterAuthChangeNotify(this);
+
+            GenNewQueue(5);
 
             NotifyAudioChanged(PlayModeData.CurrentAudio);
             NotifyPlayStateChanged(IsPlaying);

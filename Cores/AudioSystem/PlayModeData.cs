@@ -31,7 +31,8 @@ namespace OneLastSong.Cores.AudioSystem
                 PlayQueue.Clear();
                 PlayQueue.Add(audio);
                 CurrentAudio = audio;
-                PlayQueue.Add(AudioDAO.Get().GetRandom());
+                Audio newAudio = await AudioDAO.Get().GetRandom();
+                PlayQueue.Add(newAudio);
             });
         }
 
@@ -84,12 +85,14 @@ namespace OneLastSong.Cores.AudioSystem
                 {
                     if (CurrentPlayMode == PlayMode.MashUp)
                     {
-                        PlayQueue.Add(AudioDAO.Get().GetRandom());
+                        Audio newAudio = await AudioDAO.Get().GetRandom();
+                        PlayQueue.Add(newAudio);
                     }
                     else
                     {
                         CurrentPlayMode = PlayMode.MashUp;
-                        PlayQueue.Add(AudioDAO.Get().GetRandom());
+                        Audio newAudio = await AudioDAO.Get().GetRandom();
+                        PlayQueue.Add(newAudio);
                     }
                 }
 
@@ -182,12 +185,34 @@ namespace OneLastSong.Cores.AudioSystem
             }
         }
 
-        internal void PlayAudioList(List<Audio> audioList)
+        internal async void PlayAudioList(List<Audio> audioList)
         {
-            PlayQueue.Clear();
-            PlayQueue.AddRange(audioList);
-            CurrentAudio = audioList[0];
-            CurrentPlayMode = PlayMode.MashUp;
+            await Semaphore.WaitAsync();
+            try
+            {
+                PlayQueue.Clear();
+                PlayQueue.AddRange(audioList);
+                CurrentAudio = audioList[0];
+                CurrentPlayMode = PlayMode.MashUp;
+            }
+            finally
+            {
+                Semaphore.Release();
+            }            
+        }
+
+        internal async Task AddNewAudiosToQueue(List<Audio> audios)
+        {
+            await Semaphore.WaitAsync();
+            try
+            {
+                PlayQueue.AddRange(audios);
+                CurrentPlayMode = PlayMode.MashUp;
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
         }
     }
 }

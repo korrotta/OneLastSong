@@ -189,19 +189,19 @@
             Spacing="5">
 
             <!--  Lyrics button  -->
-            <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+            <Button Command="{x:Bind ViewModel.OpenLyricsCommand}" Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
                 <FontIcon
                     FontSize="{StaticResource MediumTextSize}"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
                     Glyph="&#xE90B;" />
             </Button>
 
-            <!--  Playqueue button  -->
-            <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+            <!--  PlayQueue button  -->
+            <Button Command="{x:Bind ViewModel.OpenPlayQueueCommand}" Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
                 <FontIcon
                     FontSize="{StaticResource MediumTextSize}"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
-                    Glyph="&#xE8F2;" />
+                    Glyph="&#xEA37;" />
             </Button>
 
             <!--  Equalizer button  -->

@@ -29,6 +29,7 @@
     <None Remove="Themes\DarkMode.xaml" />
     <None Remove="Themes\DefaultTheme.xaml" />
     <None Remove="Themes\LightMode.xaml" />
+    <None Remove="ViewModels\PlayHistoryPage.xaml" />
     <None Remove="Views\AIRecommendationPage.xaml" />
     <None Remove="Views\AudioLyricPage.xaml" />
     <None Remove="Views\Components\AddToPlaylistMenuFlyout.xaml" />
@@ -41,6 +42,7 @@
     <None Remove="Views\Components\PlaylistMenuFlyout.xaml" />
     <None Remove="Views\Components\RightRegion.xaml" />
     <None Remove="Views\Components\SignInPage.xaml" />
+    <None Remove="Views\Components\SimpleAudioItem.xaml" />
     <None Remove="Views\Components\TopFrame.xaml" />
     <None Remove="Views\ContentFrame.xaml" />
     <None Remove="Views\Dialogs\CreateNewPlaylistDialog.xaml" />
@@ -51,6 +53,8 @@
     <None Remove="Views\EqualizerPage.xaml" />
     <None Remove="Views\MainPage.xaml" />
     <None Remove="Views\Pages\AudioDetailsPage.xaml" />
+    <None Remove="Views\Pages\PlayingQueuePage.xaml" />
+    <None Remove="Views\Pages\PlayingQueueWithListeningHistoryPage.xaml" />
     <None Remove="Views\SearchPage.xaml" />
     <None Remove="Views\SignUpPage.xaml" />
   </ItemGroup>
@@ -76,7 +80,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="Npgsql" Version="9.0.1" />
-    <PackageReference Include="OpenAI" Version="2.0.0" />
+    <PackageReference Include="OpenAI" Version="2.1.0" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
     <PackageReference Include="System.Text.Json" Version="9.0.0" />
     <PackageReference Include="WinUI3Localizer" Version="2.2.0" />
@@ -195,6 +199,26 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\SimpleAudioItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="ViewModels\PlayHistoryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\PlayingQueuePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\PlayingQueueWithListeningHistoryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Dialogs\RatingAudioDialog.xaml">

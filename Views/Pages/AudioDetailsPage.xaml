@@ -47,7 +47,7 @@
         <StackPanel Orientation="Horizontal">
             <Grid  Width="400" CornerRadius="16">
                 <ParallaxView Source="{Binding ElementName=listView}">
-                    <Image Source="{x:Bind ViewModel.Audio.CoverImageUrl, Mode=OneWay}" Stretch="Fill" />
+                    <Image Source="{x:Bind ViewModel.Audio.CoverImageUrl, Mode=OneWay}" Stretch="Fill"/>
                 </ParallaxView>
                 <ListView>
                     <ListView.Header>

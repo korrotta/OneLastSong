@@ -41,11 +41,11 @@ namespace OneLastSong.DAOs
             return _audios;
         }
 
-        public Audio GetRandom()
+        public async Task<Audio> GetRandom()
         {
             if (_audios.Count == 0)
             {
-                throw new Exception("No audios available");
+                await GetMostLikeAudios(true);
             }
 
             return _audios[_random.Next(0, _audios.Count)];

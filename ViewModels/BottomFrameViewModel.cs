@@ -34,18 +34,35 @@ namespace OneLastSong.ViewModels
         public ICommand PlayNextCommand { get; set; }
         public ICommand RestartPlayCommand { get; set; }
         public ICommand ConfigEqualizerCommand { get; set; }
+        public ICommand OpenPlayQueueCommand { get; set; }
+        public ICommand OpenLyricsCommand { get; set; }
 
         public BottomFrameViewModel(DispatcherQueue dispatcherQueue, Slider slider)
         {
             _listeningService = ListeningService.Get();
             _sidePanelNavigationService = SidePanelNavigationService.Get();
             _navigationService = NavigationService.Get();
+            
             _listeningService.RegisterAudioStateChangeListeners(this);
+            
             this._slider = slider;
+
             ChangePlayStateCommand = new RelayCommand(ChangePlayState);
             PlayNextCommand = new RelayCommand(PlayNext);
             RestartPlayCommand = new RelayCommand(RestartPlay);
             ConfigEqualizerCommand = new RelayCommand(ConfigEqualizer);
+            OpenPlayQueueCommand = new RelayCommand(OpenPlayQueue);
+            OpenLyricsCommand = new RelayCommand(OpenLyrics);
+        }
+
+        private void OpenLyrics()
+        {
+            _sidePanelNavigationService.Navigate(typeof(AudioLyricPage), CurrentAudio);
+        }
+
+        private void OpenPlayQueue()
+        {
+            _sidePanelNavigationService.Navigate(typeof(PlayingQueueWithListeningHistoryPage));
         }
 
         private void ConfigEqualizer()
