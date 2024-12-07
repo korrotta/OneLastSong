@@ -51,13 +51,13 @@ namespace OneLastSong.Services
             return (AuthService)((App)Application.Current).Services.GetService(typeof(AuthService));
         }
 
-        public void NotifyUserChange(User user)
+        public void NotifyUserChange(User user, string token)
         {
             foreach (var notify in _authChangeNotifies)
             {
                 _eventHandler.TryEnqueue(() =>
                 {
-                    notify.OnUserChange(user);
+                    notify.OnUserChange(user, token);
                 });
             }
         }

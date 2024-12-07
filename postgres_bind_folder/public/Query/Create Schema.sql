@@ -194,6 +194,15 @@ CREATE TABLE audio_ratings
     PRIMARY KEY (user_id, audio_id)
 );
 
+-- Play history table
+CREATE TABLE play_history
+(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+    played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 DROP FUNCTION IF EXISTS create_liked_playlist;
 
 -- ### Procedures region ###
@@ -1341,6 +1350,88 @@ BEGIN
 END;
 $$;
 
+-- Add user play history, returns the new record in the play history
+DROP FUNCTION IF EXISTS add_user_play_history;
+
+CREATE OR REPLACE FUNCTION add_user_play_history(ip_session_token VARCHAR, ip_audio_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_play_history JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, proceed with adding the play history
+    IF v_user_id IS NOT NULL THEN
+        -- Check if the audio exists
+        IF NOT EXISTS (
+            SELECT 1
+            FROM audios a
+            WHERE a.id = ip_audio_id
+        ) THEN
+            RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Insert the play history record
+        INSERT INTO play_history (user_id, audio_id, played_at)
+        VALUES (v_user_id, ip_audio_id, CURRENT_TIMESTAMP)
+        RETURNING json_build_object(
+            'AudioId', audio_id,
+            'PlayedAt', played_at
+        ) INTO v_play_history;
+
+        -- Return the new play history record
+        RETURN get_result_message(0, '', v_play_history);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
+-- Get user play history, returns the play history of the user, return emply array if no play history
+DROP FUNCTION IF EXISTS get_user_play_history;
+
+CREATE OR REPLACE FUNCTION get_user_play_history(ip_session_token VARCHAR)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_play_history JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, return the play history of the user
+    IF v_user_id IS NOT NULL THEN
+        -- Select the play history of the user
+        SELECT json_agg(json_build_object(
+            'AudioId', ph.audio_id,
+            'PlayedAt', ph.played_at
+        ) ORDER BY ph.played_at DESC) INTO v_play_history
+        FROM play_history ph
+        WHERE ph.user_id = v_user_id;
+
+        -- If no play history is found, return an empty JSON array
+        IF v_play_history IS NULL THEN
+            v_play_history := '[]'::JSONB;
+        END IF;
+
+        -- Return the result message
+        RETURN get_result_message(0, '', v_play_history);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+$$;
+
 -- ### Triggers region ###
 -- Trigger to call the function after a new user is inserted
 CREATE TRIGGER after_user_insert
@@ -1382,6 +1473,8 @@ GRANT EXECUTE ON FUNCTION rate_audio(VARCHAR, INT, FLOAT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_rating_score_by_audio_id(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_user_display_info(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_user_audio_rating(INT, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION add_user_play_history(VARCHAR, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_user_play_history(VARCHAR) TO restricted_user;
 
 
 SELECT user_login('test', 'test');

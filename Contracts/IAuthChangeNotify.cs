@@ -9,6 +9,6 @@ namespace OneLastSong.Contracts
 {
     public interface IAuthChangeNotify
     {
-        void OnUserChange(User user);
+        void OnUserChange(User user, string token);
     }
 }

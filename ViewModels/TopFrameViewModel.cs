@@ -240,7 +240,7 @@ namespace OneLastSong.ViewModels
             Dispose();
         }
 
-        public void OnUserChange(User user)
+        public void OnUserChange(User user, string token)
         {
             if(user == null)
             {

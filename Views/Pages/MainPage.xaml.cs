@@ -45,7 +45,7 @@ namespace OneLastSong.Views
             AuthService.OnComponentsLoaded();
         }
 
-        public async void OnUserChange(User user)
+        public async void OnUserChange(User user, string token)
         {
             if (user == null)
             {

@@ -53,7 +53,7 @@ namespace OneLastSong.Services
             return true;
         }
 
-        public async void OnUserChange(User user)
+        public async void OnUserChange(User user, string token)
         {
             if(user == null)
             {
@@ -61,7 +61,7 @@ namespace OneLastSong.Services
             }
             else
             {
-                var sessionToken = UserDAO.Get().SessionToken;
+                var sessionToken = token;
                 await playlistDAO.GetUserPlaylists(sessionToken, true);
             }
         }

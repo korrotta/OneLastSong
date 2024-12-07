@@ -51,7 +51,7 @@ namespace OneLastSong.DAOs
             User = user;
             SessionToken = token;
             SaveCurrentSessionToken();
-            _authService.NotifyUserChange(user);
+            _authService.NotifyUserChange(user, SessionToken);
         }
 
         public async Task<User> GetUser(string sessionToken)
@@ -117,7 +117,7 @@ namespace OneLastSong.DAOs
                 {
                     User = user;
                     SessionToken = loadedToken;
-                    _authService.NotifyUserChange(user);
+                    _authService.NotifyUserChange(user, SessionToken);
                     return true;
                 }
             }
@@ -129,7 +129,7 @@ namespace OneLastSong.DAOs
             User = null;
             SessionToken = null;
             ClearStoredToken();
-            _authService.NotifyUserChange(null);
+            _authService.NotifyUserChange(null, null);
         }
 
         public async Task<UserDisplayInfo> GetUserDisplayInfo(int authorId, bool forcedRefresh = false)

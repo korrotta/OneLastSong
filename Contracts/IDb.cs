@@ -39,5 +39,8 @@ namespace OneLastSong.Contracts
         public Task<ResultMessage> GetUserAudioRating(int userId, int audioId);
         /* User */
         public Task<ResultMessage> GetUserDisplayInfo(int userId);
+        /* Play history */
+        public Task<ResultMessage> AddUserPlayHistory(string sessionToken, int audioId);
+        public Task<ResultMessage> GetUserPlayHistory(string sessionToken);
     }
 }

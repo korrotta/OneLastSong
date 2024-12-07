@@ -32,6 +32,7 @@ namespace OneLastSong.Services
         private ListeningSessionDAO _listeningSessionDAO;
         private UserDAO _userDAO;
         private AudioDAO _audioDAO;
+        private PlayHistoryDAO _playHistoryDAO;
         private AuthService _authService;
         private List<IAudioStateChanged> _audioStateChangeNotifiers = new List<IAudioStateChanged>();
         private List<INotifyPlayQueueChanged> _playQueueChangeNotifiers = new List<INotifyPlayQueueChanged>();
@@ -66,6 +67,10 @@ namespace OneLastSong.Services
                         NotifyPlayQueueChanged();
                         NotifyProgressChanged(0);
                         await PlayAudioUrlAsync(currentAudio.Url, currentAudio.Duration);
+                        if (currentAudio != null)
+                        {
+                            SavePlayHistory(currentAudio);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -84,6 +89,17 @@ namespace OneLastSong.Services
 
                 await Task.Delay(1000);
             }
+        }
+
+        private void SavePlayHistory(Audio currentAudio)
+        {
+            string token = _userDAO.SessionToken;
+            if (token == null)
+            {
+                return;
+            }
+
+            _playHistoryDAO.AddUserPlayHistory(token, currentAudio.AudioId);
         }
 
         private async void GenNewQueue(int v)
@@ -338,6 +354,7 @@ namespace OneLastSong.Services
             _userDAO = UserDAO.Get();
             _audioDAO = AudioDAO.Get();
             _authService = AuthService.Get();
+            _playHistoryDAO = PlayHistoryDAO.Get();
 
             _listeningSessionDAO.SetListeningService(this);
             _authService.RegisterAuthChangeNotify(this);
@@ -363,11 +380,11 @@ namespace OneLastSong.Services
             PlayNext();
         }
 
-        public async void OnUserChange(User user)
+        public async void OnUserChange(User user, string sesstionken)
         {
             if (user != null)
             {
-                string token = _userDAO.SessionToken;
+                string token = sesstionken;
                 var listeningSession = await _listeningSessionDAO.GetListeningSession(token);
                 var audio = await _audioDAO.GetAudioById(listeningSession.AudioId);
 

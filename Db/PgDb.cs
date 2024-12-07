@@ -678,6 +678,61 @@ namespace OneLastSong.Db
             return null;
         }
 
+        public async Task<ResultMessage> AddUserPlayHistory(string sessionToken, int audioId)
+        {
+            CheckConnection();
+
+            try
+            {
+                await using (var cmd = dataSource.CreateCommand(QUERY_ADD_USER_PLAY_HISTORY))
+                {
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+                    cmd.Parameters.AddWithValue("audio_id", audioId);
+                    await using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
+        }
+
+        public async Task<ResultMessage> GetUserPlayHistory(string sessionToken)
+        {
+            CheckConnection();
+
+            try
+            {
+                await using (var cmd = dataSource.CreateCommand(QUERY_GET_USER_PLAY_HISTORY))
+                {
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+                    await using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
+        }
+
         // Our Query strings
         public static readonly string QUERY_USER_LOGIN = "SELECT user_login(@username, @password)";
         public static readonly string QUERY_GET_USER = "SELECT get_user_data(@session_token)";
@@ -700,5 +755,7 @@ namespace OneLastSong.Db
         public static readonly string QUERY_GET_RATING_SCORE_BY_AUDIO_ID = "SELECT get_rating_score_by_audio_id(@audio_id)";
         public static readonly string QUERY_GET_USER_DISPLAY_INFO = "SELECT get_user_display_info(@user_id)";
         public static readonly string QUERY_GET_USER_AUDIO_RATING = "SELECT get_user_audio_rating(@user_id, @audio_id)";
+        public static readonly string QUERY_ADD_USER_PLAY_HISTORY = "SELECT add_user_play_history(@session_token, @audio_id)";
+        public static readonly string QUERY_GET_USER_PLAY_HISTORY = "SELECT get_user_play_history(@session_token)";
     }
 }

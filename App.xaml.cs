@@ -75,6 +75,7 @@ namespace OneLastSong
             services.AddSingleton<LyricDAO>();
             services.AddSingleton<RatingDAO>();
             services.AddSingleton<CommentDAO>();
+            services.AddSingleton<PlayHistoryDAO>();
             // Services
             var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             services.AddSingleton<NavigationService>(provider => new NavigationService(dispatcherQueue));
@@ -83,6 +84,7 @@ namespace OneLastSong
             services.AddSingleton<ListeningService>(provider => new ListeningService(dispatcherQueue));
             services.AddSingleton<PlaylistService>(provider => new PlaylistService(dispatcherQueue));            
             services.AddSingleton<AIService>(provider => new AIService(dispatcherQueue)); // OpenAI
+            services.AddSingleton<PlayHistoryService>(provider => new PlayHistoryService(dispatcherQueue));
 
             return services.BuildServiceProvider();
         }
@@ -97,6 +99,7 @@ namespace OneLastSong
             await NavigationService.Get().OnSubsystemInitialized();
             await SidePanelNavigationService.Get().OnSubsystemInitialized();
             await AIService.Get().OnSubsystemInitialized(); // OpenAI
+            await PlayHistoryService.Get().OnSubsystemInitialized();
         }
 
         private async Task InitializeDatabase()
@@ -114,6 +117,7 @@ namespace OneLastSong
                 ((App)Application.Current).Services.GetService<LyricDAO>().Init();
                 ((App)Application.Current).Services.GetService<RatingDAO>().Init();
                 ((App)Application.Current).Services.GetService<CommentDAO>().Init();
+                ((App)Application.Current).Services.GetService<PlayHistoryDAO>().Init();
             }
             catch (Exception ex)
             {

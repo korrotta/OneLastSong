@@ -6,10 +6,20 @@
     xmlns:local="using:OneLastSong.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:components="using:OneLastSong.Views.Components"
     mc:Ignorable="d"
     Background="Transparent">
 
-    <Grid>
-        <TextBlock Text="Play History" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-    </Grid>
+    <StackPanel Spacing="8" Padding="{StaticResource MediumPadding}">
+        <!--Playing queue-->
+        <TextBlock Text="Recents" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource Body2}" FontWeight="SemiBold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+        <ListView 
+        ItemsSource="{x:Bind ViewModel.PlayHistories, Mode=OneWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <components:SimpleAudioItem Audio="{Binding}" Margin="{StaticResource MediumBottomMargin}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackPanel>
 </Page>
