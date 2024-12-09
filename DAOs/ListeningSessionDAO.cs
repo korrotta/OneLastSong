@@ -35,6 +35,11 @@ namespace OneLastSong.DAOs
             ResultMessage result = await _db.GetListeningSession(sessionToken);
             if (result.Status == ResultMessage.STATUS_OK)
             {
+                if(result.JsonData == null)
+                {
+                    // User doesn't have any listening sessions.
+                    return null;
+                }
                 return JsonSerializer.Deserialize<ListeningSession>(result.JsonData);
             }
             else

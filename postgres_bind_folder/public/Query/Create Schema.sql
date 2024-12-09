@@ -457,7 +457,7 @@ BEGIN
 
     -- Insert the new user
     INSERT INTO users (username, password_hash, avatar_url, profile_quote, description)
-    VALUES (ip_username, get_encrypted_password(ip_password),'', '', '')
+    VALUES (ip_username, get_encrypted_password(ip_password),'https://firebasestorage.googleapis.com/v0/b/onelastsong-5d5a8.appspot.com/o/images%2FUser.png?alt=media&token=ebf3514f-17e3-4360-a2fe-fd9a60cb1802', '', '')
     RETURNING id INTO v_user_id;
 
     -- Return success message
