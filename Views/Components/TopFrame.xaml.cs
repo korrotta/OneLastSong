@@ -1,18 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using OneLastSong.Services;
 using OneLastSong.ViewModels;
+using OneLastSong.Views.Pages;
+using System;
 using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -26,6 +18,7 @@ namespace OneLastSong.Views.Components
     public sealed partial class TopFrame : Page
     {
         public TopFrameViewModel TopFrameViewModel { get; set; } = new TopFrameViewModel();
+        private NavigationService NavigationService { get; set; }
         public String AvatarUrl { get; set; }
 
         public TopFrame()
@@ -33,6 +26,7 @@ namespace OneLastSong.Views.Components
             this.InitializeComponent();
             // Set the DataContext of the page to the ViewModel to allow for user login state data binding
             this.DataContext = TopFrameViewModel;
+            NavigationService = NavigationService.Get();
             this.Loaded += OnLoaded;
         }
 
@@ -47,6 +41,11 @@ namespace OneLastSong.Views.Components
             {
                 TopFrameViewModel?.SearchCommand?.Execute(null);
             }
+        }
+
+        private void ProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(typeof(ProfilePage));
         }
     }
 }
