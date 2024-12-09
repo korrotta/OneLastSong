@@ -2,6 +2,7 @@
 using Npgsql;
 using OneLastSong.Contracts;
 using OneLastSong.Models;
+using OneLastSong.Utils;
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -16,14 +17,22 @@ namespace OneLastSong.Db
 
         public async Task Connect()
         {
-            var dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnectionString);
-            dataSourceBuilder.EnableRecordsAsTuples();
-            dataSource = dataSourceBuilder.Build();
-            _conn = await dataSource.OpenConnectionAsync();
-
-            if (_conn.State != System.Data.ConnectionState.Open)
+            try
             {
-                throw new InvalidOperationException("Connection not established");
+                var dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnectionString);
+                dataSourceBuilder.EnableRecordsAsTuples();
+                dataSource = dataSourceBuilder.Build();
+                _conn = await dataSource.OpenConnectionAsync();
+
+                if (_conn.State != System.Data.ConnectionState.Open)
+                {
+                    throw new InvalidOperationException("Connection not established");
+                }
+            }
+            catch (Exception e)
+            {
+                LogUtils.Error(e.Message);
+                throw new Exception("Connection to database failed!");
             }
         }
 

@@ -25,30 +25,46 @@ namespace OneLastSong.DAOs
 
         public async Task<List<Audio>> GetMostLikeAudios(bool willRefresh = false, int limit = 1000)
         {
-            if (willRefresh || _audios.Count == 0)
+            try
             {
-                ResultMessage result = await _db.GetMostLikeAudios(limit);
-                if (result.Status == ResultMessage.STATUS_OK)
+                if (willRefresh || _audios.Count == 0)
                 {
-                    _audios = JsonSerializer.Deserialize<List<Audio>>(result.JsonData);
+                    ResultMessage result = await _db.GetMostLikeAudios(limit);
+                    if (result.Status == ResultMessage.STATUS_OK)
+                    {
+                        _audios = JsonSerializer.Deserialize<List<Audio>>(result.JsonData);
+                    }
+                    else
+                    {
+                        throw new Exception(result.ErrorMessage);
+                    }
                 }
-                else
-                {
-                    throw new Exception(result.ErrorMessage);
-                }
-            }
 
-            return _audios;
+                return _audios;
+            }
+            catch (Exception e)
+            {
+                LogUtils.Error(e.Message);
+                return new List<Audio>();
+            }
         }
 
         public async Task<Audio> GetRandom()
         {
-            if (_audios.Count == 0)
+            try
             {
-                await GetMostLikeAudios(true);
-            }
+                if (_audios.Count == 0)
+                {
+                    await GetMostLikeAudios(true);
+                }
 
-            return _audios[_random.Next(0, _audios.Count)];
+                return _audios[_random.Next(0, _audios.Count)];
+            }
+            catch (Exception e)
+            {
+                LogUtils.Error(e.Message);
+                return null;
+            }
         }
 
         public static AudioDAO Get()

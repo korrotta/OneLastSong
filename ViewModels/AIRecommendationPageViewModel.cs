@@ -147,7 +147,23 @@ namespace OneLastSong.ViewModels
                 if (!string.IsNullOrEmpty(msg))
                 {
                     AddMessageToConversation($"User: {msg}");
-                    aiService.SendUserMessage(msg);
+
+                    if(!aiService.IsInitialized())
+                    {
+                        SnackbarUtils.ShowSnackbar("AI Service is not initialized", SnackbarType.Error);
+                        AddMessageToConversation($"CoChiller: Sorry, something bad happened!");
+                        return;
+                    }
+
+                    try 
+                    {
+                        aiService.SendUserMessage(msg);
+                    }
+                    catch (Exception e)
+                    {
+                        LogUtils.Error(e.Message);
+                        SnackbarUtils.ShowSnackbar("Sorry, something bad happened", SnackbarType.Error);
+                    }
                 }
                 SuggestedActions.Clear();
             }
