@@ -1,4 +1,5 @@
-﻿using OneLastSong.Models;
+﻿using OneLastSong.DAOs;
+using OneLastSong.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -7,10 +8,10 @@ namespace OneLastSong.ViewModels
     public class ProfileViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-
+        UserDAO userDAO = UserDAO.Get();
         private string _username;
         private string _profilePictureUrl;
-        private int _followerCount;
+        private string _description;
         private ObservableCollection<Playlist> _playlists;
 
         public string Username
@@ -33,24 +34,21 @@ namespace OneLastSong.ViewModels
             }
         }
 
-        public int FollowerCount
+        public string Description
         {
-            get => _followerCount;
+            get => _description;
             set
             {
-                _followerCount = value;
-                OnPropertyChanged(nameof(FollowerCount));
+                _description = value;
+                OnPropertyChanged(nameof(Description));
             }
         }
 
         public ProfileViewModel()
         {
-            // Simulate loading user profile data
-
-            Username = "Tent";
-            ProfilePictureUrl = "https://via.placeholder.com/120";
-            FollowerCount = 1200;
-
+            Username = userDAO.User.Username;
+            ProfilePictureUrl = userDAO.User.AvatarUrl;
+            Description = userDAO.User.Description;
         }
 
         protected void OnPropertyChanged(string propertyName)

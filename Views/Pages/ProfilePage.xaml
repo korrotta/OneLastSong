@@ -30,13 +30,11 @@
                         FontWeight="Bold"
                         Text="{Binding Username}" />
                     <TextBlock
+                        Margin="0,5,0,0"
                         FontSize="18"
                         Opacity="0.7"
-                        Text="{Binding FollowerCount}" />
-                    <TextBlock
-                        FontSize="18"
-                        Opacity="0.7"
-                        Text="Followers" />
+                        Text="{Binding Description}"
+                        TextWrapping="Wrap" />
                 </StackPanel>
             </StackPanel>
         </StackPanel>
