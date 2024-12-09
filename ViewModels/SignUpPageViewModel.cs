@@ -63,6 +63,8 @@ namespace OneLastSong.ViewModels
                 await DialogUtils.ShowDialogAsync(Localizer.Get().GetLocalizedString(LocalizationUtils.INFO_STRING),
                     Localizer.Get().GetLocalizedString(LocalizationUtils.SIGN_UP_SUCCESS_STRING),
                     XamlRoot);
+                await UserDAO.Get().SignInUser(Username, Password);
+                NavigationService.Get().Navigate(typeof(HomePage));
             }
             catch (Exception ex)
             {

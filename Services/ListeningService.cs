@@ -386,6 +386,12 @@ namespace OneLastSong.Services
             {
                 string token = sesstionken;
                 var listeningSession = await _listeningSessionDAO.GetListeningSession(token);
+                
+                if(listeningSession == null)
+                {
+                    return;
+                }
+
                 var audio = await _audioDAO.GetAudioById(listeningSession.AudioId);
 
                 PlayModeData.RetrievePlayingSession(audio, listeningSession.Progress);
