@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="OneLastSong.Views.Pages.ProfilePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:OneLastSong.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <!--  Header Section  -->
+        <StackPanel Padding="20" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal" Spacing="20">
+                <!--  Profile Picture  -->
+                <Border
+                    Width="120"
+                    Height="120"
+                    Background="Gray"
+                    CornerRadius="60">
+                    <Image Source="{Binding ProfilePictureUrl}" Stretch="UniformToFill" />
+                </Border>
+
+                <!--  User Details  -->
+                <StackPanel VerticalAlignment="Center">
+
+                    <TextBlock
+                        FontSize="40"
+                        FontWeight="Bold"
+                        Text="{Binding Username}" />
+                    <TextBlock
+                        FontSize="18"
+                        Opacity="0.7"
+                        Text="{Binding FollowerCount}" />
+                    <TextBlock
+                        FontSize="18"
+                        Opacity="0.7"
+                        Text="Followers" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+
+    </Grid>
+</Page>
