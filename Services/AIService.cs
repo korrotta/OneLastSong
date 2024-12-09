@@ -66,6 +66,7 @@ namespace OneLastSong.Services
             var openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             if (openAiKey == null)
             {
+                return false;
                 // Contact me to get the key
                 throw new InvalidOperationException("OPENAI_API_KEY environment variable is not set");
             }
@@ -207,8 +208,18 @@ namespace OneLastSong.Services
             return _client.GetChatClient("gpt-4o-mini");
         }
 
+        public bool IsInitialized()
+        {
+            return _client != null && _chatClient != null;
+        }
+
         public async void SendUserMessage(string userInput)
         {
+            if(_client == null || _chatClient == null)
+            {
+                throw new InvalidOperationException("AI Service is not initialized");
+            }
+
             var chatClient = _chatClient;
             _history.Add(ChatMessage.CreateUserMessage(userInput));
             // Assemble the chat prompt with a system message and the user's input
