@@ -1,0 +1,51 @@
+﻿# Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# Windows build files
+AppPackages/
+publish/
+
+# NuGet Packages
+*.nupkg
+packages/
+
+# Test-related build artifacts
+TestResults/
+*.testsettings
+
+# User-specific files
+*.rsuser
+*.suo
+*.userprefs
+*.pidb
+
+# Visual Studio Code settings
+.vscode/
+
+# JetBrains Rider settings
+.idea/
+
+# Logs
+*.log
+
+# Crash dumps
+*.dmp
+
+# User-defined local configuration
+appsettings.local.json
+appsettings.Development.json
+
+# Ignore secrets
+secrets.json
+
+# Exclude any cache or temp files
+*.cache
+*.tmp
