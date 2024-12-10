@@ -192,4 +192,70 @@
   <data name="Dont_have_an_account?_Run.Text" xml:space="preserve">
     <value>Don't have an account?</value>
   </data>
+  <data name="Test_String" xml:space="preserve">
+    <value>this is a test EN</value>
+  </data>
+  <data name="Login_String" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="SignInFail_String" xml:space="preserve">
+    <value>Username or password is incorrect!</value>
+  </data>
+  <data name="FeatureNotImplemented_String" xml:space="preserve">
+    <value>This feature is still under development. We are sorry for this inconvenience :(</value>
+  </data>
+  <data name="Info_String" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Error_String" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="SignUpSuccess_String" xml:space="preserve">
+    <value>Signed up successfully!</value>
+  </data>
+  <data name="Warning_String" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Success_String" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="SignInSuccess_String" xml:space="preserve">
+    <value>Signed in successfully!</value>
+  </data>
+  <data name="FormContainingError_String" xml:space="preserve">
+    <value>Form containing error(s).</value>
+  </data>
+  <data name="Account_IconTextButton.Text" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="Profile_IconTextButton.Text" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Logout_IconTextButton.Text" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Items_TextBlock.Text" xml:space="preserve">
+    <value>Item(s)</value>
+  </data>
+  <data name="Discovery_album(s)_TextBlock.Text" xml:space="preserve">
+    <value>Discovery album(s)</value>
+  </data>
+  <data name="Discovery_song(s)_TextBlock.Text" xml:space="preserve">
+    <value>Discovery song(s)</value>
+  </data>
+  <data name="New_Playlist_ContentDialog.Title" xml:space="preserve">
+    <value>New Playlist</value>
+  </data>
+  <data name="Enter_playlist_name_TextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter playlist name</value>
+  </data>
+  <data name="Ok_Button.Content" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="Cancel_Button.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="NotSignedInError_String" xml:space="preserve">
+    <value>You have to sign in to use this feature!</value>
+  </data>
 </root>

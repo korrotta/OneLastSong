@@ -13,6 +13,11 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using OneLastSong.Models;
+using OneLastSong.DAOs;
+using OneLastSong.ViewModels;
+using OneLastSong.Services;
+using OneLastSong.Utils;
+using Microsoft.VisualBasic.Devices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -22,33 +27,46 @@ namespace OneLastSong.Views.Components
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class HomePage : Page
+    public sealed partial class HomePage : Page, IDisposable
     {
+        public HomePageViewModel ViewModel { get; set; } = new HomePageViewModel();
+
         public HomePage()
         {
             this.InitializeComponent();
-            StyledGrid.ItemsSource = GenerateRandomData(10);
-            ExampleList.ItemsSource = GenerateRandomData(10);
+            Loaded += HomePage_Loaded;
         }
 
-        private List<CustomDataObject> GenerateRandomData(int count)
+        private async void HomePage_Loaded(object sender, RoutedEventArgs e)
         {
-            var random = new Random();
-            var dataList = new List<CustomDataObject>();
+            await ViewModel.Load();
+            ViewModel.UpdateView();
+        }
 
-            for (int i = 0; i < count; i++)
+        // On navigated to
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+        }
+
+        public void Dispose()
+        {
+            ViewModel?.Dispose();
+        }
+
+        public void AudioTitleHyperlinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is HyperlinkButton hyperlinkButton)
             {
-                dataList.Add(new CustomDataObject
+                try
                 {
-                    Title = $"Title {i + 1}",
-                    ImageLocation = "/Assets/LikedPlaylist.png",
-                    Views = random.Next(0, 10000).ToString(),
-                    Likes = random.Next(0, 5000).ToString(),
-                    Description = $"Description for item {i + 1}"
-                });
+                    ViewModel.NavigateToAudioDetails(((int)hyperlinkButton.Tag).ToString());
+                }
+                catch (Exception ex)
+                {
+                    // Log exception
+                    SnackbarUtils.ShowSnackbar("There was an error while navigating to audio details", SnackbarType.Error);
+                }
             }
-
-            return dataList;
         }
     }
 }

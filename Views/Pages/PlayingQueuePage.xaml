@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="OneLastSong.Views.Pages.PlayingQueuePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneLastSong.Views.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:components="using:OneLastSong.Views.Components"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <StackPanel Spacing="8" Padding="{StaticResource MediumPadding}">
+        <!--Current playing audio-->
+        <TextBlock 
+            Text="Now Playing" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource Body2}" FontWeight="SemiBold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+        <components:SimpleAudioItem Audio="{x:Bind ViewModel.CurrentAudio, Mode=OneWay}" Margin="{StaticResource MediumLeftMargin}"/>
+
+        <!--Playing queue-->
+        <TextBlock Text="Playing Queue" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource Body2}" FontWeight="SemiBold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+        <ListView 
+            ItemsSource="{x:Bind ViewModel.PlayingQueue, Mode=OneWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <components:SimpleAudioItem Audio="{Binding}" Margin="{StaticResource MediumBottomMargin}" RightTapped="AudioItem_RightTapped"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackPanel>
+</Page>

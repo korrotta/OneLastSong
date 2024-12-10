@@ -9,11 +9,14 @@
 
 # Custom Files
 _cmd/
+.postgres_bind_folder/
+
 
 # User-specific files
 *.rsuser
 *.suo
 *.user
+*.csproj.user
 *.userosscache
 *.sln.docstates
 

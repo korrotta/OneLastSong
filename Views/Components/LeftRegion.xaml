@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
+    x:Name="LeftRegionPage"
     x:Class="OneLastSong.Views.Components.LeftRegion"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -16,7 +17,7 @@
         <!-- DataTemplate used: -->
 
         <DataTemplate x:Key="PlaylistListViewTemplate" x:DataType="models:Playlist">
-            <Grid>
+            <Grid RightTapped="Grid_RightTapped">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -34,7 +35,7 @@
                     HorizontalAlignment="Center"
                     Margin="0,6,6,6">
                     <Image
-                        Source="/Assets/LikedPlaylist.png"
+                        Source="{x:Bind CoverImageUrl}"
                         Stretch="UniformToFill"/>
                 </Border>
                 <TextBlock Grid.Column="1"
@@ -45,7 +46,7 @@
                     Margin="12,6,0,0"/>
                 <TextBlock  Grid.Column="1"
                     Grid.Row="1"
-                    Text="{x:Bind Count}"
+                    Text="{x:Bind ItemCount}"
                     x:Phase="2"
                     Style="{ThemeResource BodySmall1}"
                     Foreground="{ThemeResource TEXT_LIGHT}"
@@ -66,18 +67,20 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <FontIcon Glyph="&#xE8F1;" FontSize="{StaticResource SubheaderTextSize}" Foreground="{ThemeResource TEXT_LIGHT}" Grid.Column="0" Margin="0 0 16 0" />
-            <TextBlock Style="{StaticResource Body1}" Foreground="{ThemeResource TEXT_LIGHT}" l:Uids.Uid="Your_library_TextBlock" Grid.Column="1"/>
+            <TextBlock l:Uids.Uid="Your_library_TextBlock" Grid.Column="1" Style="{StaticResource Body1}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+            
+            <!-- Create new playlist -->
             <Button
                 Grid.Column="2" Margin="{StaticResource MediumRightMargin}"
                 Style="{StaticResource IconButton}"
-                >
+                Command="{x:Bind ViewModel.CreateNewPlaylistCommand}">
                 <FontIcon Glyph="&#xE710;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
             </Button>
 
+            <!-- Sort -->
             <Button
                 Grid.Column="3"
-                Style="{StaticResource IconButton}"
-                >
+                Style="{StaticResource IconButton}">
                 <FontIcon Glyph="&#xE89F;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
             </Button>
         </Grid>
@@ -98,7 +101,7 @@
                 Style="{StaticResource IconButton}"
                 Margin="{StaticResource MediumRightMargin}">
                 <Border Background="{ThemeResource BG_LIGHT_TERTIARY}" Style="{StaticResource Badge}">
-                    <TextBlock Style="{StaticResource BodySmall1}" TextAlignment="Center">Podcasts</TextBlock>
+                    <TextBlock Style="{StaticResource BodySmall1}" TextAlignment="Center">Albums</TextBlock>
                 </Border>
             </Button>
 
@@ -147,7 +150,7 @@
 
         <ScrollViewer>
             <ListView
-                x:Name="ExampleList"
+                ItemsSource="{x:Bind ViewModel.PlaylistList, Mode=OneWay}"
                 SelectionMode="Single"
                 ItemTemplate="{StaticResource PlaylistListViewTemplate}"/>
         </ScrollViewer>

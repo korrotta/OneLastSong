@@ -1,7 +1,9 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using OneLastSong.Contracts;
+using OneLastSong.DAOs;
 using OneLastSong.Models;
 using OneLastSong.Services;
 using OneLastSong.Utils;
@@ -14,20 +16,47 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using WinUI3Localizer;
 
 namespace OneLastSong.ViewModels
 {
-
+    [Serializable]
     public class TopFrameViewModel : INotifyPropertyChanged, INavChangeNotifier, IAuthChangeNotify
     {
         private bool _isLanguageComboBoxInitialized = false;
         private bool _isThemeComboBoxInitialized = false;
         public String Language { get; set; }
         public String Theme { get; set; }
+        private string _searchQuery = "";
         private bool _isUserLoggedIn;
         public NavigationService NavigationService { get; set; }
         public User User { get; private set; } = new User();
+        public ICommand NavigateToSignUpPageCommand { get; }
+        public ICommand NavigateToSignInPageCommand { get; }
+        public ICommand LogoutCommand { get; }
+        public ICommand SearchCommand { get; }
+        public ICommand GoToAIPageCommand { get; }
+
+        public TopFrameViewModel()
+        {
+            Language = Localizer.Get().GetCurrentLanguage();
+            Theme = ThemeUtils.GetStoredLocalTheme();
+            IsUserLoggedIn = false;
+            NavigationService = NavigationService.Get();
+
+            GoBackButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_DISABLED);
+            GoForwardButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_DISABLED);
+
+            NavigationService.RegisterNavChangeNotifier(this);
+            AuthService.Get().RegisterAuthChangeNotify(this);
+
+            NavigateToSignUpPageCommand = new RelayCommand(()=>Navigate(typeof(SignUpPage)));
+            NavigateToSignInPageCommand = new RelayCommand(() => Navigate(typeof(SignInPage)));
+            LogoutCommand = new RelayCommand(LogOut);
+            SearchCommand = new RelayCommand(Search);
+            GoToAIPageCommand = new RelayCommand(() => Navigate(typeof(AIRecommendationPage)));
+        }
 
         public bool IsUserLoggedIn
         {
@@ -101,30 +130,8 @@ namespace OneLastSong.ViewModels
 
         public XamlRoot XamlRoot { get; set; }
 
-        public TopFrameViewModel()
-        {
-            Language = Localizer.Get().GetCurrentLanguage();
-            Theme = ThemeUtils.GetStoredLocalTheme();
-            IsUserLoggedIn = false;
-            NavigationService = NavigationService.Get();
-
-            GoBackButtonColor = GetBrush("TEXT_DISABLED");
-            GoForwardButtonColor = GetBrush("TEXT_DISABLED");
-
-            NavigationService.RegisterNavChangeNotifier(this);
-            AuthService.Get().RegisterAuthChangeNotify(this);
-        }
-
-        private SolidColorBrush GetBrush(string color)
-        {
-            if (appRes.TryGetValue(color, out object brush))
-            {
-                return (SolidColorBrush)brush;
-            }
-            return null;
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler<string> OnSearchEventHandler;
 
         public void langComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -161,7 +168,7 @@ namespace OneLastSong.ViewModels
                 {
                     string selectedTheme = comboBoxItem.Tag.ToString();
                     LogUtils.Debug($"Selected Theme: {selectedTheme}");
-                    ThemeUtils.ChangeTheme(selectedTheme, true);
+                    ThemeUtils.ChangeTheme(selectedTheme);
 
 
                     if (XamlRoot != null)
@@ -199,20 +206,20 @@ namespace OneLastSong.ViewModels
 
             if (CanGoBack)
             {
-                GoBackButtonColor = GetBrush("TEXT_PRIMARY");
+                GoBackButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_PRIMARY);
             }
             else
             {
-                GoBackButtonColor = GetBrush("TEXT_DISABLED");
+                GoBackButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_DISABLED);
             }
 
             if (CanGoForward)
             {
-                GoForwardButtonColor = GetBrush("TEXT_PRIMARY");
+                GoForwardButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_PRIMARY);
             }
             else
             {
-                GoForwardButtonColor = GetBrush("TEXT_DISABLED");
+                GoForwardButtonColor = ThemeUtils.GetBrush(ThemeUtils.TEXT_DISABLED);
             }
         }
 
@@ -228,20 +235,60 @@ namespace OneLastSong.ViewModels
             AuthService.Get().UnregisterAuthChangeNotify(this);
         }
 
-        public async void OnUserChange(User user)
+        ~TopFrameViewModel()
+        {
+            Dispose();
+        }
+
+        public void OnUserChange(User user, string token)
         {
             if(user == null)
             {
                 IsUserLoggedIn = false;
-                NavigationService.Navigate(typeof(SignInPage));
                 return;
             }
 
             User = user;
-            IsUserLoggedIn = user != null;
-            NavigationService.Navigate(typeof(HomePage));
+            IsUserLoggedIn = true;
+        }
 
-            await DialogUtils.ShowDialogAsync("Welcome", $"Welcome {user.Username}!", XamlRoot);
+        public void LogOut()
+        {
+            UserDAO.Get().SignOut();
+        }
+
+        public string SearchQuery
+        {
+            get => _searchQuery;
+            set
+            {
+                if (_searchQuery != value)
+                {
+                    _searchQuery = value;
+                    OnPropertyChanged(nameof(SearchQuery));
+                }
+            }
+        }
+
+        public void Search()
+        {
+            OnSearchEventHandler?.Invoke(this, SearchQuery);
+        }
+
+        public void SubscribeToSearchEvent(EventHandler<string> handler)
+        {
+            OnSearchEventHandler += handler;
+        }
+
+        public void UnsubscribeFromSearchEvent(EventHandler<string> handler)
+        {
+            OnSearchEventHandler -= handler;
+        }
+
+        public void OnSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SearchQuery = (sender as TextBox).Text;
+            SearchQuery = SearchQuery.Trim();
         }
     }
 }

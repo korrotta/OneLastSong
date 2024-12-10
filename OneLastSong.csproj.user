@@ -1,6 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup />
+  <PropertyGroup>
+    <Source>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</Source>
+    <SmallTileSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</SmallTileSource>
+    <MediumTileSource>I:\Repos\WinUI\OneLastSong\Assets\App44x44Logo.scale-400.png</MediumTileSource>
+    <WideTileSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</WideTileSource>
+    <LargeTileSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</LargeTileSource>
+    <AppIconSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</AppIconSource>
+    <SplashScreenSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</SplashScreenSource>
+    <PackageLogoSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</PackageLogoSource>
+    <BadgeLogoSource>I:\Repos\WinUI\OneLastSong\Assets\AppLogo.png</BadgeLogoSource>
+  </PropertyGroup>
   <ItemGroup>
     <None Update="App.xaml">
       <SubType>Designer</SubType>
@@ -11,13 +21,61 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\Pages\ProfilePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\AudioPlayButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\AudioExtraControlsFlyout.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\AudioExtraControlsButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\AudioItemInQueueMenuFlyout.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\SimpleAudioItem.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\PlayingQueuePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\PlayingQueueWithListeningHistoryPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Dialogs\RatingAudioDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\AudioDetailsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Dialogs\SimpleThemedConfirmDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\AddToPlaylistMenuFlyout.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\Chip.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Dialogs\EditPlaylistDetailsDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\PlaylistMenuFlyout.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Dialogs\SimpleMessageThemedDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Dialogs\CreateNewPlaylistDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Components\IconTextButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Components\BottomFrame.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\ContentFrame.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\SignUpPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Components\TopFrame.xaml">
@@ -48,9 +106,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Styles\Texts.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Themes\LightMode.xaml">

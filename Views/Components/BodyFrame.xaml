@@ -8,7 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="Transparent">
-    
+
+    <Page.Resources>
+        <LinearGradientBrush x:Key="ContentFrameGradientBrush" StartPoint="0.5,0" EndPoint="0.5,0.2">
+            <GradientStop Color="{ThemeResource cBG_SECONDARY}" Offset="0"/>
+            <GradientStop Color="{ThemeResource cBG_TERTIARY}" Offset="1"/>
+        </LinearGradientBrush>
+    </Page.Resources>
+
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <!-- Define your body content here -->
         <Grid.ColumnDefinitions>
@@ -18,7 +25,7 @@
         </Grid.ColumnDefinitions>
 
         <Frame x:Name="LefRegion" Grid.Column="0" Margin="{StaticResource MediumLeftMargin}" Background="{ThemeResource BG_TERTIARY}" CornerRadius="13"/>
-        <Frame x:Name="ContentFrame" Grid.Column="1" Margin="{StaticResource MediumHorizontalMargin}" Background="{ThemeResource BG_TERTIARY}" CornerRadius="13"/>
+        <Frame x:Name="ContentFrame" Grid.Column="1" Margin="{StaticResource MediumHorizontalMargin}" Background="{StaticResource ContentFrameGradientBrush}" CornerRadius="13"/>
         <Frame x:Name="RightRegion" Grid.Column="2" Margin="{StaticResource MediumRightMargin}" Background="{ThemeResource BG_TERTIARY}" CornerRadius="13"/>
 
         <VisualStateManager.VisualStateGroups>
@@ -40,8 +47,7 @@
                     <VisualState.Setters>
                         <Setter Target="FirstColumn.Width" Value="20*"/>
                         <Setter Target="FirstColumn.MaxWidth" Value="288"/>
-                        <Setter Target="ThirdColumn.Width" Value="0"/>
-                        <Setter Target="RightRegion.Visibility" Value="Collapsed"/>
+                        <Setter Target="ThirdColumn.MaxWidth" Value="288"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

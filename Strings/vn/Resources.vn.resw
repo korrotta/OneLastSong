@@ -192,4 +192,70 @@
   <data name="Dont_have_an_account?_Run.Text" xml:space="preserve">
     <value>Bạn chưa có tài khoản?</value>
   </data>
+  <data name="Test_String" xml:space="preserve">
+    <value>Đây là test VN</value>
+  </data>
+  <data name="Login_String" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="SignInFail_String" xml:space="preserve">
+    <value>Tên đăng nhập hoặc mật khẩu không đúng!</value>
+  </data>
+  <data name="FeatureNotImplemented_String" xml:space="preserve">
+    <value>Tính năng này vẫn đang được phát triển. Chúng tôi xin lỗi vì sư bất tiện này :(</value>
+  </data>
+  <data name="Info_String" xml:space="preserve">
+    <value>Thông tin</value>
+  </data>
+  <data name="Error_String" xml:space="preserve">
+    <value>Lỗi</value>
+  </data>
+  <data name="SignUpSuccess_String" xml:space="preserve">
+    <value>Đăng ký thành công!</value>
+  </data>
+  <data name="Warning_String" xml:space="preserve">
+    <value>Cảnh báo</value>
+  </data>
+  <data name="Success_String" xml:space="preserve">
+    <value>Thành công</value>
+  </data>
+  <data name="SignInSuccess_String" xml:space="preserve">
+    <value>Đăng nhập thành công!</value>
+  </data>
+  <data name="FormContainingError_String" xml:space="preserve">
+    <value>Form chứa lỗi!</value>
+  </data>
+  <data name="Account_IconTextButton.Text" xml:space="preserve">
+    <value>Tài khoản</value>
+  </data>
+  <data name="Profile_IconTextButton.Text" xml:space="preserve">
+    <value>Thông tin cá nhân</value>
+  </data>
+  <data name="Logout_IconTextButton.Text" xml:space="preserve">
+    <value>Đăng xuất</value>
+  </data>
+  <data name="Items_TextBlock.Text" xml:space="preserve">
+    <value>Bài</value>
+  </data>
+  <data name="Discovery_album(s)_TextBlock.Text" xml:space="preserve">
+    <value>Khám phá album</value>
+  </data>
+  <data name="Discovery_song(s)_TextBlock.Text" xml:space="preserve">
+    <value>Khám phá bài hát</value>
+  </data>
+  <data name="New_Playlist_ContentDialog.Title" xml:space="preserve">
+    <value>Tạo Playlist mới</value>
+  </data>
+  <data name="Enter_playlist_name_TextBox.PlaceholderText" xml:space="preserve">
+    <value>Nhập vào tên playlist</value>
+  </data>
+  <data name="Ok_Button.Content" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="Cancel_Button.Content" xml:space="preserve">
+    <value>Bỏ</value>
+  </data>
+  <data name="NotSignedInError_String" xml:space="preserve">
+    <value>Bạn cần đăng nhập để sử dụng chức năng này!</value>
+  </data>
 </root>

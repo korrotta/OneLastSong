@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <x:String x:Key="AppName">OneLastSong</x:String>
+    <x:String x:Key="AppVersion">Alpha v1.0.0</x:String>
+    <x:String x:Key="DefaultPlaylistCover">https://firebasestorage.googleapis.com/v0/b/onelastsong-5d5a8.appspot.com/o/images%2FPlaylistCoverImage.png?alt=media&amp;token=8177598f-a85a-4d5b-8412-451233fb4877</x:String>
+</ResourceDictionary>

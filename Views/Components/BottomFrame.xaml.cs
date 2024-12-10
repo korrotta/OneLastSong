@@ -1,4 +1,10 @@
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Input;
+using OneLastSong.Utils;
 using OneLastSong.ViewModels;
 using System;
 
@@ -7,46 +13,30 @@ namespace OneLastSong.Views.Components
     public sealed partial class BottomFrame : Page
     {
         public BottomFrameViewModel ViewModel { get; set; }
+        DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
         public BottomFrame()
         {
             this.InitializeComponent();
-            this.ViewModel = new BottomFrameViewModel();
+            ViewModel = new BottomFrameViewModel(dispatcherQueue, ProgressBar);
             this.DataContext = this.ViewModel;
-
-            ViewModel.LoadSong(new Uri("https://vgmsite.com/soundtracks/minecraft/kvptjmornx/1-18.%20Sweden.mp3"));
+            this.Loaded += BottomFrame_Loaded;            
         }
 
-        private void PlaybackButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void BottomFrame_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.PlayPause();
-            PlaybackIcon.Glyph = ViewModel.IsPlaying ? "\uE769" : "\uE768";
+            
         }
 
-        private void RepeatButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void Slider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
         {
-
+            var slider = sender as Slider;
+            ViewModel.OnSliderValueChanged((int)slider.Value);
         }
 
-        private void ProgressBar_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void SongTitleHyperlink_Clicked(Hyperlink sender, HyperlinkClickEventArgs args)
         {
-            ProgressBar.Maximum = ViewModel.TotalTime.TotalSeconds;
-        }
-
-        private void ProgressBar_Moved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
-        {
-
-        }
-
-
-        private void VolumeSlider_ValueChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
-        {
-            ViewModel.SetVolume(e.NewValue / 100);
-        }
-
-        private void Fullscreen_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-        {
-
+            ViewModel.OnSongTitleClicked();
         }
     }
 }

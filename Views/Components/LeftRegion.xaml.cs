@@ -16,6 +16,7 @@ using OneLastSong.Models;
 using OneLastSong.DAOs;
 using Microsoft.Extensions.DependencyInjection;
 using OneLastSong.Utils;
+using OneLastSong.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,30 +26,34 @@ namespace OneLastSong.Views.Components
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LeftRegion : Page
+    public sealed partial class LeftRegion : Page, IDisposable
     {
+        public LeftFrameViewModel ViewModel { get; set; } = new LeftFrameViewModel();
+
         public LeftRegion()
         {
             this.InitializeComponent();
-            ExampleList.ItemsSource = GenerateRandomPlaylists(5);
+            this.DataContext = ViewModel;
+            Loaded += LeftRegion_Loaded;
         }
 
-        private List<Playlist> GenerateRandomPlaylists(int count)
+        private void LeftRegion_Loaded(object sender, RoutedEventArgs e)
         {
-            var random = new Random();
-            var playlists = new List<Playlist>();
+            ViewModel.XamlRoot = XamlRoot;
+            ViewModel.InitPlaylist();
+        }
 
-            for (int i = 0; i < count; i++)
-            {
-                playlists.Add(new Playlist
-                {
-                    Name = $"Playlist {i + 1}",
-                    Count = random.Next(1, 100),
-                    Type = random.Next(0, 2) == 0 ? "Music" : "Video"
-                });
-            }
+        private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var grid = sender as Grid;
+            var playlist = grid.DataContext as Playlist;
+            var viewModel = DataContext as LeftFrameViewModel;
+            ViewModel?.OpenPlaylistOptionsMenu(sender, e, playlist);
+        }
 
-            return playlists;
+        public void Dispose()
+        {
+            ViewModel?.Dispose();
         }
     }
 

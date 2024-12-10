@@ -6,7 +6,43 @@
     xmlns:local="using:OneLastSong"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:OneLastSong.UI"
+    Title="OneLastSong"
     mc:Ignorable="d">
 
-    <Frame x:Name="MainFrame"/>
+    <Grid>
+        <Frame x:Name="MainFrame"/>
+        
+        <ListView x:Name="SnackbarListView" VerticalAlignment="Top" HorizontalAlignment="Center"
+              ItemsSource="{x:Bind SnackbarMessages}" Margin="{StaticResource MediumTopMargin}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="ui:SnackbarMessage">
+                    <Border Background="{Binding Background}" Margin="0,0,0,10" Padding="10" CornerRadius="5">
+                        <Grid Width="400">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <FontIcon Glyph="{Binding Icon}" Foreground="{ThemeResource TEXT_PRIMARY}" Margin="0,0,10,0" Grid.Column="0"/>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="{Binding Title}" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Foreground="{ThemeResource TEXT_LIGHT}"/>
+                            </StackPanel>
+                            <Button Style="{StaticResource IconButton}" Grid.Column="2" Click="CloseSnackbar_Click" Tag="{Binding}">
+                                <FontIcon Glyph="&#xE894;" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition/>
+                </TransitionCollection>
+            </ListView.ItemContainerTransitions>
+        </ListView>
+
+    </Grid>
 </Window>

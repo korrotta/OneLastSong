@@ -8,17 +8,24 @@ using Microsoft.UI.Xaml;
 using OneLastSong.Views.Components;
 using Microsoft.UI.Xaml.Media.Animation;
 using OneLastSong.Contracts;
+using Microsoft.UI.Dispatching;
+using OneLastSong.Views;
 
 namespace OneLastSong.Services
 {
-    public class NavigationService
+    public class NavigationService : IDisposable, INotifySubsytemStateChanged
     {
         private Frame _frame;
         private Stack<(Type PageType, object Parameter)> _backStack = new();
         private Stack<(Type PageType, object Parameter)> _forwardStack = new();
+        private object _currentParameter = null;
         private List<INavChangeNotifier> navChangeNotifiers = new();
+        private DispatcherQueue _eventHandler;
 
-        public NavigationService() { }
+        public NavigationService(DispatcherQueue dispatcherQueue)
+        {
+            _eventHandler = dispatcherQueue;
+        }
 
         public void Initialize(Frame frame)
         {
@@ -30,11 +37,21 @@ namespace OneLastSong.Services
 
         public void RegisterNavChangeNotifier(INavChangeNotifier navChangeNotifier)
         {
+            if (navChangeNotifiers.Contains(navChangeNotifier))
+            {
+                return;
+            }
+
             navChangeNotifiers.Add(navChangeNotifier);
         }
 
         public void UnregisterNavChangeNotifier(INavChangeNotifier navChangeNotifier)
         {
+            if (!navChangeNotifiers.Contains(navChangeNotifier))
+            {
+                return;
+            }
+
             navChangeNotifiers.Remove(navChangeNotifier);
         }
 
@@ -42,7 +59,21 @@ namespace OneLastSong.Services
         {
             if (CanGoBack)
             {
-                var currentEntry = (_frame.CurrentSourcePageType, _frame.GetNavigationState());
+                object currentState = _frame.GetNavigationState();
+
+                {
+                    if (_frame.Content is INavigationStateSavable savable)
+                    {
+                        currentState = savable.GetCurrentParameterState();
+                    }
+
+                    if (_frame.Content is IDisposable)
+                    {
+                        ((IDisposable)_frame.Content).Dispose();
+                    }
+                }
+
+                var currentEntry = (_frame.CurrentSourcePageType, currentState);
                 _forwardStack.Push(currentEntry);
 
                 var (pageType, parameter) = _backStack.Pop();
@@ -56,7 +87,17 @@ namespace OneLastSong.Services
                         }
                     }
                 };
+                _currentParameter = parameter;
                 _frame.Navigate(pageType, parameter);
+
+                // Restore state
+                {
+                    if (_frame.Content is INavigationStateSavable savable)
+                    {
+                        savable.OnStateLoad(parameter);
+                    }
+                }
+
                 NotifyNavChangeNotifiers();
             }
         }
@@ -65,7 +106,21 @@ namespace OneLastSong.Services
         {
             if (CanGoForward)
             {
-                var currentEntry = (_frame.CurrentSourcePageType, _frame.GetNavigationState());
+                object currentState = _frame.GetNavigationState();
+
+                {
+                    if (_frame.Content is INavigationStateSavable savable)
+                    {
+                        currentState = savable.GetCurrentParameterState();
+                    }
+
+                    if (_frame.Content is IDisposable)
+                    {
+                        ((IDisposable)_frame.Content).Dispose();
+                    }
+                }
+
+                var currentEntry = (_frame.CurrentSourcePageType, currentState);
                 _backStack.Push(currentEntry);
 
                 var (pageType, parameter) = _forwardStack.Pop();
@@ -79,22 +134,46 @@ namespace OneLastSong.Services
                         }
                     }
                 };
+                _currentParameter = parameter;
                 _frame.Navigate(pageType, parameter);
+
+                // Restore state
+                {
+                    if (_frame.Content is INavigationStateSavable savable)
+                    {
+                        savable.OnStateLoad(parameter);
+                    }
+                }
+
                 NotifyNavChangeNotifiers();
             }
         }
 
-        public void Navigate(Type pageType, object parameter = null)
+        public Page Navigate(Type pageType, object parameter = null, bool forcedNew = false)
         {
             // if requested page is the same as current page, do nothing
-            if (_frame.CurrentSourcePageType == pageType)
+            if (_frame.CurrentSourcePageType == pageType && !forcedNew)
             {
-                return;
+                return _frame.Content as Page;
             }
 
             if (_frame.CurrentSourcePageType != null)
             {
-                var currentEntry = (_frame.CurrentSourcePageType, _frame.GetNavigationState());
+                object currentState = _frame.GetNavigationState();
+
+                {
+                    if (_frame.Content is INavigationStateSavable savable)
+                    {
+                        currentState = savable.GetCurrentParameterState();
+                    }
+
+                    if (_frame.Content is IDisposable)
+                    {
+                        ((IDisposable)_frame.Content).Dispose();
+                    }
+                }
+
+                var currentEntry = (_frame.CurrentSourcePageType, currentState);
                 _backStack.Push(currentEntry);
                 _forwardStack.Clear();
             }
@@ -109,8 +188,44 @@ namespace OneLastSong.Services
                     }
                 }
             };
+            _currentParameter = parameter;
             _frame.Navigate(pageType, parameter);
 
+            // Load state
+            {
+                if (_frame.Content is INavigationStateSavable savable)
+                {
+                    savable.OnStateLoad(parameter);
+                }
+            }
+
+            NotifyNavChangeNotifiers();
+
+            // Return the instance of the navigated-to page
+            return _frame.Content as Page;
+        }
+
+        public void NavigateOrReloadOnParameterChanged(Type pageType, object parameter)
+        {
+            if (_frame.CurrentSourcePageType == pageType)
+            {
+                if (_frame.Content is INavigationStateSavable savable && !_currentParameter.Equals(parameter))
+                {
+                    // update current page parameter
+                    _currentParameter = parameter;
+                    savable.OnStateLoad(parameter);
+                }
+            }
+            else
+            {
+                Navigate(pageType, parameter);
+            }
+        }
+
+        public void ClearHistory()
+        {
+            _backStack.Clear();
+            _forwardStack.Clear();
             NotifyNavChangeNotifiers();
         }
 
@@ -118,13 +233,48 @@ namespace OneLastSong.Services
         {
             foreach (var navChangeNotifier in navChangeNotifiers)
             {
-                navChangeNotifier.OnNavHistoryChanged(this);
+                _eventHandler.TryEnqueue(() =>
+                {
+                    navChangeNotifier.OnNavHistoryChanged(this);
+                });
             }
         }
 
         public static NavigationService Get()
         {
             return (NavigationService)((App)Application.Current).Services.GetService(typeof(NavigationService));
+        }
+
+        public async Task<bool> OnSubsystemInitialized()
+        {
+            NotifyNavChangeNotifiers();
+            await Task.CompletedTask;
+            return true;
+        }
+
+        public void Dispose()
+        {
+
+        }
+
+        internal Page GetCurrentPage()
+        {
+            return _frame.Content as Page;
+        }
+
+        public object GetCurrentParameter()
+        {
+            return _currentParameter;
+        }
+
+        public bool IsAsPageType(Type pageType)
+        {
+            if(_frame == null)
+            {
+                return false;
+            }
+
+            return _frame.CurrentSourcePageType == pageType;
         }
     }
 }

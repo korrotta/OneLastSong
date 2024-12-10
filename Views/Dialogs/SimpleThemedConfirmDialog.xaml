@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="OneLastSong.Views.Dialogs.SimpleThemedConfirmDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneLastSong.Views.Dialogs"
+    xmlns:l="using:WinUI3Localizer"
+    PrimaryButtonText="Ok"
+    SecondaryButtonText="Cancel"
+    Title="Confirm this action"
+    Background="{ThemeResource BG_PRIMARY}"
+    Foreground="{ThemeResource TEXT_PRIMARY}"
+    CornerRadius="13">
+
+    <StackPanel>
+        <TextBlock Text="{x:Bind ConfirmMessage, Mode=TwoWay}" Style="{StaticResource Body2}"
+                   Foreground="{ThemeResource TEXT_PRIMARY}"
+                   />
+    </StackPanel>
+
+</ContentDialog>
