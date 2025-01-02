@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using OneLastSong.Views.Dialogs;
 using OneLastSong.Services;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using OneLastSong.Views.Pages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,6 +34,7 @@ namespace OneLastSong.Views.Components
         private PlaylistDAO _playlistDAO;
         private UserDAO _userDAO;
         private ListeningService _listeningService;
+        private NavigationService _navigationService;
 
         public PlaylistMenuFlyoutViewModel ViewModel { get; set; } = new PlaylistMenuFlyoutViewModel();
 
@@ -46,6 +48,7 @@ namespace OneLastSong.Views.Components
             _playlistDAO = PlaylistDAO.Get();
             _userDAO = UserDAO.Get();
             _listeningService = ListeningService.Get();
+            _navigationService = NavigationService.Get();
         }
 
         private void EditPlaylistDetails_Click(object sender, RoutedEventArgs e)
@@ -118,6 +121,24 @@ namespace OneLastSong.Views.Components
 
                 _listeningService.PlayPlaylist(_playlist);
                 SnackbarUtils.ShowSnackbar("Playlist is now playing", SnackbarType.Success);
+            }
+            catch (Exception ex)
+            {
+                SnackbarUtils.ShowSnackbar(ex.Message, SnackbarType.Error);
+            }
+        }
+
+        private void SongsButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (_playlist.Audios == null || _playlist.Audios.Length == 0)
+                {
+                    SnackbarUtils.ShowSnackbar("The playlist is empty", SnackbarType.Warning);
+                    return;
+                }
+                // Navigate to the playlist songs page
+                _navigationService.Navigate(typeof(PlaylistSongsPage), _playlist.PlaylistId, true);
             }
             catch (Exception ex)
             {

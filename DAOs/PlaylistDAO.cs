@@ -52,6 +52,19 @@ namespace OneLastSong.DAOs
             return _playlistList;
         }
 
+        public async Task<List<Audio>> GetAudiosInPlaylist(string sessionToken, int playlistId)
+        {
+            ResultMessage result = await _db.GetAudiosInPlaylist(sessionToken, playlistId);
+            if (result.Status == ResultMessage.STATUS_OK)
+            {
+                return JsonSerializer.Deserialize<List<Audio>>(result.JsonData);
+            }
+            else
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+        }
+
         public async Task<Playlist> AddUserPlaylist(string sessionToken, string playlistName, string coverImageUrl = null)
         {
             if(coverImageUrl == null)

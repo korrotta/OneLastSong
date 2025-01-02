@@ -1464,33 +1464,6 @@ BEGIN
 END;
 $$;
 
--- create function to comment on an audio
-CREATE OR REPLACE FUNCTION comment_audio(ip_session_token VARCHAR, ip_audio_id INTEGER, ip_comment TEXT)
-RETURNS JSONB
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-DECLARE
-    v_user_id INTEGER;
-    v_audio_id INTEGER;
-BEGIN
-    -- Validate the session token and get the user ID
-    v_user_id := validate_session(ip_session_token);
-
-    -- If the session is valid, insert the comment
-    IF v_user_id IS NOT NULL THEN
-        INSERT INTO comments (user_id, audio_id, comment_text, commented_at)
-        VALUES (v_user_id, ip_audio_id, ip_comment, CURRENT_TIMESTAMP);
-
-        -- Return the success message
-        RETURN get_result_message(0, '', '{}'::JSONB);
-    ELSE
-        -- If the session is not valid, return an error message
-        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
-    END IF;
-END;
-$$;
-
 -- create function to update user profile
 CREATE OR REPLACE FUNCTION update_user_profile(ip_session_token VARCHAR, ip_avatar_url VARCHAR, ip_profile_quote TEXT, ip_description TEXT)
 RETURNS JSONB
@@ -1519,8 +1492,9 @@ BEGIN
     END IF;
 END;
 $$;
---create function to get all user's playlists
-CREATE OR REPLACE FUNCTION get_all_user_playlists(ip_session_token VARCHAR)
+
+-- get audios in a playlist, input token and playlist id
+CREATE OR REPLACE FUNCTION get_audios_in_playlist(ip_session_token VARCHAR, ip_playlist_id INTEGER)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -1532,28 +1506,62 @@ BEGIN
     -- Validate the session token and get the user ID
     v_user_id := validate_session(ip_session_token);
 
-    -- If the session is valid, retrieve the user's playlists
-    IF v_user_id IS NOT NULL THEN
-        SELECT json_agg(json_build_object(
-            'PlaylistId', p.id,
-            'Name', p.name,
-            'CoverImageUrl', p.cover_image_url,
-            'ItemCount', (
-                SELECT COUNT(*)
-                FROM playlist_audios pa
-                WHERE pa.playlist_id = p.id
-            ),
-            'CreatedAt', p.created_at
-        )) INTO v_json_data
+    -- Check if the playlist belongs to the user
+    IF NOT EXISTS (
+        SELECT 1
         FROM playlists p
-        WHERE p.user_id = v_user_id;
-
-        -- Return the user's playlists
-        RETURN get_result_message(0, '', v_json_data);
-    ELSE
-        -- If the session is not valid, return an error message
-        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+        WHERE p.id = ip_playlist_id AND p.user_id = v_user_id
+    ) THEN
+        -- If the playlist does not belong to the user, return an error message
+        RETURN get_result_message(1, 'Playlist does not belong to the user', '{}'::JSONB);
     END IF;
+
+    -- If the session is valid, retrieve the audios in the playlist
+IF v_user_id IS NOT NULL THEN
+    WITH audio_genres AS (
+        SELECT 
+            a.id AS audio_id,
+            ARRAY_AGG(g.name) AS genres
+        FROM audios a
+        LEFT JOIN audios_genres ag ON a.id = ag.audio_id
+        LEFT JOIN genres g ON ag.genre_id = g.id
+        GROUP BY a.id
+    )
+    SELECT json_agg(json_build_object(
+        'AudioId', a.id,
+        'Title', a.title,
+        'Artist', a.artist,
+        'AlbumId', a.album_id,
+        'CategoryId', a.category_id,
+        'Duration', a.duration,
+        'Url', a.url,
+        'CoverImageUrl', a.cover_image_url,
+        'AuthorId', a.author_id,
+        'CreatedAt', a.created_at,
+        'Description', a.description,
+        'Country', c.name,
+        'CategoryName', cat.name,
+        'Genres', ag.genres,
+        'Likes', (
+            SELECT COUNT(*)
+            FROM likes l
+            WHERE l.audio_id = a.id
+        )
+    )) INTO v_json_data
+    FROM audios a
+    JOIN playlist_audios pa ON a.id = pa.audio_id
+    LEFT JOIN countries c ON a.country_id = c.id
+    LEFT JOIN categories cat ON a.category_id = cat.id
+    LEFT JOIN audio_genres ag ON a.id = ag.audio_id
+    WHERE pa.playlist_id = ip_playlist_id
+    GROUP BY a.id, c.name, cat.name, ag.genres;
+
+    -- Return the audios in the playlist
+    RETURN get_result_message(0, '', v_json_data);
+ELSE
+    -- If the session is not valid, return an error message
+    RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+END IF;
 END;
 $$;
 
@@ -1600,7 +1608,9 @@ GRANT EXECUTE ON FUNCTION get_user_display_info(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_user_audio_rating(INT, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION add_user_play_history(VARCHAR, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_user_play_history(VARCHAR) TO restricted_user;
-
+GRANT EXECUTE ON FUNCTION like_audio(VARCHAR, INT, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION update_user_profile(VARCHAR, VARCHAR, TEXT, TEXT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION get_audios_in_playlist(VARCHAR, INT) TO restricted_user;
 
 SELECT user_login('test', 'test');
 SELECT validate_session('7d683b5d-6c62-474f-b666-7df5017edabc');
