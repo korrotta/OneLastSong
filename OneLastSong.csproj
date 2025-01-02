@@ -58,6 +58,7 @@
     <None Remove="Views\Pages\AudioDetailsPage.xaml" />
     <None Remove="Views\Pages\PlayingQueuePage.xaml" />
     <None Remove="Views\Pages\PlayingQueueWithListeningHistoryPage.xaml" />
+    <None Remove="Views\Pages\ProfilePage.xaml" />
     <None Remove="Views\Pages\PlaylistSongsPage.xaml" />
     <None Remove="Views\SearchPage.xaml" />
     <None Remove="Views\SignUpPage.xaml" />
@@ -206,6 +207,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\ProfilePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Pages\PlaylistSongsPage.xaml">

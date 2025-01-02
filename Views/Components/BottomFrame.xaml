@@ -3,33 +3,34 @@
     x:Class="OneLastSong.Views.Components.BottomFrame"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:OneLastSong.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:OneLastSong.Views.Components"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:OneLastSong.ViewModels"
-    xmlns:converters="using:OneLastSong.Converters"
     d:DataContext="{d:DesignInstance Type=viewmodels:BottomFrameViewModel}"
     Background="White"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:DurationToTimeConverter x:Key="DurationToTimeConverter"/>
-        <converters:PlayStateToIconConverter x:Key="PlayStateToIconConverter"/>
+        <converters:DurationToTimeConverter x:Key="DurationToTimeConverter" />
+        <converters:PlayStateToIconConverter x:Key="PlayStateToIconConverter" />
     </Page.Resources>
 
     <Grid
         HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch"        
+        VerticalAlignment="Stretch"
         Background="{ThemeResource BG_PRIMARY}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="400" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="400" />
         </Grid.ColumnDefinitions>
 
         <!--  Left: Song Image and Info  -->
         <StackPanel
             Grid.Column="0"
+            MaxWidth="400"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             Orientation="Horizontal">
@@ -43,10 +44,12 @@
 
             <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                 <TextBlock
-                Foreground="{ThemeResource TEXT_PRIMARY}"
-                Style="{StaticResource Body2}"
-                TextAlignment="Left">
-                    <Hyperlink Foreground="{ThemeResource TEXT_PRIMARY}" Click="SongTitleHyperlink_Clicked">
+                    MaxWidth="300"
+                    Foreground="{ThemeResource TEXT_PRIMARY}"
+                    Style="{StaticResource Body2}"
+                    TextAlignment="Left"
+                    TextTrimming="CharacterEllipsis">
+                    <Hyperlink Click="SongTitleHyperlink_Clicked" Foreground="{ThemeResource TEXT_PRIMARY}">
                         <Run Text="{x:Bind ViewModel.CurrentAudio.Title, Mode=OneWay}" />
                     </Hyperlink>
                 </TextBlock>
@@ -59,7 +62,11 @@
         </StackPanel>
 
         <!--  Middle: Playback Controls + Slider  -->
-        <Grid Grid.Column="1" VerticalAlignment="Center">
+        <Grid
+            Grid.Column="1"
+            Margin="15,0,15,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -80,12 +87,14 @@
                 </Button>
 
                 <!--  Previous button  -->
-                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}"
-                        Command="{x:Bind ViewModel.RestartPlayCommand}">
+                <Button
+                    Margin="{StaticResource MediumRightMargin}"
+                    Command="{x:Bind ViewModel.RestartPlayCommand}"
+                    Style="{StaticResource IconButton}">
                     <FontIcon
                         FontSize="{StaticResource MediumTextSize}"
                         Foreground="{ThemeResource TEXT_PRIMARY}"
-                        Glyph="&#xE892;"/>
+                        Glyph="&#xE892;" />
                 </Button>
 
                 <!--  Play/Pause button  -->
@@ -98,8 +107,8 @@
                     <Button
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Style="{StaticResource IconButton}"
-                        Command="{x:Bind ViewModel.ChangePlayStateCommand}">
+                        Command="{x:Bind ViewModel.ChangePlayStateCommand}"
+                        Style="{StaticResource IconButton}">
                         <FontIcon
                             x:Name="PlaybackIcon"
                             FontSize="{StaticResource LargeTextSize}"
@@ -111,8 +120,10 @@
 
 
                 <!--  Next button  -->
-                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}"
-                        Command="{x:Bind ViewModel.PlayNextCommand}">
+                <Button
+                    Margin="{StaticResource MediumRightMargin}"
+                    Command="{x:Bind ViewModel.PlayNextCommand}"
+                    Style="{StaticResource IconButton}">
                     <FontIcon
                         FontSize="{StaticResource MediumTextSize}"
                         Foreground="{ThemeResource TEXT_PRIMARY}"
@@ -120,9 +131,7 @@
                 </Button>
 
                 <!--  Repeat button  -->
-                <Button
-                    Margin="{StaticResource MediumRightMargin}"
-                    Style="{StaticResource IconButton}">
+                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
                     <FontIcon
                         x:Name="RepeatIcon"
                         FontSize="{StaticResource MediumTextSize}"
@@ -133,11 +142,11 @@
             </StackPanel>
 
             <!--  Progress Bar  -->
-            <Grid Grid.Row="1" Margin="15,0,15,0">
+            <Grid Grid.Row="1" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <!--  Current Time  -->
@@ -145,51 +154,57 @@
                     x:Name="CurrentTime"
                     Grid.Column="0"
                     Margin="5,0,0,0"
-                    HorizontalAlignment="Right"
+                    HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     FontSize="14"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
-                    Text="{x:Bind ViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource DurationToTimeConverter}}"
-                    Style="{StaticResource BodySmall1}"/>
+                    Style="{StaticResource BodySmall1}"
+                    Text="{x:Bind ViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource DurationToTimeConverter}}" />
 
                 <!--  Progress  -->
                 <Slider
                     x:Name="ProgressBar"
                     Grid.Column="1"
-                    Margin="10,0,10,0"
+                    MinWidth="400"
+                    MaxWidth="700"
+                    Margin="5,0,5,0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     Maximum="{x:Bind ViewModel.CurrentAudio.Duration, Mode=OneWay}"
-                    Value="{Binding CurrentProgress, Mode=OneWay}"
+                    Minimum="0"
                     PointerCaptureLost="Slider_PointerCaptureLost"
-                    StepFrequency="1"
                     SmallChange="1"
-                    Minimum="0"/>
+                    StepFrequency="1"
+                    Value="{Binding CurrentProgress, Mode=OneWay}" />
 
                 <!--  End Time  -->
                 <TextBlock
                     x:Name="EndTime"
                     Grid.Column="2"
                     Margin="0,0,5,0"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     FontSize="14"
-                    Text="{x:Bind ViewModel.CurrentAudio.Duration, Mode=OneWay, Converter={StaticResource DurationToTimeConverter}}"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
-                    Style="{StaticResource BodySmall1}"/>
+                    Style="{StaticResource BodySmall1}"
+                    Text="{x:Bind ViewModel.CurrentAudio.Duration, Mode=OneWay, Converter={StaticResource DurationToTimeConverter}}" />
             </Grid>
         </Grid>
 
         <!--  Right: Miscellaneous Options  -->
         <StackPanel
             Grid.Column="2"
+            MaxWidth="400"
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
             Orientation="Horizontal"
             Spacing="5">
 
             <!--  Lyrics button  -->
-            <Button Command="{x:Bind ViewModel.OpenLyricsCommand}" Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+            <Button
+                Margin="{StaticResource MediumRightMargin}"
+                Command="{x:Bind ViewModel.OpenLyricsCommand}"
+                Style="{StaticResource IconButton}">
                 <FontIcon
                     FontSize="{StaticResource MediumTextSize}"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
@@ -197,7 +212,10 @@
             </Button>
 
             <!--  PlayQueue button  -->
-            <Button Command="{x:Bind ViewModel.OpenPlayQueueCommand}" Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+            <Button
+                Margin="{StaticResource MediumRightMargin}"
+                Command="{x:Bind ViewModel.OpenPlayQueueCommand}"
+                Style="{StaticResource IconButton}">
                 <FontIcon
                     FontSize="{StaticResource MediumTextSize}"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
@@ -205,9 +223,10 @@
             </Button>
 
             <!--  Equalizer button  -->
-            <Button Margin="{StaticResource MediumRightMargin}" 
-                    Style="{StaticResource IconButton}"
-                    Command="{x:Bind ViewModel.ConfigEqualizerCommand}">
+            <Button
+                Margin="{StaticResource MediumRightMargin}"
+                Command="{x:Bind ViewModel.ConfigEqualizerCommand}"
+                Style="{StaticResource IconButton}">
                 <FontIcon
                     FontSize="{StaticResource MediumTextSize}"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
@@ -226,16 +245,14 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Maximum="100.0"
-                                Minimum="0"/>
+                                Minimum="0" />
                         </StackPanel>
                     </Flyout>
                 </Button.Flyout>
             </Button>
 
             <!--  Fullscreen button  -->
-            <Button
-                Margin="{StaticResource MediumRightMargin}"
-                Style="{StaticResource IconButton}">
+            <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
                 <FontIcon
                     FontSize="{StaticResource MediumTextSize}"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
