@@ -113,6 +113,16 @@ namespace OneLastSong.DAOs
             {
                 throw new Exception(result.ErrorMessage);
             }
+            // remove from cache
+            Playlist playlist = _playlistList.Find(playlist => playlist.PlaylistId == playlistId);
+            if (playlist != null)
+            {
+                var audioList = playlist.Audios.ToList(); // Convert array to List<Audio>
+                audioList.RemoveAll(audio => audio.AudioId == audioId); // Perform removal
+                playlist.Audios = audioList.ToArray(); // Convert back to array
+                _playlistService.NotifyPlaylistChanged(_playlistList);
+                playlist.ItemCount = playlist.Audios.Length;
+            }
         }
 
         public async Task DeletePlaylist(string sessionToken, int playlistId)

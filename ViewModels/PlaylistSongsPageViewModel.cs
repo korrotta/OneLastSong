@@ -1,7 +1,11 @@
-﻿using Microsoft.UI.Xaml.Data;
+﻿using CommunityToolkit.WinUI.UI.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using OneLastSong.DAOs;
 using OneLastSong.Models;
 using OneLastSong.Utils;
+using OneLastSong.Views.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,6 +25,8 @@ namespace OneLastSong.ViewModels
         private ObservableCollection<Audio> _filteredAudios = new ObservableCollection<Audio>();
         private Playlist _playlist;
         private string _searchText;
+
+        public XamlRoot XamlRoot { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -100,14 +106,121 @@ namespace OneLastSong.ViewModels
         public void FilterAudios(string searchText)
         {
             _searchText = searchText;
-            _filteredAudios.Clear();
+            FilteredAudios.Clear();
 
             foreach (var audio in _audios)
             {
                 if (string.IsNullOrEmpty(_searchText) || audio.Title.Contains(_searchText, StringComparison.OrdinalIgnoreCase) || audio.Artist.Contains(_searchText, StringComparison.OrdinalIgnoreCase))
                 {
-                    _filteredAudios.Add(audio);
+                    FilteredAudios.Add(audio);
                 }
+            }
+        }
+
+        internal void SortAudios(string v, DataGridColumnEventArgs e, DataGrid dg)
+        {
+            if (v == "AudioId")
+            {
+                if (e.Column.SortDirection == DataGridSortDirection.Ascending)
+                {
+                    FilteredAudios = new ObservableCollection<Audio>(_filteredAudios.OrderBy(audio => audio.AudioId));
+                    e.Column.SortDirection = DataGridSortDirection.Descending;
+                }
+                else
+                {
+                    FilteredAudios = new ObservableCollection<Audio>(_filteredAudios.OrderByDescending(audio => audio.AudioId));
+                    e.Column.SortDirection = DataGridSortDirection.Ascending;
+                }
+            }
+            else if (v == "Title")
+            {
+                if (e.Column.SortDirection == DataGridSortDirection.Ascending)
+                {
+                    FilteredAudios = new ObservableCollection<Audio>(_filteredAudios.OrderBy(audio => audio.Title));
+                    e.Column.SortDirection = DataGridSortDirection.Descending;
+                }
+                else
+                {
+                    FilteredAudios = new ObservableCollection<Audio>(_filteredAudios.OrderByDescending(audio => audio.Title));
+                    e.Column.SortDirection = DataGridSortDirection.Ascending;
+                }
+            }
+            else if (v == "Artist")
+            {
+                if (e.Column.SortDirection == DataGridSortDirection.Ascending)
+                {
+                    FilteredAudios = new ObservableCollection<Audio>(_filteredAudios.OrderBy(audio => audio.Artist));
+                    e.Column.SortDirection = DataGridSortDirection.Descending;
+                }
+                else
+                {
+                    FilteredAudios = new ObservableCollection<Audio>(_filteredAudios.OrderByDescending(audio => audio.Artist));
+                    e.Column.SortDirection = DataGridSortDirection.Ascending;
+                }
+            }
+            else if (v == "Duration")
+            {
+                if (e.Column.SortDirection == DataGridSortDirection.Ascending)
+                {
+                    FilteredAudios = new ObservableCollection<Audio>(_filteredAudios.OrderBy(audio => audio.Duration));
+                    e.Column.SortDirection = DataGridSortDirection.Descending;
+                }
+                else
+                {
+                    FilteredAudios = new ObservableCollection<Audio>(_filteredAudios.OrderByDescending(audio => audio.Duration));
+                    e.Column.SortDirection = DataGridSortDirection.Ascending;
+                }
+            }
+
+            // Remove sorting indicator from other columns
+            foreach (var dbColumn in dg.Columns)
+            {
+                if (dbColumn.Tag != null && dbColumn.Tag.ToString() != v)
+                {
+                    dbColumn.SortDirection = null;
+                }
+            }
+        }
+
+        public async Task ShowConfirmRemoveAudioFromPlaylist(Audio audio)
+        {
+            if(XamlRoot == null)
+            {
+                return;
+            }
+
+            SimpleThemedConfirmDialog dialog = new SimpleThemedConfirmDialog
+            {
+                ConfirmMessage = $"Are you sure you want to delete \"{audio.Title}\" from \"{CurrentPlaylist.Name}\" playlist?",
+                XamlRoot = this.XamlRoot,
+            };
+
+            ContentDialogResult result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                await RemoveAudioFromPlaylist(audio);    
+            }
+        }
+
+        internal async Task RemoveAudioFromPlaylist(Audio audio)
+        {
+            try
+            {
+                string token = _userDAO.SessionToken;
+                if (string.IsNullOrEmpty(token))
+                {
+                    SnackbarUtils.ShowSnackbar("You need to login first", SnackbarType.Warning);
+                    return;
+                }
+                await _playlistDAO.RemoveAudioFromPlaylist(token, CurrentPlaylist.PlaylistId, audio.AudioId);
+                Audios.Remove(audio);
+                FilteredAudios.Remove(audio);
+                SnackbarUtils.ShowSnackbar("Audio removed from playlist", SnackbarType.Success);
+            }
+            catch (Exception ex)
+            {
+                SnackbarUtils.ShowSnackbar("There was an error while removing the audio from the playlist", SnackbarType.Error);
             }
         }
     }

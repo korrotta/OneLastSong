@@ -7,8 +7,19 @@
     xmlns:models="using:OneLastSong.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:components="using:OneLastSong.Views.Components"
+    xmlns:converters="using:OneLastSong.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource BG_PRIMARY}">
+
+    <Page.Resources>
+        <converters:DurationToTimeConverter x:Key="DurationToTimeConverter" />
+        <converters:PlayStateToIconConverter x:Key="PlayStateToIconConverter" />
+        <Style TargetType="controls:DataGridRow" x:Key="DataGridRowStyleKey">
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+    </Page.Resources>
 
     <Grid Padding="{StaticResource MediumPadding}">
         <Grid.RowDefinitions>
@@ -32,22 +43,62 @@
 
         <StackPanel Grid.Row="1" Margin="0,20,0,0">
             <TextBox x:Name="SearchBox" PlaceholderText="Search songs..." TextChanged="SearchBox_TextChanged" Margin="0,0,0,10"/>
-            <ListView ItemsSource="{x:Bind ViewModel.FilteredAudios, Mode=OneWay}">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Audio">
-                        <Grid Padding="10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{x:Bind Title}" Grid.Column="0" FontSize="16" VerticalAlignment="Center"/>
-                            <TextBlock Text="{x:Bind Artist}" Grid.Column="1" FontSize="16" VerticalAlignment="Center"/>
-                            <TextBlock Text="{x:Bind Duration}" Grid.Column="2" FontSize="16" VerticalAlignment="Center"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <controls:DataGrid 
+                x:Name="dgAudios"
+                ItemsSource="{x:Bind ViewModel.FilteredAudios, Mode=OneWay}"
+                VerticalAlignment="Stretch"
+                AutoGenerateColumns="False"
+                CanUserReorderColumns="False" CanUserResizeColumns="False"
+                CanUserSortColumns="True"
+                Sorting="dg_Sorting"
+                ColumnWidth="Auto"
+                RowStyle="{StaticResource DataGridRowStyleKey}">
+                <controls:DataGrid.Columns>
+                    <controls:DataGridTextColumn Header="Id" Binding="{Binding AudioId}" IsReadOnly="True" Tag="AudioId"/>
+                    <controls:DataGridTemplateColumn Header="Cover" Tag="CoverImageUrl">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid CornerRadius="8" Width="40" Height="40">
+                                    <Image Source="{Binding CoverImageUrl}" Stretch="Fill" Width="40" Height="40"/>
+                                </Grid>
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                    <controls:DataGridTextColumn Header="Title" Binding="{Binding Title}" IsReadOnly="True" Tag="Title" Width="*"/>
+                    <controls:DataGridTextColumn Header="Artist" Binding="{Binding Artist}" IsReadOnly="True" Tag="Artist" Width="*"/>
+                    <controls:DataGridTemplateColumn Header="Duration" IsReadOnly="True" Tag="Duration">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid VerticalAlignment="Center">
+                                    <TextBlock
+                                        Text="{Binding Duration, Mode=OneWay, Converter={StaticResource DurationToTimeConverter}}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                    <controls:DataGridTemplateColumn Header="Controls" Tag="Controls">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <components:AudioExtraControlsButton Audio="{Binding}"/>
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                    <controls:DataGridTemplateColumn Header="Action" Tag="Action">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Background="Red" Foreground="White" Click="RemoveButton_Click" Padding="5,2">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE74D;" Margin="0,0,5,0"/>
+                                        <!-- Delete icon -->
+                                        <TextBlock Text="Remove"/>
+                                    </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                </controls:DataGrid.Columns>
+            </controls:DataGrid>
         </StackPanel>
     </Grid>
 </Page>
+
