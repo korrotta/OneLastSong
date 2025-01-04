@@ -770,6 +770,36 @@ namespace OneLastSong.Db
             return null;
         }
 
+        public async Task<ResultMessage> UpdatePlaylist(string sessionToken, int playlistId, string name, string coverImageUrl)
+        {
+            CheckConnection();
+
+            try
+            {
+                await using (var cmd = dataSource.CreateCommand(QUERY_UPDATE_USER_PLAYLIST))
+                {
+                    cmd.Parameters.AddWithValue("session_token", sessionToken);
+                    cmd.Parameters.AddWithValue("playlist_id", playlistId);
+                    cmd.Parameters.AddWithValue("name", name);
+                    cmd.Parameters.AddWithValue("cover_image_url", coverImageUrl);
+                    await using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            string json = reader.GetString(0);
+                            return ResultMessage.FromJson(json);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return null;
+        }
+
         // Our Query strings
         public static readonly string QUERY_USER_LOGIN = "SELECT user_login(@username, @password)";
         public static readonly string QUERY_GET_USER = "SELECT get_user_data(@session_token)";
@@ -795,5 +825,6 @@ namespace OneLastSong.Db
         public static readonly string QUERY_ADD_USER_PLAY_HISTORY = "SELECT add_user_play_history(@session_token, @audio_id)";
         public static readonly string QUERY_GET_USER_PLAY_HISTORY = "SELECT get_user_play_history(@session_token)";
         public static readonly string QUERY_GET_AUDIOS_IN_PLAYLIST = "SELECT get_audios_in_playlist(@session_token, @playlist_id)";
+        public static readonly string QUERY_UPDATE_USER_PLAYLIST = "SELECT update_user_playlist(@session_token, @playlist_id, @name, @cover_image_url)";
     }
 }

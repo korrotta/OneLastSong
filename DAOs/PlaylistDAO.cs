@@ -150,5 +150,21 @@ namespace OneLastSong.DAOs
         {
             return _playlistList;
         }
+
+        internal async Task UpdatePlaylist(string sessionToken, Playlist playlist)
+        {
+            int playlistId = playlist.PlaylistId;
+            ResultMessage result = await _db.UpdatePlaylist(sessionToken, playlistId, playlist.Name, playlist.CoverImageUrl);
+            if (result.Status == ResultMessage.STATUS_OK)
+            {
+                // fetch new playlist data
+                _playlistList = await GetUserPlaylists(sessionToken, true);
+                _playlistService.NotifyPlaylistChanged(_playlistList);
+            }
+            else
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+        }
     }
 }

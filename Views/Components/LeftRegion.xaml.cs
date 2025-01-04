@@ -55,6 +55,14 @@ namespace OneLastSong.Views.Components
         {
             ViewModel?.Dispose();
         }
+
+        private void PlaylistName_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is Playlist playlist)
+            {
+                ViewModel?.OpenPlaylist(playlist);
+            }
+        }
     }
 
 }

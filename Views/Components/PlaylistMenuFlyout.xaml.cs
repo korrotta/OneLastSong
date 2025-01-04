@@ -138,7 +138,7 @@ namespace OneLastSong.Views.Components
                     return;
                 }
                 // Navigate to the playlist songs page
-                _navigationService.Navigate(typeof(PlaylistSongsPage), _playlist.PlaylistId, true);
+                _navigationService.NavigateOrReloadOnParameterChanged(typeof(PlaylistSongsPage), _playlist.PlaylistId);
             }
             catch (Exception ex)
             {

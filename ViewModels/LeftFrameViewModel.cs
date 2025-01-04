@@ -9,6 +9,7 @@ using OneLastSong.Services;
 using OneLastSong.Utils;
 using OneLastSong.Views.Components;
 using OneLastSong.Views.Dialogs;
+using OneLastSong.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,12 +28,16 @@ namespace OneLastSong.ViewModels
         public ICommand CreateNewPlaylistCommand { get; set; }
         private PlaylistDAO _playlistDAO;
         private PlaylistService _playlistService;
+        private NavigationService _navigationService;
 
         public LeftFrameViewModel()
         {
             CreateNewPlaylistCommand = new RelayCommand(CreateNewPlaylist);
+
             _playlistService = PlaylistService.Get();
             _playlistDAO = PlaylistDAO.Get();
+            _navigationService = NavigationService.Get();
+
             _playlistService.RegisterPlaylistNotifier(this);
         }
 
@@ -159,6 +164,24 @@ namespace OneLastSong.ViewModels
         public void OnPlaylistUpdated(List<Playlist> playlists)
         {
             PlaylistList = new ObservableCollection<Playlist>(playlists);
+        }
+
+        internal void OpenPlaylist(Playlist playlist)
+        {
+            try
+            {
+                if (playlist.Audios == null || playlist.Audios.Length == 0)
+                {
+                    SnackbarUtils.ShowSnackbar("The playlist is empty", SnackbarType.Warning);
+                    return;
+                }
+                // Navigate to the playlist songs page
+                _navigationService.NavigateOrReloadOnParameterChanged(typeof(PlaylistSongsPage), playlist.PlaylistId);
+            }
+            catch (Exception ex)
+            {
+                SnackbarUtils.ShowSnackbar(ex.Message, SnackbarType.Error);
+            }
         }
     }
 }

@@ -26,9 +26,9 @@ namespace OneLastSong.ViewModels
         {
             if (XamlRoot == null) { return; }
 
-            EditPlaylistDetailsDialog editPlaylistDetailsDialog = new EditPlaylistDetailsDialog
+            EditPlaylistDetailsDialog editPlaylistDetailsDialog = new EditPlaylistDetailsDialog(Playlist)
             {
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
             };
 
             await editPlaylistDetailsDialog.ShowAsync();

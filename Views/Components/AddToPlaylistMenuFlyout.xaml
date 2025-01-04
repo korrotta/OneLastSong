@@ -14,7 +14,7 @@
         </Style>
     </MenuFlyout.MenuFlyoutPresenterStyle>
 
-    <MenuFlyoutItem Text="Add to a new playlist" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+    <MenuFlyoutItem Text="Add to a new playlist" Foreground="{ThemeResource TEXT_PRIMARY}" Click="AddToNewPlaylist_Click"/>
     <MenuFlyoutSeparator Foreground="{ThemeResource TEXT_PRIMARY}"/>
     <!-- Existed playlists list will be added programmatically -->
     <MenuFlyoutSubItem x:Name="PlaylistsSubItem" Text="Add to existing playlist" Foreground="{ThemeResource TEXT_PRIMARY}"/>

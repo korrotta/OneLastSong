@@ -93,13 +93,21 @@ namespace OneLastSong.ViewModels
                 return;
             }
 
-            CurrentPlaylist = _playlistDAO.GetCachedPlaylists().FirstOrDefault(playlist => playlist.PlaylistId == playlistId);
-
-            List<Audio> audios = await _playlistDAO.GetAudiosInPlaylist(token, playlistId);
-            foreach (Audio audio in CurrentPlaylist.Audios)
+            try
             {
-                _audios.Add(audio);
-                _filteredAudios.Add(audio);
+                CurrentPlaylist = _playlistDAO.GetCachedPlaylists().FirstOrDefault(playlist => playlist.PlaylistId == playlistId);
+
+                List<Audio> audios = await _playlistDAO.GetAudiosInPlaylist(token, playlistId);
+                foreach (Audio audio in CurrentPlaylist.Audios)
+                {
+                    _audios.Add(audio);
+                    _filteredAudios.Add(audio);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Error(ex.Message);
+                SnackbarUtils.ShowSnackbar("There was an error while loading the playlist", SnackbarType.Error);
             }
         }
 

@@ -28,6 +28,7 @@ namespace OneLastSong.Contracts
         public Task<ResultMessage> RemoveAudioFromPlaylist(string sessionToken, int playlistId, int audioId);
         public Task<ResultMessage> DeletePlaylist(string sessionToken, int playlistId);
         public Task<ResultMessage> GetAudiosInPlaylist(string sessionToken, int playlistId);
+        public Task<ResultMessage> UpdatePlaylist(string sessionToken, int playlistId, string name, string coverImageUrl);
         /* Play */
         public Task<ResultMessage> SaveListeningSession(string sessionToken, int audioId, int progress);
         public Task<ResultMessage> GetListeningSession(string sessionToken);

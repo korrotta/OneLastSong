@@ -1,10 +1,11 @@
-﻿using System;
+﻿using OneLastSong.Utils;
+using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace OneLastSong.Models
 {
-    public class Playlist : INotifyPropertyChanged, IComparable
+    public class Playlist : INotifyPropertyChanged, IComparable, ICloneable
     {
         private int _playlistId;
         private string _name;
@@ -48,11 +49,8 @@ namespace OneLastSong.Models
             get => _coverImageUrl;
             set
             {
-                if (_coverImageUrl != value)
-                {
-                    _coverImageUrl = value;
-                    OnPropertyChanged(nameof(CoverImageUrl));
-                }
+                _coverImageUrl = value;
+                OnPropertyChanged(nameof(CoverImageUrl));
             }
         }
 
@@ -139,6 +137,20 @@ namespace OneLastSong.Models
         public int CompareTo(object obj)
         {
             return obj is Playlist playlist ? PlaylistId.CompareTo(playlist.PlaylistId) : 1;
+        }
+
+        public object Clone()
+        {
+            return new Playlist
+            {
+                PlaylistId = PlaylistId,
+                Name = Name,
+                CoverImageUrl = CoverImageUrl,
+                ItemCount = ItemCount,
+                Audios = Audios,
+                Deletable = Deletable,
+                CreatedAt = CreatedAt
+            };
         }
     }
 }

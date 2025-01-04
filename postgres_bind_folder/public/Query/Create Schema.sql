@@ -1565,6 +1565,53 @@ END IF;
 END;
 $$;
 
+-- Update user playlist --
+CREATE OR REPLACE FUNCTION update_user_playlist(ip_session_token VARCHAR, ip_playlist_id INTEGER, ip_name VARCHAR, ip_cover_image_url VARCHAR)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is not valid, return an error message
+    IF v_user_id IS NULL THEN
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+
+    -- Check if playlist exists
+    IF NOT EXISTS (
+        SELECT 1
+        FROM playlists p
+        WHERE p.id = ip_playlist_id
+    ) THEN
+        RETURN get_result_message(1, 'Playlist does not exist', '{}'::JSONB);
+    END IF;
+
+    -- Check if the playlist belongs to the user
+    IF NOT EXISTS (
+        SELECT 1
+        FROM playlists p
+        WHERE p.id = ip_playlist_id AND p.user_id = v_user_id
+    ) THEN
+        -- If the playlist does not belong to the user, return an error message
+        RETURN get_result_message(1, 'Playlist does not belong to the user', '{}'::JSONB);
+    END IF;
+
+    -- Update the playlist
+    UPDATE playlists
+    SET name = ip_name,
+        cover_image_url = ip_cover_image_url
+    WHERE id = ip_playlist_id;
+
+    -- Return the success message
+    RETURN get_result_message(0, '', '{}'::JSONB);
+END;
+$$;
+
 -- ### Triggers region ###
 -- Trigger to call the function after a new user is inserted
 CREATE TRIGGER after_user_insert
@@ -1611,6 +1658,7 @@ GRANT EXECUTE ON FUNCTION get_user_play_history(VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION like_audio(VARCHAR, INT, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION update_user_profile(VARCHAR, VARCHAR, TEXT, TEXT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_audios_in_playlist(VARCHAR, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION update_user_playlist(VARCHAR, INT, VARCHAR, VARCHAR) TO restricted_user;
 
 SELECT user_login('test', 'test');
 SELECT validate_session('7d683b5d-6c62-474f-b666-7df5017edabc');
