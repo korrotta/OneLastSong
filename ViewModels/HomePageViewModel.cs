@@ -29,7 +29,8 @@ namespace OneLastSong.ViewModels
         private AudioService audioService;
 
         private AudioDAO audioDAO;
-        
+        private UserDAO userDAO;
+
         private AudioItem _selectedAudio;
         
 
@@ -40,6 +41,7 @@ namespace OneLastSong.ViewModels
             audioService = AudioService.Get();
 
             audioDAO = AudioDAO.Get();
+            userDAO = UserDAO.Get();
 
             PlayCommand = new RelayCommand<Audio>(PlayAudio);
             listeningService.RegisterAudioStateChangeListeners(this);
@@ -57,21 +59,7 @@ namespace OneLastSong.ViewModels
         public async Task Load()
         {
             var audios = await AudioDAO.Get().GetMostLikeAudios();
-            ListAudios = new ObservableCollection<AudioItem>(audios.Select(a => new AudioItem
-            {
-                AudioId = a.AudioId,
-                Title = a.Title,
-                Artist = a.Artist,
-                AlbumId = a.AlbumId,
-                AuthorId = a.AuthorId,
-                Duration = a.Duration,
-                CreatedAt = a.CreatedAt,
-                CategoryId = a.CategoryId,
-                Description = a.Description,
-                CoverImageUrl = a.CoverImageUrl,
-                Likes = a.Likes,
-                Url = a.Url
-            }));
+            ListAudios = new ObservableCollection<AudioItem>(audios.Select(a => new AudioItem(a)));
             ListAlbums = new ObservableCollection<Album>(await AlbumDAO.Get().GetMostLikeAlbums());
             listeningService = ListeningService.Get();
             if (ListAudios.Count > 0)
@@ -213,6 +201,36 @@ namespace OneLastSong.ViewModels
                     ListAudios[i].AudioLikeState = AudioItem.AudioLikeStateType.NotLiked;
                     ListAudios[i].Likes--;
                 }
+            }
+        }
+
+        internal async void HandleLikeButtonClick(int audioId)
+        {
+            AudioItem audioItem = ListAudios.FirstOrDefault(a => a.AudioId == audioId);
+
+            string sessionToken = userDAO.SessionToken;
+
+            if (audioItem == null || String.IsNullOrEmpty(sessionToken))
+            {
+                return;
+            }
+
+            try
+            {
+                if (audioItem.AudioLikeState == AudioItem.AudioLikeStateType.Liked)
+                {
+                    await audioDAO.RemoveLikeFromAudio(sessionToken, audioId);
+                    SnackbarUtils.ShowSnackbar($"Removed like from audio \"{audioItem.Title}\" successfully!", SnackbarType.Success);
+                }
+                else
+                {
+                    await audioDAO.LikeAudio(sessionToken, audioId);
+                    SnackbarUtils.ShowSnackbar($"Liked audio \"{audioItem.Title}\" successfully!", SnackbarType.Success);
+                }
+            }
+            catch (Exception e)
+            {
+                SnackbarUtils.ShowSnackbar(e.Message, SnackbarType.Error);
             }
         }
     }

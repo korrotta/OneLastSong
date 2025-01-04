@@ -75,7 +75,8 @@ namespace OneLastSong.Views.Components
             {
                 try
                 {
-                    LogUtils.Info(button.Tag.ToString());
+                    int audioId = (int)button.Tag;
+                    ViewModel.HandleLikeButtonClick(audioId);
                 }
                 catch (Exception ex)
                 {

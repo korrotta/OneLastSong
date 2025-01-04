@@ -196,6 +196,7 @@ namespace OneLastSong.DAOs
             if (playlist != null)
             {
                 playlist.Audios = likedPlaylist.Audios;
+                playlist.ItemCount = likedPlaylist.Audios.Length;
                 _playlistService.NotifyPlaylistChanged(_playlistList);
             }
             _playlistService.NotifyPlaylistChanged(_playlistList);

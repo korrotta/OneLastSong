@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
 using OneLastSong.DAOs;
 using OneLastSong.Models;
+using OneLastSong.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,14 +69,14 @@ namespace OneLastSong.Services
             playlistDAO.UpdatePlaylistInCache(likedPlaylist);
         }
 
-        public void OnAnAudioLikeRemoved(int audioId)
+        public async void OnAnAudioLikeRemoved(int audioId)
         {
             string token = UserDAO.Get().SessionToken;
             if (String.IsNullOrEmpty(token))
             {
                 return;
             }
-            Playlist likedPlaylist = playlistDAO.GetCachedPlaylists().FirstOrDefault(p => p.Name == "Liked");
+            Playlist likedPlaylist = await playlistDAO.GetLikePlaylist(token);
             if (likedPlaylist == null)
             {
                 return;

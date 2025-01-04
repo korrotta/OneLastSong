@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using OneLastSong.Contracts;
+using OneLastSong.DAOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace OneLastSong.Services
     {
         private List<INotifyLikeAudioStateChanged> _audioLikeStateNotifiers = new List<INotifyLikeAudioStateChanged>();
         private DispatcherQueue _eventHandler;
+        private AudioDAO _audioDAO;
 
         public AudioService(DispatcherQueue dispatcherQueue)
         {
@@ -67,6 +69,8 @@ namespace OneLastSong.Services
 
         public Task<bool> OnSubsystemInitialized()
         {
+            _audioDAO = AudioDAO.Get();
+            _audioDAO.SetAudioService(this);
             return Task.FromResult(true);
         }
 

@@ -38,11 +38,26 @@ namespace OneLastSong.Cores.DataItems
             }
         }
 
-        public AudioItem()
+        public AudioItem(Audio a)
         {
-            Audio = this;
             _playlistDAO = PlaylistDAO.Get();
             _userDAO = UserDAO.Get();
+
+            AudioId = a.AudioId;
+            Title = a.Title;
+            Artist = a.Artist;
+            AlbumId = a.AlbumId;
+            AuthorId = a.AuthorId;
+            Duration = a.Duration;
+            CreatedAt = a.CreatedAt;
+            CategoryId = a.CategoryId;
+            Description = a.Description;
+            CoverImageUrl = a.CoverImageUrl;
+            Likes = a.Likes;
+            Url = a.Url;
+
+            Audio = this;
+
             UpdateLikeState();
         }
 
@@ -56,7 +71,7 @@ namespace OneLastSong.Cores.DataItems
             _likedPlaylist = await _playlistDAO.GetLikePlaylist(_userDAO.SessionToken);
             if (AudioLikeState == AudioLikeStateType.Fetching)
             {
-                AudioLikeState = _likedPlaylist?.Audios.Any(audio => audio.AudioId == AudioId) == true
+                AudioLikeState = _likedPlaylist?.ContainsAudio(Audio.AudioId) == true
                     ? AudioLikeStateType.Liked
                     : AudioLikeStateType.NotLiked;
             }

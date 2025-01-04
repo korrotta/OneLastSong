@@ -1502,6 +1502,7 @@ DECLARE
     v_user_id INTEGER;
     v_audio_exists BOOLEAN;
     v_result JSONB;
+    v_liked_playlist_id INTEGER;
 BEGIN
     -- Validate the session token and get the user ID
     v_user_id := validate_session(ip_session_token);
@@ -1533,7 +1534,17 @@ BEGIN
         VALUES (v_user_id, ip_audio_id, CURRENT_TIMESTAMP);
 
         -- Add the audio to the liked playlist
-        PERFORM add_audio_to_playlist(ip_session_token, 1, ip_audio_id);
+        SELECT id INTO v_liked_playlist_id
+        FROM playlists
+        WHERE user_id = v_user_id AND name = 'Liked Playlist';
+
+        IF v_liked_playlist_id IS NULL THEN
+            INSERT INTO playlists (user_id, name, cover_image_url, created_at)
+            VALUES (v_user_id, 'Liked Playlist', '', CURRENT_TIMESTAMP)
+            RETURNING id INTO v_liked_playlist_id;
+        END IF;
+
+        PERFORM add_audio_to_playlist(ip_session_token, v_liked_playlist_id, ip_audio_id);
 
         -- Return success message
         RETURN get_result_message(0, '', '{}'::JSONB);
@@ -1542,6 +1553,7 @@ BEGIN
         RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
     END IF;
 END;
+$$;
 
 -- Remove like from an audio, remove from likes table and liked playlist
 CREATE OR REPLACE FUNCTION remove_like_from_audio(ip_session_token VARCHAR, ip_audio_id INTEGER)
@@ -1713,6 +1725,11 @@ BEGIN
         RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
     END IF;
 
+    -- If ip_name is empty, NULL or equals "Liked Playlist" return an error message
+    IF ip_name IS NULL OR ip_name = '' OR ip_name = 'Liked Playlist' THEN
+        RETURN get_result_message(1, 'Invalid playlist name', '{}'::JSONB);
+    END IF;
+
     -- Check if playlist exists
     IF NOT EXISTS (
         SELECT 1
@@ -1788,7 +1805,6 @@ GRANT EXECUTE ON FUNCTION add_user_play_history(VARCHAR, INT) TO restricted_user
 GRANT EXECUTE ON FUNCTION get_user_play_history(VARCHAR) TO restricted_user;
 GRANT EXECUTE ON FUNCTION like_audio(VARCHAR, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION remove_like_from_audio(VARCHAR, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION remove
 GRANT EXECUTE ON FUNCTION update_user_profile(VARCHAR, VARCHAR, TEXT, TEXT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_audios_in_playlist(VARCHAR, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION update_user_playlist(VARCHAR, INT, VARCHAR, VARCHAR) TO restricted_user;

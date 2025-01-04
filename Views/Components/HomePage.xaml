@@ -81,8 +81,8 @@
                 <!--Buttons-->
                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Spacing="16">
                     <!-- Like -->
-                    <Button Style="{StaticResource IconButton}" Click="LikeButton_Click" Tag="{x:Bind AlbumId}">
-                        <FontIcon Glyph="{x:Bind AudioLikeState, Converter={StaticResource AudioLikeStateToIconConverter}}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                    <Button Style="{StaticResource IconButton}" Click="LikeButton_Click" Tag="{x:Bind AudioId, Mode=OneWay}">
+                        <FontIcon Glyph="{x:Bind AudioLikeState, Mode=OneWay,Converter={StaticResource AudioLikeStateToIconConverter}}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                     </Button>
                     <!-- Add to playlist -->
                     <Button Style="{StaticResource IconButton}">
