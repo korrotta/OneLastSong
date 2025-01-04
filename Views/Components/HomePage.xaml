@@ -23,7 +23,8 @@
 
     <Page.Resources>
         <converters:PlayStateToIconConverter x:Key="PlayStateToIconConverter"/>
-        
+        <converters:AudioLikeStateToIconConverter x:Key="AudioLikeStateToIconConverter"/>
+
         <DataTemplate x:Name="AlbumTemplate" x:DataType="models:Album">
             <Grid Width="200" Height="112">
                 <Image Source="{x:Bind CoverImageUrl}" Stretch="UniformToFill"/>
@@ -80,8 +81,8 @@
                 <!--Buttons-->
                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Spacing="16">
                     <!-- Like -->
-                    <Button Style="{StaticResource IconButton}">
-                        <FontIcon Glyph="&#xEB51;" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                    <Button Style="{StaticResource IconButton}" Click="LikeButton_Click" Tag="{x:Bind AlbumId}">
+                        <FontIcon Glyph="{x:Bind AudioLikeState, Converter={StaticResource AudioLikeStateToIconConverter}}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                     </Button>
                     <!-- Add to playlist -->
                     <Button Style="{StaticResource IconButton}">

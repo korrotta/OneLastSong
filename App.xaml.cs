@@ -85,6 +85,7 @@ namespace OneLastSong
             services.AddSingleton<PlaylistService>(provider => new PlaylistService(dispatcherQueue));            
             services.AddSingleton<AIService>(provider => new AIService(dispatcherQueue)); // OpenAI
             services.AddSingleton<PlayHistoryService>(provider => new PlayHistoryService(dispatcherQueue));
+            services.AddSingleton<AudioService>(provider => new AudioService(dispatcherQueue));
 
             return services.BuildServiceProvider();
         }
@@ -100,6 +101,7 @@ namespace OneLastSong
             await SidePanelNavigationService.Get().OnSubsystemInitialized();
             await AIService.Get().OnSubsystemInitialized(); // OpenAI
             await PlayHistoryService.Get().OnSubsystemInitialized();
+            await AudioService.Get().OnSubsystemInitialized();
         }
 
         private async Task InitializeDatabase()

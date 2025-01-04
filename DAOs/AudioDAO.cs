@@ -136,5 +136,23 @@ namespace OneLastSong.DAOs
 
             return JsonSerializer.Serialize(conciseAudioObjs);
         }
+
+        internal async Task LikeAudio(string token, int audioId)
+        {
+            ResultMessage result = await _db.LikeAudio(token, audioId);
+            if (result.Status != ResultMessage.STATUS_OK)
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+        }
+
+        internal async Task RemoveLikeFromAudio(string token, int audioId)
+        {
+            ResultMessage result = await _db.RemoveLikeFromAudio(token, audioId);
+            if (result.Status != ResultMessage.STATUS_OK)
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+        }
     }
 }

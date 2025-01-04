@@ -93,6 +93,18 @@ namespace OneLastSong.DAOs
 
         public async Task AddAudioToPlaylist(string sessionToken, int playlistId, int audioId)
         {
+            // Check if the like playlist is not fetched yet, fetch it
+            if (_playlistList.Count == 0)
+            {
+                await GetUserPlaylists(sessionToken);
+            }
+
+            // if the playlist contains the audio, do nothing
+            if(_playlistList.Find(playlist => playlist.PlaylistId == playlistId).Audios.ToList().Find(audio => audio.AudioId == audioId) != null)
+            {
+                return;
+            }
+
             ResultMessage result = await _db.AddAudioToPlaylist(sessionToken, playlistId, audioId);
             if((result.Status == ResultMessage.STATUS_OK))
             {
@@ -165,6 +177,28 @@ namespace OneLastSong.DAOs
             {
                 throw new Exception(result.ErrorMessage);
             }
+        }
+
+        internal async Task<Playlist> GetLikePlaylist(string sessionToken)
+        {
+            // Check if the like playlist is not fetched yet, fetch it
+            if(_playlistList.Count == 0)
+            {
+                await GetUserPlaylists(sessionToken);
+            }
+
+            return _playlistList.Find(playlist => playlist.Name == ConfigValueUtils.GetConfigValue(ConfigValueUtils.LIKE_PLAYLIST_NAME_KEY));
+        }
+
+        internal void UpdatePlaylistInCache(Playlist likedPlaylist)
+        {
+            Playlist playlist = _playlistList.Find(p => p.PlaylistId == likedPlaylist.PlaylistId);
+            if (playlist != null)
+            {
+                playlist.Audios = likedPlaylist.Audios;
+                _playlistService.NotifyPlaylistChanged(_playlistList);
+            }
+            _playlistService.NotifyPlaylistChanged(_playlistList);
         }
     }
 }

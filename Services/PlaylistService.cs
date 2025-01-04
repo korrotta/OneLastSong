@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace OneLastSong.Services
 {
-    public class PlaylistService : IDisposable, INotifySubsytemStateChanged, IAuthChangeNotify
+    public class PlaylistService : IDisposable, INotifySubsytemStateChanged, IAuthChangeNotify, INotifyLikeAudioStateChanged
     {
         private List<INotifyPlaylistChanged> playlistNotifiers = new List<INotifyPlaylistChanged>();
         private DispatcherQueue _eventHandler;
@@ -32,6 +32,7 @@ namespace OneLastSong.Services
         public void Dispose()
         {
             AuthService.Get().UnregisterAuthChangeNotify(this);
+            AudioService.Get().UnregisterAudioLikeStateNotifier(this);
         }
 
         public void NotifyPlaylistChanged(List<Playlist> playlists)
@@ -45,9 +46,50 @@ namespace OneLastSong.Services
             }
         }
 
+        public async void OnAnAudioLiked(int audioId)
+        {
+            string token = UserDAO.Get().SessionToken;
+
+            if(String.IsNullOrEmpty(token))
+            {
+                return;
+            }
+
+            Playlist likedPlaylist = await playlistDAO.GetLikePlaylist(token);
+            if (likedPlaylist == null)
+            {
+                return;
+            }
+
+            Audio likedAudio = await AudioDAO.Get().GetAudioById(audioId);
+            var newAudioList = likedPlaylist.Audios.ToList();
+            newAudioList.Add(likedAudio);
+            likedPlaylist.Audios = newAudioList.ToArray();
+            playlistDAO.UpdatePlaylistInCache(likedPlaylist);
+        }
+
+        public void OnAnAudioLikeRemoved(int audioId)
+        {
+            string token = UserDAO.Get().SessionToken;
+            if (String.IsNullOrEmpty(token))
+            {
+                return;
+            }
+            Playlist likedPlaylist = playlistDAO.GetCachedPlaylists().FirstOrDefault(p => p.Name == "Liked");
+            if (likedPlaylist == null)
+            {
+                return;
+            }
+            var newAudioList = likedPlaylist.Audios.ToList();
+            newAudioList.RemoveAll(a => a.AudioId == audioId);
+            likedPlaylist.Audios = newAudioList.ToArray();
+            playlistDAO.UpdatePlaylistInCache(likedPlaylist);
+        }
+
         public async Task<bool> OnSubsystemInitialized()
         {
             AuthService.Get().RegisterAuthChangeNotify(this);
+            AudioService.Get().RegisterAudioLikeStateNotifier(this);
             NotifyPlaylistChanged(playlistDAO.GetCachedPlaylists());
             await Task.CompletedTask;
             return true;

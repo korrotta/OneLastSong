@@ -629,6 +629,66 @@ $$;
 -- Function get all user's playlists
 DROP FUNCTION IF EXISTS get_all_user_playlists(VARCHAR);
 
+CREATE OR REPLACE FUNCTION get_all_user_playlists(ip_session_token VARCHAR)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INT;
+    v_json_data JSONB;
+BEGIN
+    -- Get the user id
+    v_user_id := validate_session(ip_session_token);
+
+    IF v_user_id IS NULL THEN
+        RETURN get_result_message(1, 'Invalid session token', '[]'::JSONB);
+    END IF;
+
+    -- Select all user's playlists
+    SELECT json_agg(json_build_object(
+        'PlaylistId', p.id,
+        'Name', p.name,
+        'CoverImageUrl', p.cover_image_url,
+        'ItemCount', (
+            SELECT COUNT(*)
+            FROM playlist_audios pa
+            WHERE pa.playlist_id = p.id
+        ),
+        'Audios', COALESCE((
+            SELECT json_agg(json_build_object(
+                'AudioId', a.id,
+                'Title', a.title,
+                'Artist', a.artist,
+                'AlbumId', a.album_id,
+                'CategoryId', a.category_id,
+                'Duration', a.duration,
+                'Url', a.url,
+                'CoverImageUrl', a.cover_image_url,
+                'AuthorId', a.author_id,
+                'CreatedAt', a.created_at,
+                'Description', a.description,
+                'Likes', (
+                    SELECT COUNT(*)
+                    FROM likes l
+                    WHERE l.audio_id = a.id
+                )
+            ) ORDER BY pa.added_at)
+            FROM audios a
+            JOIN playlist_audios pa ON pa.audio_id = a.id
+            WHERE pa.playlist_id = p.id
+        ), '[]'::json),
+        'CreatedAt', p.created_at
+    )) INTO v_json_data
+    FROM playlists p
+    WHERE p.user_id = v_user_id;
+
+    -- Return the result message
+    RETURN get_result_message(0, '', v_json_data);
+END;
+$$;
+
+
 CREATE OR REPLACE FUNCTION get_audio_by_id(ip_audio_id INTEGER)
 RETURNS JSONB
 LANGUAGE plpgsql
@@ -1432,30 +1492,101 @@ BEGIN
 END;
 $$;
 
--- Function to like an audio
-CREATE OR REPLACE FUNCTION like_audio(ip_session_token VARCHAR, ip_audio_id INTEGER, ip_playlist_id INTEGER)
+-- Function to like an audio, add to likes table and liked playlist
+CREATE OR REPLACE FUNCTION like_audio(ip_session_token VARCHAR, ip_audio_id INTEGER)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 DECLARE
     v_user_id INTEGER;
-    v_audio_id INTEGER;
-    v_playlist_id INTEGER;
+    v_audio_exists BOOLEAN;
+    v_result JSONB;
 BEGIN
     -- Validate the session token and get the user ID
     v_user_id := validate_session(ip_session_token);
 
-    -- If the session is valid, insert the like
+    -- If the session is valid, proceed with liking the audio
     IF v_user_id IS NOT NULL THEN
+        -- Check if the audio exists
+        SELECT EXISTS (
+            SELECT 1
+            FROM audios a
+            WHERE a.id = ip_audio_id
+        ) INTO v_audio_exists;
+
+        IF NOT v_audio_exists THEN
+            RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Check if the audio is already liked by the user
+        IF EXISTS (
+            SELECT 1
+            FROM likes l
+            WHERE l.user_id = v_user_id AND l.audio_id = ip_audio_id
+        ) THEN
+            RETURN get_result_message(1, 'Audio is already liked', '{}'::JSONB);
+        END IF;
+
+        -- Insert the like record
         INSERT INTO likes (user_id, audio_id, liked_at)
         VALUES (v_user_id, ip_audio_id, CURRENT_TIMESTAMP);
 
-        -- Insert the audio into the playlist
-        INSERT INTO playlist_audios (playlist_id, audio_id)
-        VALUES (ip_playlist_id, ip_audio_id);
+        -- Add the audio to the liked playlist
+        PERFORM add_audio_to_playlist(ip_session_token, 1, ip_audio_id);
 
-        -- Return the success message
+        -- Return success message
+        RETURN get_result_message(0, '', '{}'::JSONB);
+    ELSE
+        -- If the session is not valid, return an error message
+        RETURN get_result_message(1, 'Invalid session token', '{}'::JSONB);
+    END IF;
+END;
+
+-- Remove like from an audio, remove from likes table and liked playlist
+CREATE OR REPLACE FUNCTION remove_like_from_audio(ip_session_token VARCHAR, ip_audio_id INTEGER)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_audio_exists BOOLEAN;
+    v_result JSONB;
+BEGIN
+    -- Validate the session token and get the user ID
+    v_user_id := validate_session(ip_session_token);
+
+    -- If the session is valid, proceed with unliking the audio
+    IF v_user_id IS NOT NULL THEN
+        -- Check if the audio exists
+        SELECT EXISTS (
+            SELECT 1
+            FROM audios a
+            WHERE a.id = ip_audio_id
+        ) INTO v_audio_exists;
+
+        IF NOT v_audio_exists THEN
+            RETURN get_result_message(1, 'Audio does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Check if the audio is liked by the user
+        IF NOT EXISTS (
+            SELECT 1
+            FROM likes l
+            WHERE l.user_id = v_user_id AND l.audio_id = ip_audio_id
+        ) THEN
+            RETURN get_result_message(1, 'Audio is not liked', '{}'::JSONB);
+        END IF;
+
+        -- Remove the like record
+        DELETE FROM likes
+        WHERE user_id = v_user_id AND audio_id = ip_audio_id;
+
+        -- Remove the audio from the liked playlist
+        PERFORM remove_audio_from_playlist(ip_session_token, 1, ip_audio_id);
+
+        -- Return success message
         RETURN get_result_message(0, '', '{}'::JSONB);
     ELSE
         -- If the session is not valid, return an error message
@@ -1655,7 +1786,9 @@ GRANT EXECUTE ON FUNCTION get_user_display_info(INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_user_audio_rating(INT, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION add_user_play_history(VARCHAR, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_user_play_history(VARCHAR) TO restricted_user;
-GRANT EXECUTE ON FUNCTION like_audio(VARCHAR, INT, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION like_audio(VARCHAR, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION remove_like_from_audio(VARCHAR, INT) TO restricted_user;
+GRANT EXECUTE ON FUNCTION remove
 GRANT EXECUTE ON FUNCTION update_user_profile(VARCHAR, VARCHAR, TEXT, TEXT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION get_audios_in_playlist(VARCHAR, INT) TO restricted_user;
 GRANT EXECUTE ON FUNCTION update_user_playlist(VARCHAR, INT, VARCHAR, VARCHAR) TO restricted_user;

@@ -68,5 +68,21 @@ namespace OneLastSong.Views.Components
                 }
             }
         }
+
+        public void LikeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                try
+                {
+                    LogUtils.Info(button.Tag.ToString());
+                }
+                catch (Exception ex)
+                {
+                    // Log exception
+                    SnackbarUtils.ShowSnackbar("There was an error while liking/disliking the audio", SnackbarType.Error);
+                }
+            }
+        }
     }
 }

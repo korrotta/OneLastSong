@@ -19,20 +19,31 @@ using System.Windows.Input;
 
 namespace OneLastSong.ViewModels
 {
-    public class HomePageViewModel : INotifyPropertyChanged, IAudioStateChanged, IDisposable
+    public class HomePageViewModel : INotifyPropertyChanged, IAudioStateChanged, IDisposable, INotifyLikeAudioStateChanged
     {
         public ICommand PlayCommand { get; }
         public event PropertyChangedEventHandler PropertyChanged;
+        
         private ListeningService listeningService;
         private NavigationService navigationService;
+        private AudioService audioService;
+
+        private AudioDAO audioDAO;
+        
         private AudioItem _selectedAudio;
+        
 
         public HomePageViewModel()
         {
             listeningService = ListeningService.Get();
             navigationService = NavigationService.Get();
+            audioService = AudioService.Get();
+
+            audioDAO = AudioDAO.Get();
+
             PlayCommand = new RelayCommand<Audio>(PlayAudio);
             listeningService.RegisterAudioStateChangeListeners(this);
+            audioService.RegisterAudioLikeStateNotifier(this);
         }
 
         public void OnPropertyChanged(string propertyName)
@@ -167,6 +178,7 @@ namespace OneLastSong.ViewModels
         public void Dispose()
         {
             listeningService.UnregisterAudioStateChangeListeners(this);
+            audioService.UnregisterAudioLikeStateNotifier(this);
         }
 
         public void UpdateView()
@@ -178,6 +190,30 @@ namespace OneLastSong.ViewModels
         internal void NavigateToAudioDetails(string audioId)
         {
             navigationService.NavigateOrReloadOnParameterChanged(typeof(AudioDetailsPage), audioId);
+        }
+
+        public void OnAnAudioLiked(int audioId)
+        {
+            for (int i = 0; i < ListAudios.Count; i++)
+            {
+                if (ListAudios[i].AudioId == audioId)
+                {
+                    ListAudios[i].AudioLikeState = AudioItem.AudioLikeStateType.Liked;
+                    ListAudios[i].Likes++;
+                }
+            }
+        }
+
+        public void OnAnAudioLikeRemoved(int audioId)
+        {
+            for (int i = 0; i < ListAudios.Count; i++)
+            {
+                if (ListAudios[i].AudioId == audioId)
+                {
+                    ListAudios[i].AudioLikeState = AudioItem.AudioLikeStateType.NotLiked;
+                    ListAudios[i].Likes--;
+                }
+            }
         }
     }
 }

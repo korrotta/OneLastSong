@@ -39,6 +39,9 @@ namespace OneLastSong.Contracts
         public Task<ResultMessage> RateAudio(string sessionToken, int audioId, float rating);
         public Task<ResultMessage> GetRatingScoreByAudioId(int audioId);
         public Task<ResultMessage> GetUserAudioRating(int userId, int audioId);
+        /* Like */
+        public Task<ResultMessage> LikeAudio(string sessionToken, int audioId);
+        public Task<ResultMessage> RemoveLikeFromAudio(string sessionToken, int audioId);
         /* User */
         public Task<ResultMessage> GetUserDisplayInfo(int userId);
         /* Play history */

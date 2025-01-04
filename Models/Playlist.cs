@@ -152,5 +152,26 @@ namespace OneLastSong.Models
                 CreatedAt = CreatedAt
             };
         }
+
+        public bool IsEmpty()
+        {
+            return Audios == null || Audios.Length == 0;
+        }
+
+        public bool ContainsAudio(Audio audio)
+        {
+            if (Audios == null)
+            {
+                return false;
+            }
+            foreach (var a in Audios)
+            {
+                if (a.AudioId == audio.AudioId)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
