@@ -42,6 +42,7 @@
     <None Remove="Views\Components\HomePage.xaml" />
     <None Remove="Views\Components\IconTextButton.xaml" />
     <None Remove="Views\Components\LeftRegion.xaml" />
+    <None Remove="Views\Components\PaginationControl.xaml" />
     <None Remove="Views\Components\PlaylistMenuFlyout.xaml" />
     <None Remove="Views\Components\RightRegion.xaml" />
     <None Remove="Views\Components\SignInPage.xaml" />
@@ -208,6 +209,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\PaginationControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Pages\ProfilePage.xaml">

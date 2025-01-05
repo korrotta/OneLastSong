@@ -6,10 +6,21 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:OneLastSong.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:components="using:OneLastSong.Views.Components"
+    xmlns:converters="using:OneLastSong.Converters"
+    Background="Transparent"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <converters:DurationToTimeConverter x:Key="DurationToTimeConverter" />
+        <converters:PlayStateToIconConverter x:Key="PlayStateToIconConverter" />
+        <Style TargetType="controls:DataGridRow" x:Key="DataGridRowStyleKey">
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+    </Page.Resources>
+    <ScrollViewer>
+        <Grid>
         <!--  Header Section  -->
         <StackPanel Padding="20" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" Spacing="20">
@@ -28,17 +39,77 @@
                     <TextBlock
                         FontSize="40"
                         FontWeight="Bold"
-                        Text="{Binding Username}" />
+                        Text="{Binding Username}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                     <TextBlock
                         Margin="0,5,0,0"
                         FontSize="18"
                         Opacity="0.7"
                         Text="{Binding Description}"
-                        TextWrapping="Wrap" />
+                        Foreground="{ThemeResource TEXT_PRIMARY}"
+                        TextWrapping="Wrap"
+                        MaxWidth="600"/>
                 </StackPanel>
             </StackPanel>
+
+            <TextBlock Text="Your play history" Style="{StaticResource SongBigTitle}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
+            <TextBlock Text="(Only visible for you)" Style="{StaticResource Body2}" Foreground="{ThemeResource TEXT_LIGHT}"/>
+
+            <!-- Search -->
+            <TextBox x:Name="SearchBox" PlaceholderText="Search songs..." TextChanged="SearchBox_TextChanged" Margin="0,0,0,10"/>
+
+            <controls:DataGrid 
+                x:Name="dgAudios"
+                ItemsSource="{x:Bind ViewModel.PlayHistory, Mode=OneWay}"
+                VerticalAlignment="Stretch"
+                AutoGenerateColumns="False"
+                CanUserReorderColumns="False" CanUserResizeColumns="False"
+                CanUserSortColumns="True"
+                Sorting="dg_Sorting"
+                ColumnWidth="Auto"
+                RowStyle="{StaticResource DataGridRowStyleKey}">
+                <controls:DataGrid.Columns>
+                    <controls:DataGridTextColumn Header="Id" Binding="{Binding AudioItem.AudioId, Mode=OneWay}" IsReadOnly="True" Tag="AudioId"/>
+                    <controls:DataGridTemplateColumn Header="Cover" Tag="CoverImageUrl">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid CornerRadius="8" Width="40" Height="40">
+                                    <Image Source="{Binding AudioItem.CoverImageUrl}" Stretch="Fill" Width="40" Height="40"/>
+                                </Grid>
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                    <controls:DataGridTextColumn Header="Title" Binding="{Binding AudioItem.Title, Mode=OneWay}" IsReadOnly="True" Tag="Title" Width="*"/>
+                    <controls:DataGridTextColumn Header="Artist" Binding="{Binding AudioItem.Artist, Mode=OneWay}" IsReadOnly="True" Tag="Artist" Width="*"/>
+                    <controls:DataGridTextColumn Header="Relative time" Binding="{Binding RelativePlayedAtString, Mode=OneWay}" IsReadOnly="True" Tag="RelativePlayedAtString"/>
+                    <controls:DataGridTextColumn Header="Time" Binding="{Binding PlayedAtString, Mode=OneWay}" IsReadOnly="True" Tag="PlayedAt"/>
+                    <controls:DataGridTemplateColumn Header="Duration" IsReadOnly="True" Tag="Duration">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid VerticalAlignment="Center">
+                                    <TextBlock
+                                        Text="{Binding AudioItem.Duration, Mode=OneWay, Converter={StaticResource DurationToTimeConverter}}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                    <controls:DataGridTemplateColumn Header="Controls" Tag="Controls">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <components:AudioExtraControlsButton Audio="{Binding AudioItem, Mode=OneWay}"/>
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                </controls:DataGrid.Columns>
+            </controls:DataGrid>
+
+            <components:PaginationControl
+                MinPage="1"
+                MaxPage="{x:Bind ViewModel.MaxPage, Mode=OneWay}"
+                CurrentPage="{x:Bind ViewModel.CurrentPage, Mode=TwoWay}"
+                PageChanged="PaginationControl_PageChanged"/>
+
+            <TextBlock Text="Your playlists" Style="{StaticResource SongBigTitle}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
         </StackPanel>
-
-
     </Grid>
+    </ScrollViewer>
 </Page>

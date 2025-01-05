@@ -45,15 +45,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Grid  Width="400" CornerRadius="16">
-                <ParallaxView Source="{Binding ElementName=listView}">
-                    <Image Source="{x:Bind ViewModel.Audio.CoverImageUrl, Mode=OneWay}" Stretch="Fill"/>
-                </ParallaxView>
-                <ListView>
-                    <ListView.Header>
-                        <TextBlock Text="" />
-                    </ListView.Header>
-                </ListView>
+            <Grid  Width="200" Height="200" CornerRadius="16">
+                <Image Source="{x:Bind ViewModel.Audio.CoverImageUrl, Mode=OneWay}" Stretch="Fill" Width="200" Height="200"/>
             </Grid>
             <StackPanel Orientation="Vertical" Margin="20,0,0,0" Grid.Row="0" Spacing="4">
                 <TextBlock Text="{x:Bind ViewModel.Audio.Title, Mode=OneWay}" FontSize="24" FontWeight="Bold" Foreground="{ThemeResource TEXT_PRIMARY}"/>

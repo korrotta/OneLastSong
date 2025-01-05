@@ -155,6 +155,12 @@ namespace OneLastSong.ViewModels
                     return;
                 }
 
+                if(String.IsNullOrEmpty(NewCommentContent))
+                {
+                    SnackbarUtils.ShowSnackbar("Comment cannot be empty", SnackbarType.Error);
+                    return;
+                }
+
                 await _commentDAO.CommentAudio(sessionToken, Audio.AudioId, NewCommentContent);
                 NewCommentContent = "";
                 SnackbarUtils.ShowSnackbar("Your comment has been added", SnackbarType.Success);

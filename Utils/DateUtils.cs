@@ -24,5 +24,10 @@ namespace OneLastSong.Utils
                 return $"{(int)timeSpan.TotalMinutes} minutes ago";
             return "just now";
         }
+
+        public static string GetFormattedDate(DateTime date)
+        {
+            return date.ToString("dd MMMM yyyy");
+        }
     }
 }

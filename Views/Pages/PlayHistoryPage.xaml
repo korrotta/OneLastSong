@@ -13,13 +13,15 @@
     <StackPanel Spacing="8" Padding="{StaticResource MediumPadding}">
         <!--Playing queue-->
         <TextBlock Text="Recents" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource Body2}" FontWeight="SemiBold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-        <ListView 
-        ItemsSource="{x:Bind ViewModel.PlayHistories, Mode=OneWay}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <components:SimpleAudioItem Audio="{Binding}" Margin="{StaticResource MediumBottomMargin}"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ListView 
+            ItemsSource="{x:Bind ViewModel.PlayHistories, Mode=OneWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <components:SimpleAudioItem Audio="{Binding}" Margin="{StaticResource MediumBottomMargin}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollViewer>
     </StackPanel>
 </Page>

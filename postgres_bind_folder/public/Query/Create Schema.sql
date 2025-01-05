@@ -3,24 +3,34 @@ SELECT now();
 
 -- Drop existing tables if they exist
 DROP TABLE IF EXISTS users CASCADE;
+
 DROP TABLE IF EXISTS playlists CASCADE;
+
 DROP TABLE IF EXISTS audios CASCADE;
+
 DROP TABLE IF EXISTS playlist_audios CASCADE;
+
 DROP TABLE IF EXISTS likes CASCADE;
+
 DROP TABLE IF EXISTS listening_sessions CASCADE;
+
 DROP TABLE IF EXISTS user_settings CASCADE;
+
 DROP TABLE IF EXISTS albums CASCADE;
+
 DROP TABLE IF EXISTS categories CASCADE;
+
 DROP TABLE IF EXISTS friends CASCADE;
+
 DROP TABLE IF EXISTS followers CASCADE;
 
 -- Extensions
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Users table
-CREATE TABLE users 
-(
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
@@ -32,79 +42,71 @@ CREATE TABLE users
 );
 
 -- Sessions table
-CREATE TABLE sessions
-(
+CREATE TABLE sessions (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
     session_token VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expires_at TIMESTAMP NOT NULL
 );
 
 -- Albums table
-CREATE TABLE albums
-(
+CREATE TABLE albums (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     artist VARCHAR(255) NOT NULL,
     cover_image_url VARCHAR(255),
     release_date DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL
+    user_id INTEGER REFERENCES users (id) ON DELETE SET NULL
 );
 
 -- Categories table
-CREATE TABLE categories
-(
+CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Audios table
-CREATE TABLE audios
-(
+CREATE TABLE audios (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     artist VARCHAR(255) NOT NULL,
-    album_id INTEGER REFERENCES albums(id) ON DELETE SET NULL,
-    category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
+    album_id INTEGER REFERENCES albums (id) ON DELETE SET NULL,
+    category_id INTEGER REFERENCES categories (id) ON DELETE SET NULL,
     duration INTEGER NOT NULL, -- Duration in seconds
     url VARCHAR(255) NOT NULL,
     cover_image_url VARCHAR(255),
-    author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    author_id INTEGER REFERENCES users (id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    country_id VARCHAR(2) REFERENCES countries(id) DEFAULT '__',
+    country_id VARCHAR(2) REFERENCES countries (id) DEFAULT '__',
     description TEXT
 );
 
 -- Genres table
-CREATE TABLE genres
-(
+CREATE TABLE genres (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
 -- Audios_Genres table to establish many-to-many relationship
-CREATE TABLE audios_genres
-(
-    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
-    genre_id INTEGER REFERENCES genres(id) ON DELETE CASCADE,
+CREATE TABLE audios_genres (
+    audio_id INTEGER REFERENCES audios (id) ON DELETE CASCADE,
+    genre_id INTEGER REFERENCES genres (id) ON DELETE CASCADE,
     PRIMARY KEY (song_id, genre_id)
 );
 
 -- Countries table
-CREATE TABLE countries
-(
+CREATE TABLE countries (
     id VARCHAR(2) PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
 -- Playlists table
-CREATE TABLE playlists
-(
+CREATE TABLE playlists (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     cover_image_url VARCHAR(255),
     deletable BOOLEAN DEFAULT TRUE,
@@ -112,94 +114,87 @@ CREATE TABLE playlists
 );
 
 -- Playlist audios table (many-to-many relationship between playlists and audios)
-CREATE TABLE playlist_audios
-(
-    playlist_id INTEGER REFERENCES playlists(id) ON DELETE CASCADE,
-    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+CREATE TABLE playlist_audios (
+    playlist_id INTEGER REFERENCES playlists (id) ON DELETE CASCADE,
+    audio_id INTEGER REFERENCES audios (id) ON DELETE CASCADE,
     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (playlist_id, audio_id)
 );
 
 -- Likes table (tracks which audios users have liked)
-CREATE TABLE likes
-(
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+CREATE TABLE likes (
+    user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    audio_id INTEGER REFERENCES audios (id) ON DELETE CASCADE,
     liked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, audio_id)
 );
 
 -- Listening sessions table
-CREATE TABLE listening_sessions
-(
+CREATE TABLE listening_sessions (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    audio_id INTEGER REFERENCES audios (id) ON DELETE CASCADE,
     progress INTEGER DEFAULT 0
 );
 
 -- User settings table
-CREATE TABLE user_settings
-(
-    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+CREATE TABLE user_settings (
+    user_id INTEGER PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
     theme VARCHAR(50),
     notifications_enabled BOOLEAN DEFAULT TRUE,
     language VARCHAR(50) DEFAULT 'en'
 );
 
 -- Friends table (self-referencing many-to-many relationship)
-CREATE TABLE friends
-(
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    friend_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+CREATE TABLE friends (
+    user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    friend_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, friend_id)
 );
 
 -- Followers table (self-referencing many-to-many relationship)
-CREATE TABLE followers
-(
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    follower_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+CREATE TABLE followers (
+    user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    follower_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, follower_id)
 );
 
 -- Playlist --
-CREATE TABLE lyrics
-(
+CREATE TABLE lyrics (
     id SERIAL PRIMARY KEY,
-    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+    audio_id INTEGER REFERENCES audios (id) ON DELETE CASCADE,
     timestamp FLOAT,
     lyric TEXT
 );
 
 -- Comments --
-CREATE TABLE audio_comments
-(
+CREATE TABLE audio_comments (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    audio_id INTEGER REFERENCES audios (id) ON DELETE CASCADE,
     comment_text TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Ratings --
-CREATE TABLE audio_ratings
-(
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
-    rating FLOAT CHECK (rating >= 0 AND rating <= 5),
+CREATE TABLE audio_ratings (
+    user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    audio_id INTEGER REFERENCES audios (id) ON DELETE CASCADE,
+    rating FLOAT CHECK (
+        rating >= 0
+        AND rating <= 5
+    ),
     rated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, audio_id)
 );
 
 -- Play history table
-CREATE TABLE play_history
-(
+CREATE TABLE play_history (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    audio_id INTEGER REFERENCES audios(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    audio_id INTEGER REFERENCES audios (id) ON DELETE CASCADE,
     played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -242,7 +237,9 @@ CREATE OR REPLACE FUNCTION generate_token()
 RETURNS UUID AS $$
 BEGIN
     RETURN uuid_generate_v4();
+
 END;
+
 $$ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS public.user_login;
@@ -318,6 +315,7 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
 $$ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS public.get_user_data;
@@ -378,6 +376,7 @@ END;
 $$ LANGUAGE plpgsql
 
 -- Create validate username function return empty string if username is valid, otherwise return an error message
+
 CREATE OR REPLACE FUNCTION validate_username(ip_username VARCHAR)
 RETURNS VARCHAR
 SECURITY DEFINER
@@ -466,7 +465,8 @@ END;
 $$;
 
 -- Create a function to get the top n most liked audios
-DROP FUNCTION IF EXISTS get_most_like_audios(n INT);
+DROP FUNCTION IF EXISTS get_most_like_audios (n INT);
+
 CREATE OR REPLACE FUNCTION get_most_like_audios(n INT)
 RETURNS JSONB
 LANGUAGE plpgsql
@@ -627,7 +627,7 @@ END;
 $$;
 
 -- Function get all user's playlists
-DROP FUNCTION IF EXISTS get_all_user_playlists(VARCHAR);
+DROP FUNCTION IF EXISTS get_all_user_playlists (VARCHAR);
 
 CREATE OR REPLACE FUNCTION get_all_user_playlists(ip_session_token VARCHAR)
 RETURNS JSONB
@@ -687,7 +687,6 @@ BEGIN
     RETURN get_result_message(0, '', v_json_data);
 END;
 $$;
-
 
 CREATE OR REPLACE FUNCTION get_audio_by_id(ip_audio_id INTEGER)
 RETURNS JSONB
@@ -793,7 +792,7 @@ END;
 $$;
 
 -- Get all artists
-DROP FUNCTION IF EXISTS get_all_artists();
+DROP FUNCTION IF EXISTS get_all_artists ();
 
 CREATE OR REPLACE FUNCTION get_all_artists()
 RETURNS JSONB
@@ -1016,6 +1015,15 @@ BEGIN
 
         IF NOT v_playlist_exists THEN
             RETURN get_result_message(1, 'Playlist does not exist', '{}'::JSONB);
+        END IF;
+
+        -- Check if the playlist name is not "Liked Playlist"
+        IF EXISTS (
+            SELECT 1
+            FROM playlists p
+            WHERE p.id = ip_playlist_id AND p.name = 'Liked Playlist'
+        ) THEN
+            RETURN get_result_message(1, 'Cannot delete the "Liked Playlist"', '{}'::JSONB);
         END IF;
 
         -- Check if the playlist belongs to the user
@@ -1565,11 +1573,12 @@ DECLARE
     v_user_id INTEGER;
     v_audio_exists BOOLEAN;
     v_result JSONB;
+    v_liked_playlist_id INTEGER;
 BEGIN
     -- Validate the session token and get the user ID
     v_user_id := validate_session(ip_session_token);
 
-    -- If the session is valid, proceed with unliking the audio
+    -- If the session is valid, proceed with removing the like from the audio
     IF v_user_id IS NOT NULL THEN
         -- Check if the audio exists
         SELECT EXISTS (
@@ -1596,7 +1605,13 @@ BEGIN
         WHERE user_id = v_user_id AND audio_id = ip_audio_id;
 
         -- Remove the audio from the liked playlist
-        PERFORM remove_audio_from_playlist(ip_session_token, 1, ip_audio_id);
+        SELECT id INTO v_liked_playlist_id
+        FROM playlists
+        WHERE user_id = v_user_id AND name = 'Liked Playlist';
+
+        IF v_liked_playlist_id IS NOT NULL THEN
+            PERFORM remove_audio_from_playlist(ip_session_token, v_liked_playlist_id, ip_audio_id);
+        END IF;
 
         -- Return success message
         RETURN get_result_message(0, '', '{}'::JSONB);
@@ -1772,43 +1787,113 @@ EXECUTE FUNCTION create_liked_playlist();
 CREATE ROLE restricted_user WITH LOGIN PASSWORD '12345678';
 -- Revoke all privileges from restricted_user
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM restricted_user;
+
 REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM restricted_user;
+
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA public FROM restricted_user;
 -- Grant execute permissions on specific functions to restricted_user
 GRANT EXECUTE ON FUNCTION user_login(VARCHAR, VARCHAR) TO restricted_user;
-GRANT EXECUTE ON FUNCTION validate_session(VARCHAR) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_user_data(VARCHAR) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_result_message(INT, VARCHAR, JSONB) TO restricted_user;
-GRANT EXECUTE ON FUNCTION validate_username(VARCHAR) TO restricted_user;
-GRANT EXECUTE ON FUNCTION validate_password(VARCHAR) TO restricted_user;
-GRANT EXECUTE ON FUNCTION user_signup(VARCHAR, VARCHAR) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_most_like_audios(INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_album_item_count(INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_first_n_albums(INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_all_user_playlists(VARCHAR) TO restricted_user;
-GRANT EXECUTE ON FUNCTION add_user_playlist(VARCHAR, VARCHAR, VARCHAR) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_all_artists() TO restricted_user;
-GRANT EXECUTE ON FUNCTION add_audio_to_playlist(VARCHAR, INT, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION remove_audio_from_playlist(VARCHAR, INT, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION delete_playlist(VARCHAR, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION save_listening_session(VARCHAR, INT, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION save_listening_session(VARCHAR, INT, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_listening_session(VARCHAR, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_lyrics(INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION comment_audio(VARCHAR, INT, TEXT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_comments_by_audio_id(INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION rate_audio(VARCHAR, INT, FLOAT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_rating_score_by_audio_id(INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_user_display_info(INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_user_audio_rating(INT, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION add_user_play_history(VARCHAR, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_user_play_history(VARCHAR) TO restricted_user;
-GRANT EXECUTE ON FUNCTION like_audio(VARCHAR, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION remove_like_from_audio(VARCHAR, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION update_user_profile(VARCHAR, VARCHAR, TEXT, TEXT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION get_audios_in_playlist(VARCHAR, INT) TO restricted_user;
-GRANT EXECUTE ON FUNCTION update_user_playlist(VARCHAR, INT, VARCHAR, VARCHAR) TO restricted_user;
 
-SELECT user_login('test', 'test');
-SELECT validate_session('7d683b5d-6c62-474f-b666-7df5017edabc');
-SELECT get_user_data('7d683b5d-6c62-474f-b666-7df5017edabc');
+GRANT
+EXECUTE ON FUNCTION validate_session (VARCHAR) TO restricted_user;
+
+GRANT EXECUTE ON FUNCTION get_user_data (VARCHAR) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_result_message (INT, VARCHAR, JSONB) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION validate_username (VARCHAR) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION validate_password (VARCHAR) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION user_signup (VARCHAR, VARCHAR) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_most_like_audios (INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_album_item_count (INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_first_n_albums (INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_all_user_playlists (VARCHAR) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION add_user_playlist (VARCHAR, VARCHAR, VARCHAR) TO restricted_user;
+
+GRANT EXECUTE ON FUNCTION get_all_artists () TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION add_audio_to_playlist (VARCHAR, INT, INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION remove_audio_from_playlist (VARCHAR, INT, INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION delete_playlist (VARCHAR, INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION save_listening_session (VARCHAR, INT, INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION save_listening_session (VARCHAR, INT, INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_listening_session (VARCHAR, INT) TO restricted_user;
+
+GRANT EXECUTE ON FUNCTION get_lyrics (INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION comment_audio (VARCHAR, INT, TEXT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_comments_by_audio_id (INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION rate_audio (VARCHAR, INT, FLOAT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_rating_score_by_audio_id (INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_user_display_info (INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_user_audio_rating (INT, INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION add_user_play_history (VARCHAR, INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_user_play_history (VARCHAR) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION like_audio (VARCHAR, INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION remove_like_from_audio (VARCHAR, INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION update_user_profile (VARCHAR, VARCHAR, TEXT, TEXT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION get_audios_in_playlist (VARCHAR, INT) TO restricted_user;
+
+GRANT
+EXECUTE ON FUNCTION update_user_playlist (
+    VARCHAR,
+    INT,
+    VARCHAR,
+    VARCHAR
+) TO restricted_user;
+
+SELECT user_login ('test', 'test');
+
+SELECT validate_session ( '7d683b5d-6c62-474f-b666-7df5017edabc' );
+
+SELECT get_user_data ( '7d683b5d-6c62-474f-b666-7df5017edabc' );

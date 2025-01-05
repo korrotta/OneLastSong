@@ -29,6 +29,12 @@ namespace OneLastSong.Views.Dialogs
         {
             this.InitializeComponent();
             ViewModel = new EditPlaylistDetailsDialogViewModel(playlist);
+            Loaded += EditPlaylistDetailsDialog_Loaded;
+        }
+
+        private void EditPlaylistDetailsDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.XamlRoot = this.XamlRoot;
         }
 
         private async void SaveButton_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -40,7 +46,9 @@ namespace OneLastSong.Views.Dialogs
             }
             catch (Exception ex)
             {
-                await DialogUtils.ShowDialogAsync("Error", "Failed to update playlist details", XamlRoot);
+                // close the dialog
+                Hide();
+                await DialogUtils.ShowDialogAsync("Error", $"Failed to update playlist details: {ex.Message}", XamlRoot);
             }
         }
     }

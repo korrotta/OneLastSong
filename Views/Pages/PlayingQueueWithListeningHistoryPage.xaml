@@ -8,13 +8,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="Transparent">
-
+    
     <StackPanel>
         <SelectorBar SelectionChanged="SelectorBar_SelectionChanged" HorizontalAlignment="Stretch">
             <SelectorBarItem x:Name="PlayingQueue" Text="Playing Queue" IsSelected="True" FontWeight="Bold" Foreground="{ThemeResource TEXT_DISABLED}" FontSize="18"/>
             <SelectorBarItem x:Name="PlayHistory" Text="Play History" FontWeight="Bold" Foreground="{ThemeResource TEXT_DISABLED}" FontSize="18"/>
         </SelectorBar>
-
+        
         <Frame x:Name="ContentFrame" IsNavigationStackEnabled="False" />
     </StackPanel>
 

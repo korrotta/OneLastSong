@@ -30,16 +30,17 @@
         <!--  Left: Song Image and Info  -->
         <StackPanel
             Grid.Column="0"
-            MaxWidth="400"
+            MaxWidth="300"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             Orientation="Horizontal">
             <Border
                 Width="Auto"
                 Height="Auto"
-                Margin="{StaticResource MediumRightMargin}"
-                CornerRadius="5">
-                <Image Source="{x:Bind ViewModel.CurrentAudio.CoverImageUrl, Mode=OneWay}" />
+                Padding="{StaticResource MediumMargin}">
+                <Grid Margin="{StaticResource MediumRightMargin}" CornerRadius="8">
+                    <Image Source="{x:Bind ViewModel.CurrentAudio.CoverImageUrl, Mode=OneWay}"/>
+                </Grid>
             </Border>
 
             <StackPanel VerticalAlignment="Center" Orientation="Vertical">
