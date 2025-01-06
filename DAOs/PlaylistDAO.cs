@@ -100,7 +100,9 @@ namespace OneLastSong.DAOs
             }
 
             // if the playlist contains the audio, do nothing
-            if(_playlistList.Find(playlist => playlist.PlaylistId == playlistId).Audios.ToList().Find(audio => audio.AudioId == audioId) != null)
+            var onFocusPlaylist = _playlistList.Find(playlist => playlist.PlaylistId == playlistId);
+
+            if (onFocusPlaylist.ContainsAudio(audioId))
             {
                 return;
             }
