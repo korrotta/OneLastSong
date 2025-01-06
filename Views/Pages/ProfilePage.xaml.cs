@@ -51,5 +51,10 @@ namespace OneLastSong.Views.Pages
         {
             ViewModel.PaginationControl_PageChanged(e);
         }
+
+        private void EditProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.EditProfile();
+        }
     }
 }

@@ -48,7 +48,7 @@ namespace OneLastSong.ViewModels
         {
             foreach (var audio in playQueue)
             {
-                _playingQueue.Add(audio);
+                PlayingQueue.Add(audio);
             }
         }
 

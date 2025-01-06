@@ -13,6 +13,7 @@ namespace OneLastSong.Utils
         public static readonly String APP_VERSION_KEY = "AppVersion";
         public static readonly String DEFAULT_PLAYLIST_COVER_IMAGE_URL_KEY = "DefaultPlaylistCover";
         public static readonly String LIKE_PLAYLIST_NAME_KEY = "LikePlaylistName";
+        public static readonly String NOT_FOUND_IMAGE_KEY = "NotFoundImage";
 
         public static String GetConfigValue(String key)
         {

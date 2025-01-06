@@ -44,6 +44,7 @@ namespace OneLastSong.Contracts
         public Task<ResultMessage> RemoveLikeFromAudio(string sessionToken, int audioId);
         /* User */
         public Task<ResultMessage> GetUserDisplayInfo(int userId);
+        public Task<ResultMessage> UpdateUserProfile(string sessionToken, string description, string avatarUrl);
         /* Play history */
         public Task<ResultMessage> AddUserPlayHistory(string sessionToken, int audioId);
         public Task<ResultMessage> GetUserPlayHistory(string sessionToken);

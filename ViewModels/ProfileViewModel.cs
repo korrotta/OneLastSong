@@ -1,23 +1,27 @@
 ﻿using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using OneLastSong.Cores.DataItems;
 using OneLastSong.DAOs;
 using OneLastSong.Models;
 using OneLastSong.Utils;
 using OneLastSong.Views.Components;
+using OneLastSong.Views.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace OneLastSong.ViewModels
 {
     public class ProfileViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        UserDAO userDAO = UserDAO.Get();
-        PlayHistoryDAO playHistoryDAO = PlayHistoryDAO.Get();
+        private UserDAO userDAO = UserDAO.Get();
+        private PlayHistoryDAO playHistoryDAO = PlayHistoryDAO.Get();
+        private PlaylistDAO playlistDAO = PlaylistDAO.Get();
         private string _username;
         private string _profilePictureUrl;
         private string _description;
@@ -116,6 +120,31 @@ namespace OneLastSong.ViewModels
             if (String.IsNullOrEmpty(userDAO.SessionToken))
             {
                 SnackbarUtils.ShowSnackbar("You need to login to view your profile", SnackbarType.Warning);
+                return;
+            }
+
+            await LoadPlayHistory();
+            await LoadPlaylists();
+        }
+
+        private async Task LoadPlaylists()
+        {
+            if(String.IsNullOrEmpty(userDAO.SessionToken))
+            {
+                // SnackbarUtils.ShowSnackbar("You need to login to view your profile", SnackbarType.Warning);
+                return;
+            }
+
+            var playlists = await playlistDAO.GetUserPlaylists(userDAO.SessionToken);
+
+            Playlists = new ObservableCollection<Playlist>(playlists);
+        }
+
+        private async Task LoadPlayHistory()
+        {
+            if (String.IsNullOrEmpty(userDAO.SessionToken))
+            {
+                //SnackbarUtils.ShowSnackbar("You need to login to view your profile", SnackbarType.Warning);
                 return;
             }
 
@@ -265,6 +294,49 @@ namespace OneLastSong.ViewModels
         internal void PaginationControl_PageChanged(PaginationControlValueChangedEventArgs e)
         {
             CurrentPage = e.NewValue;
+        }
+
+        internal async void EditProfile()
+        {
+            var user = userDAO.User;
+            var token = userDAO.SessionToken;
+
+            if (user == null || this.XamlRoot == null || String.IsNullOrEmpty(token))
+            {
+                return;
+            }
+
+            EditUserProfileDialog dialog = new EditUserProfileDialog(user)
+            {
+                XamlRoot = this.XamlRoot
+            };
+
+
+            ContentDialogResult result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Secondary)
+            {
+                return;
+            }
+
+            var inputUserProfile = dialog.GetUser();
+
+            if (!ImageUtils.IsValidImageUrl(inputUserProfile.AvatarUrl))
+            {
+                dialog.Hide();
+                await DialogUtils.ShowDialogAsync("Invalid URL", "Please enter a valid URL", this.XamlRoot);
+                return;
+            }
+
+            try
+            {
+                await userDAO.UpdateUserProfile(token, inputUserProfile);
+                SnackbarUtils.ShowSnackbar("Profile updated successfully", SnackbarType.Success);
+            }
+            catch (Exception ex)
+            {
+                SnackbarUtils.ShowSnackbar(ex.Message, SnackbarType.Error);
+            }
         }
     }
 }

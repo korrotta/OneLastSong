@@ -150,5 +150,21 @@ namespace OneLastSong.DAOs
 
             return _userDisplayInfoCache[authorId];
         }
+
+        internal async Task UpdateUserProfile(String token, User inputUserProfile)
+        {
+            ResultMessage result = await _db.UpdateUserProfile(token, inputUserProfile.Description, inputUserProfile.AvatarUrl);
+
+            if (result.Status == ResultMessage.STATUS_OK)
+            {
+                User.Description = inputUserProfile.Description;
+                User.AvatarUrl = inputUserProfile.AvatarUrl;
+                _authService.NotifyUserChange(User, SessionToken);
+            }
+            else
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+        }
     }
 }

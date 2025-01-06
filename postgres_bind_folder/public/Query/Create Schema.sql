@@ -1623,7 +1623,11 @@ END;
 $$;
 
 -- create function to update user profile
-CREATE OR REPLACE FUNCTION update_user_profile(ip_session_token VARCHAR, ip_avatar_url VARCHAR, ip_profile_quote TEXT, ip_description TEXT)
+CREATE OR REPLACE FUNCTION update_user_profile(
+    ip_session_token VARCHAR,
+    ip_description TEXT,
+    ip_avatar_url VARCHAR
+)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -1638,7 +1642,6 @@ BEGIN
     IF v_user_id IS NOT NULL THEN
         UPDATE users
         SET avatar_url = ip_avatar_url,
-            profile_quote = ip_profile_quote,
             description = ip_description
         WHERE id = v_user_id;
 
@@ -1879,7 +1882,7 @@ GRANT
 EXECUTE ON FUNCTION remove_like_from_audio (VARCHAR, INT) TO restricted_user;
 
 GRANT
-EXECUTE ON FUNCTION update_user_profile (VARCHAR, VARCHAR, TEXT, TEXT) TO restricted_user;
+EXECUTE ON FUNCTION update_user_profile (VARCHAR, TEXT, VARCHAR) TO restricted_user;
 
 GRANT
 EXECUTE ON FUNCTION get_audios_in_playlist (VARCHAR, INT) TO restricted_user;

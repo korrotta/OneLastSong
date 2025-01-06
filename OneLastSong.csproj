@@ -43,6 +43,7 @@
     <None Remove="Views\Components\IconTextButton.xaml" />
     <None Remove="Views\Components\LeftRegion.xaml" />
     <None Remove="Views\Components\PaginationControl.xaml" />
+    <None Remove="Views\Components\PlayablePlaylistItem.xaml" />
     <None Remove="Views\Components\PlaylistMenuFlyout.xaml" />
     <None Remove="Views\Components\RightRegion.xaml" />
     <None Remove="Views\Components\SignInPage.xaml" />
@@ -129,6 +130,9 @@
     <Page Update="Views\Components\AudioItemInQueueMenuFlyout.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Dialogs\EditUserProfileDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\MainPage.xaml">
@@ -159,6 +163,9 @@
     <Content Include="Strings\**\*.resw">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Assets\images\not_found.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="Assets\images\default.png">
@@ -209,6 +216,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\PlayablePlaylistItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Components\PaginationControl.xaml">
