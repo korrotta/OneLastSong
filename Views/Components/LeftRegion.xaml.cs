@@ -63,6 +63,11 @@ namespace OneLastSong.Views.Components
                 ViewModel?.OpenPlaylist(playlist);
             }
         }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ViewModel?.Search(SearchBox.Text);
+        }
     }
 
 }

@@ -26,6 +26,7 @@ namespace OneLastSong.ViewModels
         
         private ListeningService listeningService;
         private NavigationService navigationService;
+        private SidePanelNavigationService sidePanelNavigationService;
         private AudioService audioService;
 
         private AudioDAO audioDAO;
@@ -38,6 +39,7 @@ namespace OneLastSong.ViewModels
         {
             listeningService = ListeningService.Get();
             navigationService = NavigationService.Get();
+            sidePanelNavigationService = SidePanelNavigationService.Get();
             audioService = AudioService.Get();
 
             audioDAO = AudioDAO.Get();
@@ -232,6 +234,14 @@ namespace OneLastSong.ViewModels
             {
                 SnackbarUtils.ShowSnackbar(e.Message, SnackbarType.Error);
             }
+        }
+
+        internal void NavigateToAds()
+        {
+            string url = $"https://yostar.store/products/azur-lane-plushie-4th-anniv";
+            // Open the URL in the default browser
+            BrowserUtils.OpenUrl(url);
+            sidePanelNavigationService.Navigate(typeof(AdsPage));
         }
     }
 }

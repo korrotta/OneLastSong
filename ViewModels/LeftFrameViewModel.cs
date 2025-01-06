@@ -61,6 +61,20 @@ namespace OneLastSong.ViewModels
             }
         }
 
+        private ObservableCollection<Playlist> _filteredPlaylistLists = new ObservableCollection<Playlist>();
+        public ObservableCollection<Playlist> FilteredPlaylistList
+        {
+            get => _filteredPlaylistLists;
+            set
+            {
+                if (_filteredPlaylistLists != value)
+                {
+                    _filteredPlaylistLists = value;
+                    OnPropertyChanged(nameof(FilteredPlaylistList));
+                }
+            }
+        }
+
         public async void InitPlaylist()
         {
             string sessionToken = UserDAO.Get().SessionToken;
@@ -74,6 +88,7 @@ namespace OneLastSong.ViewModels
             {
                 var playlists = await PlaylistDAO.Get().GetUserPlaylists(sessionToken);
                 PlaylistList = new ObservableCollection<Playlist>(playlists);
+                FilteredPlaylistList = PlaylistList;
             }
             catch (Exception e)
             {
@@ -164,6 +179,7 @@ namespace OneLastSong.ViewModels
         public void OnPlaylistUpdated(List<Playlist> playlists)
         {
             PlaylistList = new ObservableCollection<Playlist>(playlists);
+            FilteredPlaylistList = PlaylistList;
         }
 
         internal void OpenPlaylist(Playlist playlist)
@@ -182,6 +198,18 @@ namespace OneLastSong.ViewModels
             {
                 SnackbarUtils.ShowSnackbar(ex.Message, SnackbarType.Error);
             }
+        }
+
+        public void Search(string filter)
+        {
+            if (string.IsNullOrEmpty(filter))
+            {
+                FilteredPlaylistList = PlaylistList;
+                return;
+            }
+            FilteredPlaylistList = new ObservableCollection<Playlist>(
+                PlaylistList.Where(playlist => playlist.Name.ToLower().Contains(filter.ToLower()))
+            );
         }
     }
 }

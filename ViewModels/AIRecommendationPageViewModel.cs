@@ -176,5 +176,23 @@ namespace OneLastSong.ViewModels
 
             }
         }
+
+        internal void FetchUserConversation()
+        {
+            ConversationList.Clear();
+            aiService.FetchUserConversation();
+        }
+
+        public void OnMessageRetrieved(bool IsUser, string message)
+        {
+            if(IsUser)
+            {
+                AddMessageToConversation($"User: {message}");
+            }
+            else
+            {
+                AddMessageToConversation($"CoChiller: {message}");
+            }
+        }
     }
 }

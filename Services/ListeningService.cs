@@ -40,9 +40,63 @@ namespace OneLastSong.Services
         private Equalizer _equalizer;
         private EqualizerViewModel _equalizerViewModel;
 
+        private float _volume = 0.5f;
+        private bool _isRepeating = false;
+
+        public bool IsRepeating
+        {
+            get => _isRepeating;
+            set
+            {
+                _isRepeating = value;
+            }
+        }
+
         public EqualizerViewModel EqualizerViewModel
         {
             get => _equalizerViewModel;
+        }
+
+        public float Volume
+        {
+            get => _volume;
+            set
+            {
+                if (_volume != value)
+                {
+                    _volume = value;
+                    AddNewWorkerTask(Task.Run(() =>
+                    {
+                        if (wo != null)
+                        {
+                            wo.Volume = value;
+                        }
+                    }));
+                }
+            }
+        }
+
+        private List<Task> workerTasks = new List<Task>();
+
+        public void AddNewWorkerTask(Task task)
+        {
+            // acquire lock
+            lock (workerTasks)
+            {
+                workerTasks.Add(task);
+            }
+        }
+
+        private void HandleTask()
+        {
+            lock (workerTasks)
+            {
+                foreach (var task in workerTasks)
+                {
+                    task.Wait();
+                }
+                workerTasks.Clear();
+            }
         }
 
         public ListeningService(DispatcherQueue dispatcherQueue)
@@ -58,6 +112,7 @@ namespace OneLastSong.Services
             while (_shouldRun)
             {
                 Audio currentAudio = await PlayModeData.GetCurrentAudioSafe();
+                HandleTask();
 
                 if (currentAudio != null)
                 {
@@ -84,7 +139,14 @@ namespace OneLastSong.Services
 
                 if (PlayModeData.ListeningSession == null)
                 {
-                    currentAudio = await PlayModeData.NextAudioAsync();
+                    if (!_isRepeating)
+                    {
+                        currentAudio = await PlayModeData.NextAudioAsync();
+                    }
+                    else
+                    {
+                        currentAudio = await PlayModeData.GetCurrentAudioSafe();
+                    }
                 }
 
                 await Task.Delay(1000);
@@ -265,6 +327,7 @@ namespace OneLastSong.Services
 
             while (_shouldContinuePlayingCurrentAudio)
             {
+                HandleTask();
                 if (IsPlaying)
                 {
                     NotifyProgressChanged((int)mf.CurrentTime.TotalSeconds);
@@ -440,6 +503,26 @@ namespace OneLastSong.Services
         internal async void AddToQueue(Audio audio)
         {
             await PlayModeData.AddToQueue(audio);
+            NotifyPlayQueueChanged();
+        }
+
+        internal bool ToggleRepeat()
+        {
+            IsRepeating = !IsRepeating;
+            return IsRepeating;
+        }
+
+        internal float SetVolume(float newValue)
+        {
+            Volume = newValue;
+            return Volume;
+        }
+
+        internal void Shuffle()
+        {
+            PlayModeData.Shuffle();
+            // skip the current audio
+            PlayNext();
             NotifyPlayQueueChanged();
         }
     }

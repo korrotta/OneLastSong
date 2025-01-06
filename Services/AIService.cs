@@ -79,6 +79,8 @@ namespace OneLastSong.Services
 
             _listeningService = ListeningService.Get();
 
+            _history.Add(ChatMessage.CreateAssistantMessage("Hello, I'm your assistant. How can I help you today?"));
+
             await Task.CompletedTask;
             return true;
         }
@@ -261,6 +263,17 @@ namespace OneLastSong.Services
             });
         }
 
+        private void NotifyRetrievingMessage(bool isUser, string msg)
+        {
+            _eventHandler.TryEnqueue(() =>
+            {
+                foreach (var notify in _chatMessageChangedNotify)
+                {
+                    notify.OnMessageRetrieved(isUser, msg);
+                }
+            });
+        }
+
         private async void HandleToolCall(ChatToolCall toolCall)
         {
             LogUtils.Debug($"Tool call: {toolCall.FunctionName}");
@@ -417,6 +430,21 @@ namespace OneLastSong.Services
             }
             _listeningService.PlayAudioList(audioList);
             return "Playing the requested songs";
+        }
+
+        internal void FetchUserConversation()
+        {
+            foreach(var msg in _history.GetContextWindow())
+            {
+                if(msg as UserChatMessage != null)
+                {
+                    NotifyRetrievingMessage(true, msg.Content.First().Text);
+                }
+                else if (msg as AssistantChatMessage != null)
+                {
+                    NotifyRetrievingMessage(false, msg.Content.First().Text);
+                }
+            }
         }
     }
 }

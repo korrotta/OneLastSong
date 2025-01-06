@@ -85,5 +85,10 @@ namespace OneLastSong.Views.Components
                 }
             }
         }
+
+        private void AdsButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigateToAds();
+        }
     }
 }

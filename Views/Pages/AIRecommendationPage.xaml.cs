@@ -66,12 +66,12 @@ namespace OneLastSong.Views
 
         public object GetCurrentParameterState()
         {
-            throw new NotImplementedException();
+            return "";
         }
 
         public void OnStateLoad(object parameter)
         {
-            throw new NotImplementedException();
+            ViewModel.FetchUserConversation();
         }
     }
 }

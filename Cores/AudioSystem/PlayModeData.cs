@@ -316,5 +316,25 @@ namespace OneLastSong.Cores.AudioSystem
                 Semaphore.Release();
             }
         }
+
+        internal async void Shuffle()
+        {
+            await Semaphore.WaitAsync();
+            try
+            {
+                Random random = new Random();
+                for (int i = 0; i < PlayQueue.Count; i++)
+                {
+                    int randomIndex = random.Next(0, PlayQueue.Count);
+                    Audio temp = PlayQueue[i];
+                    PlayQueue[i] = PlayQueue[randomIndex];
+                    PlayQueue[randomIndex] = temp;
+                }
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
     }
 }

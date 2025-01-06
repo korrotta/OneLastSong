@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="OneLastSong.Views.Pages.AdsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneLastSong.Views.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:l="using:WinUI3Localizer"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <StackPanel VerticalAlignment="Center">
+        <Image
+       Source="https://yostar.store/cdn/shop/products/1_38fd2de2-9932-42a6-b0e4-3695ea09280a.jpg?v=1660643463"
+       Stretch="Uniform"/>
+        <Button
+       l:Uids.Uid="Go_to_Ad_Button"
+       VerticalAlignment="Center"
+       HorizontalAlignment="Right"
+       Margin="{StaticResource MediumRightMargin}"
+       Background="{ThemeResource BG_TERTIARY}"
+       Foreground="{ThemeResource TEXT_PRIMARY}"
+       CornerRadius="5"
+        Click="AdsButton_Click"
+       />
+    </StackPanel>
+</Page>

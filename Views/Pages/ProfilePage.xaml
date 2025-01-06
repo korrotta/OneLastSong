@@ -76,7 +76,8 @@
                 CanUserSortColumns="True"
                 Sorting="dg_Sorting"
                 ColumnWidth="Auto"
-                    MinHeight="400"
+                MinHeight="400"
+                Foreground="{ThemeResource TEXT_PRIMARY}"
                 RowStyle="{StaticResource DataGridRowStyleKey}">
                     <controls:DataGrid.Columns>
                         <controls:DataGridTextColumn Header="Id" Binding="{Binding AudioItem.AudioId, Mode=OneWay}" IsReadOnly="True" Tag="AudioId"/>

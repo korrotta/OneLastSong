@@ -15,6 +15,9 @@
     <Page.Resources>
         <converters:DurationToTimeConverter x:Key="DurationToTimeConverter" />
         <converters:PlayStateToIconConverter x:Key="PlayStateToIconConverter" />
+        <converters:IsRepeatingToIconConverter x:Key="IsRepeatingToIconConverter" />
+        <converters:VolumeStrengthToIconConverter x:Key="VolumeStrengthToIconConverter" />
+        <converters:FullScreenToIconConverter x:Key="FullScreenToIconConverter" />
     </Page.Resources>
 
     <Grid
@@ -80,7 +83,7 @@
                 Orientation="Horizontal">
 
                 <!--  Shuffle button  -->
-                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}" Click="ShuffleButton_Clicked">
                     <FontIcon
                         FontSize="{StaticResource MediumTextSize}"
                         Foreground="{ThemeResource TEXT_PRIMARY}"
@@ -118,8 +121,6 @@
                     </Button>
                 </Border>
 
-
-
                 <!--  Next button  -->
                 <Button
                     Margin="{StaticResource MediumRightMargin}"
@@ -132,12 +133,13 @@
                 </Button>
 
                 <!--  Repeat button  -->
-                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+                <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}"
+                        Click="RepeatButton_Clicked">
                     <FontIcon
                         x:Name="RepeatIcon"
                         FontSize="{StaticResource MediumTextSize}"
                         Foreground="{ThemeResource TEXT_PRIMARY}"
-                        Glyph="&#xF5E7;" />
+                        Glyph="{x:Bind ViewModel.IsRepeat, Mode=OneWay ,Converter={StaticResource IsRepeatingToIconConverter}}" />
                 </Button>
 
             </StackPanel>
@@ -235,8 +237,10 @@
             </Button>
 
             <!--  Volume slider  -->
-            <Button>
-                <FontIcon Glyph="&#xE994;" />
+            <Button
+                Margin="{StaticResource MediumRightMargin}"
+                Style="{StaticResource IconButton}">
+                <FontIcon Glyph="{x:Bind ViewModel.Volume, Mode=OneWay, Converter={StaticResource VolumeStrengthToIconConverter}}" Foreground="{ThemeResource TEXT_PRIMARY}"/>
                 <Button.Flyout>
                     <Flyout>
                         <StackPanel>
@@ -245,19 +249,22 @@
                                 Width="150"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
-                                Maximum="100.0"
-                                Minimum="0" />
+                                Maximum="1.0"
+                                Minimum="0"
+                                StepFrequency="0.01"
+                                Value="{x:Bind ViewModel.Volume, Mode=OneWay}"
+                                ValueChanged="VolumeSlider_ValueChanged"/> 
                         </StackPanel>
                     </Flyout>
                 </Button.Flyout>
             </Button>
 
             <!--  Fullscreen button  -->
-            <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}">
+            <Button Margin="{StaticResource MediumRightMargin}" Style="{StaticResource IconButton}" Click="FullScreenButton_Clicked">
                 <FontIcon
                     FontSize="{StaticResource MediumTextSize}"
                     Foreground="{ThemeResource TEXT_PRIMARY}"
-                    Glyph="&#xE740;" />
+                    Glyph="{x:Bind ViewModel.IsFullScreen, Mode=OneWay, Converter={StaticResource FullScreenToIconConverter}}" />
             </Button>
 
         </StackPanel>

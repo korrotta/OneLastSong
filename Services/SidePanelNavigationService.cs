@@ -4,6 +4,7 @@ using System;
 using OneLastSong.Contracts;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
+using OneLastSong.Views.Pages;
 
 namespace OneLastSong.Services
 {

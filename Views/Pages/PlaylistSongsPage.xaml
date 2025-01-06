@@ -52,6 +52,7 @@
                 CanUserSortColumns="True"
                 Sorting="dg_Sorting"
                 ColumnWidth="Auto"
+                Foreground="{ThemeResource TEXT_PRIMARY}"
                 RowStyle="{StaticResource DataGridRowStyleKey}">
                 <controls:DataGrid.Columns>
                     <controls:DataGridTextColumn Header="Id" Binding="{Binding AudioId}" IsReadOnly="True" Tag="AudioId"/>

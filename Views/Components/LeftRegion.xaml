@@ -129,6 +129,7 @@
                     Margin="{StaticResource MediumBottomMargin}">
                     <FontIcon Glyph="&#xE721;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
                 </Button>
+                <!-- Search playlists -->
                 <TextBox
                     Style="{StaticResource Body2}"
                     Foreground="Transparent"
@@ -138,6 +139,7 @@
                     Margin="-4 -4 0 0"
                     VerticalContentAlignment="Center"
                     VerticalAlignment="Center"
+                    x:Name="SearchBox" TextChanged="SearchBox_TextChanged"
                     />
             </Grid>
             <TextBlock Style="{StaticResource Body2}" Foreground="{ThemeResource TEXT_LIGHT}" l:Uids.Uid="Recents_TextBlock" Grid.Column="1" Margin="{StaticResource MediumRightMargin}"/>
@@ -151,7 +153,7 @@
 
         <ScrollViewer>
             <ListView
-                ItemsSource="{x:Bind ViewModel.PlaylistList, Mode=OneWay}"
+                ItemsSource="{x:Bind ViewModel.FilteredPlaylistList, Mode=OneWay}"
                 SelectionMode="Single"
                 ItemTemplate="{StaticResource PlaylistListViewTemplate}"/>
         </ScrollViewer>

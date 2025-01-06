@@ -136,6 +136,7 @@
                                 Background="{ThemeResource BG_TERTIARY}"
                                 Foreground="{ThemeResource TEXT_PRIMARY}"
                                 CornerRadius="5"
+                                Click="AdsButton_Click"
                                 />
                         </Grid>
                     </Border>
