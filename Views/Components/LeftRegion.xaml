@@ -38,12 +38,13 @@
                         Source="{x:Bind CoverImageUrl}"
                         Stretch="UniformToFill"/>
                 </Border>
-                <TextBlock Grid.Column="1"
-                    Text="{x:Bind Name}"
-                    x:Phase="1"
-                    Style="{ThemeResource Body2}"
-                    Foreground="{ThemeResource TEXT_PRIMARY}"
-                    Margin="12,6,0,0"/>
+                <Button Grid.Column="1" Margin="0,6,0,0" Background="Transparent" BorderThickness="0" Click="PlaylistName_Click">
+                    <TextBlock
+                        Text="{x:Bind Name}"
+                        x:Phase="1"
+                        Style="{ThemeResource Body2}"
+                        Foreground="{ThemeResource TEXT_PRIMARY}"/>
+                </Button>
                 <TextBlock  Grid.Column="1"
                     Grid.Row="1"
                     Text="{x:Bind ItemCount}"
@@ -128,6 +129,7 @@
                     Margin="{StaticResource MediumBottomMargin}">
                     <FontIcon Glyph="&#xE721;" FontSize="{StaticResource ExtraLargeTextSize}" Foreground="{ThemeResource TEXT_LIGHT}"/>
                 </Button>
+                <!-- Search playlists -->
                 <TextBox
                     Style="{StaticResource Body2}"
                     Foreground="Transparent"
@@ -137,6 +139,7 @@
                     Margin="-4 -4 0 0"
                     VerticalContentAlignment="Center"
                     VerticalAlignment="Center"
+                    x:Name="SearchBox" TextChanged="SearchBox_TextChanged"
                     />
             </Grid>
             <TextBlock Style="{StaticResource Body2}" Foreground="{ThemeResource TEXT_LIGHT}" l:Uids.Uid="Recents_TextBlock" Grid.Column="1" Margin="{StaticResource MediumRightMargin}"/>
@@ -150,7 +153,7 @@
 
         <ScrollViewer>
             <ListView
-                ItemsSource="{x:Bind ViewModel.PlaylistList, Mode=OneWay}"
+                ItemsSource="{x:Bind ViewModel.FilteredPlaylistList, Mode=OneWay}"
                 SelectionMode="Single"
                 ItemTemplate="{StaticResource PlaylistListViewTemplate}"/>
         </ScrollViewer>

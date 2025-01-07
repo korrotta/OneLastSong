@@ -11,7 +11,8 @@
 
     <Grid 
         PointerEntered="OnPointerEntered"
-        PointerExited="OnPointerExited">
+        PointerExited="OnPointerExited"
+        Height="64">
         <StackPanel Orientation="Horizontal" Spacing="10">
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Border

@@ -37,6 +37,51 @@ namespace OneLastSong.ViewModels
         public ICommand OpenPlayQueueCommand { get; set; }
         public ICommand OpenLyricsCommand { get; set; }
 
+        private bool _isRepeat = false;
+
+        public bool IsRepeat
+        {
+            get => _isRepeat;
+            set
+            {
+                if (_isRepeat != value)
+                {
+                    _isRepeat = value;
+                    OnPropertyChanged(nameof(IsRepeat));
+                }
+            }
+        }
+
+        private float _volume = 0.5f;
+
+        public float Volume
+        {
+            get => _volume;
+            set
+            {
+                if (_volume != value)
+                {
+                    _volume = value;
+                    OnPropertyChanged(nameof(Volume));
+                }
+            }
+        }
+
+        private bool _isFullScreen = false;
+
+        public bool IsFullScreen
+        {
+            get => _isFullScreen;
+            set
+            {
+                if (_isFullScreen != value)
+                {
+                    _isFullScreen = value;
+                    OnPropertyChanged(nameof(IsFullScreen));
+                }
+            }
+        }
+
         public BottomFrameViewModel(DispatcherQueue dispatcherQueue, Slider slider)
         {
             _listeningService = ListeningService.Get();
@@ -53,6 +98,13 @@ namespace OneLastSong.ViewModels
             ConfigEqualizerCommand = new RelayCommand(ConfigEqualizer);
             OpenPlayQueueCommand = new RelayCommand(OpenPlayQueue);
             OpenLyricsCommand = new RelayCommand(OpenLyrics);
+        }
+
+        public void OnLoaded()
+        {
+            IsRepeat = _listeningService.IsRepeating;
+            Volume = _listeningService.Volume;
+            IsFullScreen = (Application.Current as App).IsFullScreen();
         }
 
         private void OpenLyrics()
@@ -161,6 +213,33 @@ namespace OneLastSong.ViewModels
         internal void OnSongTitleClicked()
         {          
             _navigationService.NavigateOrReloadOnParameterChanged(typeof(AudioDetailsPage), CurrentAudio.AudioId.ToString());
+        }
+
+        internal void OnRepeatButtonClicked()
+        {
+            IsRepeat = _listeningService.ToggleRepeat();
+        }
+
+        internal void OnVolumeSliderValueChanged(float newValue)
+        {
+            Volume = _listeningService.SetVolume(newValue);
+        }
+
+        internal void OnShuffleButtonClicked()
+        {
+            _listeningService.Shuffle();
+        }
+
+        public ListeningService ListeningService
+        {
+            get => _listeningService;
+        }
+
+        public void ToggleFullScreen()
+        {
+            IsFullScreen = !IsFullScreen;
+
+            (Application.Current as App).SetFullScreen(IsFullScreen);
         }
     }
 }

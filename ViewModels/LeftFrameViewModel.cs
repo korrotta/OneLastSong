@@ -9,6 +9,7 @@ using OneLastSong.Services;
 using OneLastSong.Utils;
 using OneLastSong.Views.Components;
 using OneLastSong.Views.Dialogs;
+using OneLastSong.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,12 +28,16 @@ namespace OneLastSong.ViewModels
         public ICommand CreateNewPlaylistCommand { get; set; }
         private PlaylistDAO _playlistDAO;
         private PlaylistService _playlistService;
+        private NavigationService _navigationService;
 
         public LeftFrameViewModel()
         {
             CreateNewPlaylistCommand = new RelayCommand(CreateNewPlaylist);
+
             _playlistService = PlaylistService.Get();
             _playlistDAO = PlaylistDAO.Get();
+            _navigationService = NavigationService.Get();
+
             _playlistService.RegisterPlaylistNotifier(this);
         }
 
@@ -56,6 +61,20 @@ namespace OneLastSong.ViewModels
             }
         }
 
+        private ObservableCollection<Playlist> _filteredPlaylistLists = new ObservableCollection<Playlist>();
+        public ObservableCollection<Playlist> FilteredPlaylistList
+        {
+            get => _filteredPlaylistLists;
+            set
+            {
+                if (_filteredPlaylistLists != value)
+                {
+                    _filteredPlaylistLists = value;
+                    OnPropertyChanged(nameof(FilteredPlaylistList));
+                }
+            }
+        }
+
         public async void InitPlaylist()
         {
             string sessionToken = UserDAO.Get().SessionToken;
@@ -69,6 +88,7 @@ namespace OneLastSong.ViewModels
             {
                 var playlists = await PlaylistDAO.Get().GetUserPlaylists(sessionToken);
                 PlaylistList = new ObservableCollection<Playlist>(playlists);
+                FilteredPlaylistList = PlaylistList;
             }
             catch (Exception e)
             {
@@ -159,6 +179,37 @@ namespace OneLastSong.ViewModels
         public void OnPlaylistUpdated(List<Playlist> playlists)
         {
             PlaylistList = new ObservableCollection<Playlist>(playlists);
+            FilteredPlaylistList = PlaylistList;
+        }
+
+        internal void OpenPlaylist(Playlist playlist)
+        {
+            try
+            {
+                if (playlist.Audios == null || playlist.Audios.Length == 0)
+                {
+                    SnackbarUtils.ShowSnackbar("The playlist is empty", SnackbarType.Warning);
+                    return;
+                }
+                // Navigate to the playlist songs page
+                _navigationService.NavigateOrReloadOnParameterChanged(typeof(PlaylistSongsPage), playlist.PlaylistId);
+            }
+            catch (Exception ex)
+            {
+                SnackbarUtils.ShowSnackbar(ex.Message, SnackbarType.Error);
+            }
+        }
+
+        public void Search(string filter)
+        {
+            if (string.IsNullOrEmpty(filter))
+            {
+                FilteredPlaylistList = PlaylistList;
+                return;
+            }
+            FilteredPlaylistList = new ObservableCollection<Playlist>(
+                PlaylistList.Where(playlist => playlist.Name.ToLower().Contains(filter.ToLower()))
+            );
         }
     }
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="OneLastSong.Views.Components.PlayablePlaylistItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneLastSong.Views.Components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:models="using:OneLastSong.Models" d:DataContext="{d:DesignInstance Type=models:Playlist}"
+    xmlns:converters="using:OneLastSong.Converters"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:IsHoveredToVisibilityConverter x:Key="IsHoveredToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid
+        PointerEntered="UserControl_PointerEntered"
+        PointerExited="UserControl_PointerExited">
+        <Grid Width="200" Height="250" Background="{ThemeResource BG_PRIMARY}" CornerRadius="10" Padding="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" CornerRadius="10" Background="Gray">
+                <Image Source="{x:Bind Playlist.CoverImageUrl, Mode=OneWay}" Stretch="UniformToFill" />
+            </Border>
+
+            <HyperlinkButton Grid.Row="1" Click="PlaylistTitleButton_Click">
+                <TextBlock Text="{x:Bind Playlist.Name, Mode=OneWay}" Style="{StaticResource SongBigTitle}" Foreground="{ThemeResource TEXT_PRIMARY}" Margin="0,10,0,0" TextAlignment="Center"/>
+            </HyperlinkButton>            
+        </Grid>
+
+        <Border
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Visibility="{x:Bind IsHovered, Mode=OneWay, Converter={StaticResource IsHoveredToVisibilityConverter}}"
+            Width="50"
+            Height="50"
+            Margin="0 0 16 16"
+            Background="{ThemeResource BG_CONTRAST1}"
+            CornerRadius="50">
+            <Button                
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Click="PlayButton_Click"
+                Style="{StaticResource IconButton}">
+                <FontIcon
+                    x:Name="PlaybackIcon"
+                    FontSize="20"
+                    Foreground="{ThemeResource TEXT_CONTRAST1}"
+                    Glyph="&#xF5B0;"
+                    />
+            </Button>
+        </Border>
+    </Grid>
+    
+</UserControl>

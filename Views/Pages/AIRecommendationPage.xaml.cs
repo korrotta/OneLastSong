@@ -29,7 +29,7 @@ namespace OneLastSong.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AIRecommendationPage : Page, IDisposable
+    public sealed partial class AIRecommendationPage : Page, INavigationStateSavable, IDisposable
     {
         public AIRecommendationPageViewModel ViewModel { get; } = new AIRecommendationPageViewModel();
 
@@ -62,6 +62,16 @@ namespace OneLastSong.Views
             {
                 ViewModel.SendMessage(button.Content.ToString());
             }
+        }
+
+        public object GetCurrentParameterState()
+        {
+            return "";
+        }
+
+        public void OnStateLoad(object parameter)
+        {
+            ViewModel.FetchUserConversation();
         }
     }
 }

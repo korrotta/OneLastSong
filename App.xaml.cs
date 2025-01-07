@@ -26,6 +26,7 @@ using System.Threading;
 using Microsoft.UI.Dispatching;
 using System.Threading.Tasks;
 using OpenAI;
+using Windows.UI.ViewManagement;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -85,6 +86,7 @@ namespace OneLastSong
             services.AddSingleton<PlaylistService>(provider => new PlaylistService(dispatcherQueue));            
             services.AddSingleton<AIService>(provider => new AIService(dispatcherQueue)); // OpenAI
             services.AddSingleton<PlayHistoryService>(provider => new PlayHistoryService(dispatcherQueue));
+            services.AddSingleton<AudioService>(provider => new AudioService(dispatcherQueue));
 
             return services.BuildServiceProvider();
         }
@@ -100,6 +102,7 @@ namespace OneLastSong
             await SidePanelNavigationService.Get().OnSubsystemInitialized();
             await AIService.Get().OnSubsystemInitialized(); // OpenAI
             await PlayHistoryService.Get().OnSubsystemInitialized();
+            await AudioService.Get().OnSubsystemInitialized();
         }
 
         private async Task InitializeDatabase()
@@ -161,6 +164,21 @@ namespace OneLastSong
             {
                 return _window;
             }
+        }
+
+        public void SetFullScreen(bool isFullScreen)
+        {
+            var appWindow = _window.AppWindow;
+
+            var screenKind = isFullScreen ? Microsoft.UI.Windowing.AppWindowPresenterKind.FullScreen : Microsoft.UI.Windowing.AppWindowPresenterKind.Default;
+
+            appWindow.SetPresenter(screenKind);
+        }
+
+        public bool IsFullScreen()
+        {
+            var appWindow = _window.AppWindow;
+            return appWindow.Presenter.Kind == Microsoft.UI.Windowing.AppWindowPresenterKind.FullScreen;
         }
     }
 }

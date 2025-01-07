@@ -18,13 +18,15 @@
 
         <!--Playing queue-->
         <TextBlock Text="Playing Queue" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource Body2}" FontWeight="SemiBold" Foreground="{ThemeResource TEXT_PRIMARY}"/>
-        <ListView 
-            ItemsSource="{x:Bind ViewModel.PlayingQueue, Mode=OneWay}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <components:SimpleAudioItem Audio="{Binding}" Margin="{StaticResource MediumBottomMargin}" RightTapped="AudioItem_RightTapped"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ListView 
+                ItemsSource="{x:Bind ViewModel.PlayingQueue, Mode=OneWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <components:SimpleAudioItem Audio="{Binding}" Margin="{StaticResource MediumBottomMargin}" RightTapped="AudioItem_RightTapped"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollViewer>
     </StackPanel>
 </Page>

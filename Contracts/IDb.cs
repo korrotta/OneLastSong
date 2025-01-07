@@ -27,6 +27,8 @@ namespace OneLastSong.Contracts
         public Task<ResultMessage> AddAudioToPlaylist(string sessionToken, int playlistId, int audioId);
         public Task<ResultMessage> RemoveAudioFromPlaylist(string sessionToken, int playlistId, int audioId);
         public Task<ResultMessage> DeletePlaylist(string sessionToken, int playlistId);
+        public Task<ResultMessage> GetAudiosInPlaylist(string sessionToken, int playlistId);
+        public Task<ResultMessage> UpdatePlaylist(string sessionToken, int playlistId, string name, string coverImageUrl);
         /* Play */
         public Task<ResultMessage> SaveListeningSession(string sessionToken, int audioId, int progress);
         public Task<ResultMessage> GetListeningSession(string sessionToken);
@@ -37,8 +39,12 @@ namespace OneLastSong.Contracts
         public Task<ResultMessage> RateAudio(string sessionToken, int audioId, float rating);
         public Task<ResultMessage> GetRatingScoreByAudioId(int audioId);
         public Task<ResultMessage> GetUserAudioRating(int userId, int audioId);
+        /* Like */
+        public Task<ResultMessage> LikeAudio(string sessionToken, int audioId);
+        public Task<ResultMessage> RemoveLikeFromAudio(string sessionToken, int audioId);
         /* User */
         public Task<ResultMessage> GetUserDisplayInfo(int userId);
+        public Task<ResultMessage> UpdateUserProfile(string sessionToken, string description, string avatarUrl);
         /* Play history */
         public Task<ResultMessage> AddUserPlayHistory(string sessionToken, int audioId);
         public Task<ResultMessage> GetUserPlayHistory(string sessionToken);

@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using OneLastSong.Utils;
+using OneLastSong.Services;
 
 namespace OneLastSong.DAOs
 {
@@ -17,6 +18,7 @@ namespace OneLastSong.DAOs
         private List<Audio> _audios = new List<Audio>();
         private IDb _db;
         private Random _random = new Random();
+        private AudioService _audioService;
 
         public void Init()
         {
@@ -135,6 +137,43 @@ namespace OneLastSong.DAOs
             }
 
             return JsonSerializer.Serialize(conciseAudioObjs);
+        }
+
+        public void SetAudioService(AudioService audioService)
+        {
+            this._audioService = audioService;
+        }
+
+        internal async Task LikeAudio(string token, int audioId)
+        {
+            ResultMessage result = await _db.LikeAudio(token, audioId);
+            if (result.Status != ResultMessage.STATUS_OK)
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+            
+            if(_audioService == null)
+            {
+                return;
+            }
+
+            _audioService.NotifyAudioLiked(audioId);
+        }
+
+        internal async Task RemoveLikeFromAudio(string token, int audioId)
+        {
+            ResultMessage result = await _db.RemoveLikeFromAudio(token, audioId);
+            if (result.Status != ResultMessage.STATUS_OK)
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+
+            if (_audioService == null)
+            {
+                return;
+            }
+
+            _audioService.NotifyAudioLikeRemoved(audioId);
         }
     }
 }

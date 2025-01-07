@@ -52,6 +52,19 @@ namespace OneLastSong.DAOs
             return _playlistList;
         }
 
+        public async Task<List<Audio>> GetAudiosInPlaylist(string sessionToken, int playlistId)
+        {
+            ResultMessage result = await _db.GetAudiosInPlaylist(sessionToken, playlistId);
+            if (result.Status == ResultMessage.STATUS_OK)
+            {
+                return JsonSerializer.Deserialize<List<Audio>>(result.JsonData);
+            }
+            else
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+        }
+
         public async Task<Playlist> AddUserPlaylist(string sessionToken, string playlistName, string coverImageUrl = null)
         {
             if(coverImageUrl == null)
@@ -80,6 +93,20 @@ namespace OneLastSong.DAOs
 
         public async Task AddAudioToPlaylist(string sessionToken, int playlistId, int audioId)
         {
+            // Check if the like playlist is not fetched yet, fetch it
+            if (_playlistList.Count == 0)
+            {
+                await GetUserPlaylists(sessionToken);
+            }
+
+            // if the playlist contains the audio, do nothing
+            var onFocusPlaylist = _playlistList.Find(playlist => playlist.PlaylistId == playlistId);
+
+            if (onFocusPlaylist.ContainsAudio(audioId))
+            {
+                return;
+            }
+
             ResultMessage result = await _db.AddAudioToPlaylist(sessionToken, playlistId, audioId);
             if((result.Status == ResultMessage.STATUS_OK))
             {
@@ -99,6 +126,16 @@ namespace OneLastSong.DAOs
             if (result.Status != ResultMessage.STATUS_OK)
             {
                 throw new Exception(result.ErrorMessage);
+            }
+            // remove from cache
+            Playlist playlist = _playlistList.Find(playlist => playlist.PlaylistId == playlistId);
+            if (playlist != null)
+            {
+                var audioList = playlist.Audios.ToList(); // Convert array to List<Audio>
+                audioList.RemoveAll(audio => audio.AudioId == audioId); // Perform removal
+                playlist.Audios = audioList.ToArray(); // Convert back to array
+                _playlistService.NotifyPlaylistChanged(_playlistList);
+                playlist.ItemCount = playlist.Audios.Length;
             }
         }
 
@@ -126,6 +163,45 @@ namespace OneLastSong.DAOs
         public List<Playlist> GetCachedPlaylists()
         {
             return _playlistList;
+        }
+
+        internal async Task UpdatePlaylist(string sessionToken, Playlist playlist)
+        {
+            int playlistId = playlist.PlaylistId;
+            ResultMessage result = await _db.UpdatePlaylist(sessionToken, playlistId, playlist.Name, playlist.CoverImageUrl);
+            if (result.Status == ResultMessage.STATUS_OK)
+            {
+                // fetch new playlist data
+                _playlistList = await GetUserPlaylists(sessionToken, true);
+                _playlistService.NotifyPlaylistChanged(_playlistList);
+            }
+            else
+            {
+                throw new Exception(result.ErrorMessage);
+            }
+        }
+
+        internal async Task<Playlist> GetLikePlaylist(string sessionToken)
+        {
+            // Check if the like playlist is not fetched yet, fetch it
+            if(_playlistList.Count == 0)
+            {
+                await GetUserPlaylists(sessionToken);
+            }
+
+            return _playlistList.Find(playlist => playlist.Name == ConfigValueUtils.GetConfigValue(ConfigValueUtils.LIKE_PLAYLIST_NAME_KEY));
+        }
+
+        internal void UpdatePlaylistInCache(Playlist likedPlaylist)
+        {
+            Playlist playlist = _playlistList.Find(p => p.PlaylistId == likedPlaylist.PlaylistId);
+            if (playlist != null)
+            {
+                playlist.Audios = likedPlaylist.Audios;
+                playlist.ItemCount = likedPlaylist.Audios.Length;
+                _playlistService.NotifyPlaylistChanged(_playlistList);
+            }
+            _playlistService.NotifyPlaylistChanged(_playlistList);
         }
     }
 }

@@ -10,5 +10,6 @@ namespace OneLastSong.Contracts
     {
         public void OnNewMessageToUser(string message);
         public void OnSuggestionActionsChanged(List<string> actions);
+        public void OnMessageRetrieved(bool IsUser, string message);
     }
 }

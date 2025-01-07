@@ -42,6 +42,8 @@
     <None Remove="Views\Components\HomePage.xaml" />
     <None Remove="Views\Components\IconTextButton.xaml" />
     <None Remove="Views\Components\LeftRegion.xaml" />
+    <None Remove="Views\Components\PaginationControl.xaml" />
+    <None Remove="Views\Components\PlayablePlaylistItem.xaml" />
     <None Remove="Views\Components\PlaylistMenuFlyout.xaml" />
     <None Remove="Views\Components\RightRegion.xaml" />
     <None Remove="Views\Components\SignInPage.xaml" />
@@ -55,10 +57,12 @@
     <None Remove="Views\Dialogs\SimpleThemedConfirmDialog.xaml" />
     <None Remove="Views\EqualizerPage.xaml" />
     <None Remove="Views\MainPage.xaml" />
+    <None Remove="Views\Pages\AdsPage.xaml" />
     <None Remove="Views\Pages\AudioDetailsPage.xaml" />
     <None Remove="Views\Pages\PlayingQueuePage.xaml" />
     <None Remove="Views\Pages\PlayingQueueWithListeningHistoryPage.xaml" />
     <None Remove="Views\Pages\ProfilePage.xaml" />
+    <None Remove="Views\Pages\PlaylistSongsPage.xaml" />
     <None Remove="Views\SearchPage.xaml" />
     <None Remove="Views\SignUpPage.xaml" />
   </ItemGroup>
@@ -75,6 +79,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
     <PackageReference Include="Fody" Version="6.9.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -126,6 +131,9 @@
     <Page Update="Views\Components\AudioItemInQueueMenuFlyout.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Dialogs\EditUserProfileDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\MainPage.xaml">
@@ -156,6 +164,9 @@
     <Content Include="Strings\**\*.resw">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Assets\images\not_found.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="Assets\images\default.png">
@@ -208,7 +219,27 @@
     <PRIResource Remove="Strings\en\Resources.vn.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Views\Pages\AdsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\PlayablePlaylistItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Components\PaginationControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Views\Pages\ProfilePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\PlaylistSongsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

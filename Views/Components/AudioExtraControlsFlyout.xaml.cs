@@ -65,10 +65,17 @@ namespace OneLastSong.Views.Components
             ViewModel.AddToQueue();
         }
 
-        private void Like_ButtonClicked(object sender, RoutedEventArgs e)
+        private async void Like_ButtonClicked(object sender, RoutedEventArgs e)
         {
-            LogUtils.Info("Like button clicked");
-            LogUtils.Info("Audio: " + Audio.Title);
+            try
+            {
+                await ViewModel.LikeOrDislikeCurrentAudio();
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Error("Error while liking audio: " + ex.Message);
+                SnackbarUtils.ShowSnackbar("Error while liking audio", SnackbarType.Error);
+            }
         }
 
         private void Details_ButtonClicked(object sender, RoutedEventArgs e)

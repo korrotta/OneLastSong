@@ -5,12 +5,42 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:OneLastSong.Views.Dialogs"
     xmlns:l="using:WinUI3Localizer"
+    xmlns:models="using:OneLastSong.Models"
+    xmlns:converters="using:OneLastSong.Converters"
     Background="{ThemeResource BG_PRIMARY}"
     Foreground="{ThemeResource TEXT_PRIMARY}"
     SecondaryButtonText="Cancel"
+    PrimaryButtonText="Save"
+    PrimaryButtonClick="SaveButton_Click"
     CornerRadius="13">
 
-    <Grid>
-        <TextBlock Foreground="{ThemeResource TEXT_PRIMARY}">Testing</TextBlock>
+    <ContentDialog.Resources>
+        <converters:ImageUrlConverter x:Key="ImageUrlToImageSourceConverter"/>
+    </ContentDialog.Resources>
+
+    <Grid Padding="20" 
+          Width="548"
+          Height="240">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Edit Playlist Details" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+        <Border Grid.Row="1" Grid.Column="0" Width="150" Height="150" CornerRadius="16" Margin="0,0,20,0">
+            <Grid Width="128" Height="128" CornerRadius="16">
+                <Image Source="{x:Bind ViewModel.Playlist.CoverImageUrl, Mode=OneWay, Converter={StaticResource ImageUrlToImageSourceConverter}}" Stretch="UniformToFill"/>
+            </Grid>
+        </Border>
+
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Spacing="10">
+            <TextBox Header="Name" Text="{x:Bind ViewModel.Playlist.Name, Mode=TwoWay}" PlaceholderText="Enter playlist name"/>
+            <TextBox Header="Cover Image URL" Text="{x:Bind ViewModel.Playlist.CoverImageUrl, Mode=TwoWay}" PlaceholderText="Enter cover image URL"/>
+        </StackPanel>
     </Grid>
 </ContentDialog>

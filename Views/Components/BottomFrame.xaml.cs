@@ -25,7 +25,7 @@ namespace OneLastSong.Views.Components
 
         private void BottomFrame_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            ViewModel.OnLoaded();
         }
 
         private void Slider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
@@ -37,6 +37,27 @@ namespace OneLastSong.Views.Components
         private void SongTitleHyperlink_Clicked(Hyperlink sender, HyperlinkClickEventArgs args)
         {
             ViewModel.OnSongTitleClicked();
+        }
+
+        private void RepeatButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            ViewModel.OnRepeatButtonClicked();
+        }
+
+        private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            ViewModel.OnVolumeSliderValueChanged((float)e.NewValue);
+        }
+
+        private void ShuffleButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            ViewModel.OnShuffleButtonClicked();
+            SnackbarUtils.ShowSnackbar("The play queue has been shuffled.", SnackbarType.Success);
+        }
+
+        private void FullScreenButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ToggleFullScreen();
         }
     }
 }

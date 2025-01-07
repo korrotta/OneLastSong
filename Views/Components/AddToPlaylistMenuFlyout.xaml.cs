@@ -20,6 +20,7 @@ using OneLastSong.Utils;
 using OneLastSong.Cores.DataItems;
 using OneLastSong.Contracts;
 using System.Threading.Tasks;
+using OneLastSong.Views.Dialogs;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -113,6 +114,28 @@ namespace OneLastSong.Views.Components
             {
                 SnackbarUtils.ShowSnackbar(ex.Message, SnackbarType.Error);
             }
+        }
+
+        public async void AddToNewPlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new CreateNewPlaylistDialog()
+            { 
+                XamlRoot = this.XamlRoot
+            };
+            dialog.PrimaryButtonClick += async (s, args) =>
+            {
+                try
+                {
+                    var playlist = await playlistDAO.AddUserPlaylist(userDAO.SessionToken, dialog.PlaylistName);
+                    await playlistDAO.AddAudioToPlaylist(userDAO.SessionToken, playlist.PlaylistId, AudioId);
+                    SnackbarUtils.ShowSnackbar("Audio added to playlist", SnackbarType.Success);
+                }
+                catch (Exception ex)
+                {
+                    SnackbarUtils.ShowSnackbar(ex.Message, SnackbarType.Error);
+                }
+            };
+            await dialog.ShowAsync();
         }
 
         public void OnPlaylistUpdated(List<Playlist> playlists)

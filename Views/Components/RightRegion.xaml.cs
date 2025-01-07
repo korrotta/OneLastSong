@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using OneLastSong.Services;
+using OneLastSong.Views.Pages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,7 +28,9 @@ namespace OneLastSong.Views.Components
         public RightRegion()
         {
             this.InitializeComponent();
-            SidePanelNavigationService.Get().Initialize(Content);
+            var sidePanelNavigationService = SidePanelNavigationService.Get();
+            sidePanelNavigationService.Initialize(Content);
+            sidePanelNavigationService.Navigate(typeof(AdsPage));
         }
     }
 }
