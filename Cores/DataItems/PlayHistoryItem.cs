@@ -35,9 +35,15 @@ namespace OneLastSong.Cores.DataItems
 
         private AudioDAO _audioDAO;
         
-        public Audio AudioItem
+        public AudioItem AudioItem
         {
             get => _audioItem;
+            set 
+            {
+                _audioItem = value;
+                OnPropertyChanged(nameof(AudioItem));
+
+            }
         }
 
         public DateTime PlayedAt
