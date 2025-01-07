@@ -86,6 +86,7 @@
             </Button>
         </Grid>
 
+        <!--
         <StackPanel Orientation="Horizontal"
             Margin="{StaticResource MediumBottomMargin}"
             HorizontalAlignment="Stretch">
@@ -114,6 +115,7 @@
                 </Border>
             </Button>
         </StackPanel>
+        -->
 
         <Grid>
             <Grid.ColumnDefinitions>

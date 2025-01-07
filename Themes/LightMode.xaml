@@ -6,9 +6,9 @@
     <SolidColorBrush x:Key="BG_SECONDARY" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="BG_CONTRAST1" Color="#006C9D"/>
     <SolidColorBrush x:Key="TEXT_CONTRAST1" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="TEXT_LIGHT" Color="#88BADB"/>
+    <SolidColorBrush x:Key="TEXT_LIGHT" Color="#2c80b8"/>
     <SolidColorBrush x:Key="BG_TERTIARY" Color="#DDEBF4"/>
-    <SolidColorBrush x:Key="BG_LIGHT_TERTIARY" Color="#6D83AC"/>
+    <SolidColorBrush x:Key="BG_LIGHT_TERTIARY" Color="#f0f5ff"/>
     <SolidColorBrush x:Key="TEXT_DISABLED" Color="#A5BDD6"/>
     <SolidColorBrush x:Key="INFO_BRUSH" Color="LightBlue"/>
     <SolidColorBrush x:Key="ERROR_BRUSH" Color="Red"/>
@@ -21,9 +21,9 @@
     <Color x:Key="cBG_SECONDARY">#FFFFFF</Color>
     <Color x:Key="cBG_CONTRAST1">#006C9D</Color>
     <Color x:Key="cTEXT_CONTRAST1">#FFFFFF</Color>
-    <Color x:Key="cTEXT_LIGHT">#88BADB</Color>
+    <Color x:Key="cTEXT_LIGHT">#2c80b8</Color>
     <Color x:Key="cBG_TERTIARY">#DDEBF4</Color>
-    <Color x:Key="cBG_LIGHT_TERTIARY">#6D83AC</Color>
+    <Color x:Key="cBG_LIGHT_TERTIARY">#f0f5ff</Color>
     <Color x:Key="cTEXT_DISABLED">#A5BDD6</Color>
     <Color x:Key="cINFO_BRUSH">LightBlue</Color>
     <Color x:Key="cERROR_BRUSH">Red</Color>
