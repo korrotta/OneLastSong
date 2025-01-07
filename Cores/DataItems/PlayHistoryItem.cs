@@ -29,7 +29,7 @@ namespace OneLastSong.Cores.DataItems
             set
             {
                 _audioId = value;
-                LoadAudioItem(value);
+                //LoadAudioItem(value);
             }
         }
 
@@ -56,25 +56,26 @@ namespace OneLastSong.Cores.DataItems
             }
         }
 
-        public PlayHistoryItem(PlayHistory playHistory)
-        {
-            _audioDAO = AudioDAO.Get();
-            AudioId = playHistory.AudioId;
-            _playedAt = playHistory.PlayedAt;
-        }
+        //public PlayHistoryItem(PlayHistory playHistory)
+        //{
+        //    _audioDAO = AudioDAO.Get();
+        //    AudioId = playHistory.AudioId;
+        //    _playedAt = playHistory.PlayedAt;
+        //}
 
-        public PlayHistoryItem(int audioId, DateTime playedAt)
+        public PlayHistoryItem(AudioItem audioItem, DateTime playedAt)
         {
             _audioDAO = AudioDAO.Get();
-            AudioId = audioId;
+            AudioId = audioItem.AudioId;
+            this.AudioItem = audioItem;
             _playedAt = playedAt;
         }
 
-        private async void LoadAudioItem(int audioId)
-        {
-            _audioItem = new AudioItem(await _audioDAO.GetAudioById(audioId));
-            OnPropertyChanged(nameof(AudioItem));
-        }
+        //private async void LoadAudioItem(int audioId)
+        //{
+        //    _audioItem = new AudioItem(await _audioDAO.GetAudioById(audioId));
+        //    OnPropertyChanged(nameof(AudioItem));
+        //}
 
         public String RelativePlayedAtString
         {

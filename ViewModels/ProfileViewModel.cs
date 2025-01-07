@@ -154,7 +154,9 @@ namespace OneLastSong.ViewModels
 
             foreach (var playHistory in playHistoryList)
             {
-                var playHistoryItem = new PlayHistoryItem(playHistory);
+                var audio = await AudioDAO.Get().GetAudioById(playHistory.AudioId);
+                var audioItem = new AudioItem(audio);
+                var playHistoryItem = new PlayHistoryItem(audioItem, playHistory.PlayedAt);
                 _filteredPlayHistoryItems.Add(playHistoryItem);
             }
 
@@ -278,7 +280,9 @@ namespace OneLastSong.ViewModels
 
             foreach (var playHistory in playHistoryList)
             {
-                var playHistoryItem = new PlayHistoryItem(playHistory);
+                var audio = await AudioDAO.Get().GetAudioById(playHistory.AudioId);
+                var audioItem = new AudioItem(audio);
+                var playHistoryItem = new PlayHistoryItem(audioItem, playHistory.PlayedAt);
                 _filteredPlayHistoryItems.Add(playHistoryItem);
             }
 
